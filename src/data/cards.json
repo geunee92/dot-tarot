@@ -1,0 +1,420 @@
+[
+  {
+    "id": 0,
+    "key": "fool",
+    "nameEn": "THE FOOL",
+    "keywordsUpright": [
+      "Beginnings",
+      "Curiosity",
+      "Leap of faith"
+    ],
+    "keywordsReversed": [
+      "Reckless",
+      "Unprepared",
+      "Impulsive"
+    ],
+    "meaningUpright": "A fresh start wants your first step. Keep it light and learn as you go.",
+    "meaningReversed": "Slow down—your excitement is outrunning your plan. Check one risk before you jump.",
+    "talismanLine": "Step lightly, but step.",
+    "actionTip": "Try the smallest version of the plan in 10 minutes."
+  },
+  {
+    "id": 1,
+    "key": "magician",
+    "nameEn": "THE MAGICIAN",
+    "keywordsUpright": [
+      "Will",
+      "Skill",
+      "Execution"
+    ],
+    "keywordsReversed": [
+      "Scattered",
+      "Empty talk",
+      "Tricks"
+    ],
+    "meaningUpright": "You already have enough tools. Focus and turn intent into action.",
+    "meaningReversed": "Energy is leaking into distractions. Cut one promise or one tab and commit to one move.",
+    "talismanLine": "One tool, one spell.",
+    "actionTip": "Pick one task and finish the first 20% today."
+  },
+  {
+    "id": 2,
+    "key": "high_priestess",
+    "nameEn": "THE HIGH PRIESTESS",
+    "keywordsUpright": [
+      "Intuition",
+      "Insight",
+      "Silence"
+    ],
+    "keywordsReversed": [
+      "Confusion",
+      "Self-doubt",
+      "Overthinking"
+    ],
+    "meaningUpright": "Your gut knows what your mouth can't say yet. Listen before you act.",
+    "meaningReversed": "Noise is masking your signal. Pause the debate and ask what you actually feel.",
+    "talismanLine": "Quiet reveals the answer.",
+    "actionTip": "Write the question, then the first honest sentence that comes."
+  },
+  {
+    "id": 3,
+    "key": "empress",
+    "nameEn": "THE EMPRESS",
+    "keywordsUpright": [
+      "Nurture",
+      "Growth",
+      "Abundance"
+    ],
+    "keywordsReversed": [
+      "Overindulgence",
+      "Stagnation",
+      "Neglect"
+    ],
+    "meaningUpright": "Care creates momentum. Feed the right thing and it will grow.",
+    "meaningReversed": "Too much or too little is draining you. Restore balance—protect your time and energy.",
+    "talismanLine": "Care is power.",
+    "actionTip": "Do one supportive act for your future self (food, rest, tidy)."
+  },
+  {
+    "id": 4,
+    "key": "emperor",
+    "nameEn": "THE EMPEROR",
+    "keywordsUpright": [
+      "Structure",
+      "Authority",
+      "Boundaries"
+    ],
+    "keywordsReversed": [
+      "Control",
+      "Rigidity",
+      "Conflict"
+    ],
+    "meaningUpright": "Make a rule and follow it. Clear boundaries reduce chaos.",
+    "meaningReversed": "Control is turning into friction. Loosen the grip where it doesn't matter.",
+    "talismanLine": "Rule the day, not the people.",
+    "actionTip": "Define one boundary: what you will not do today."
+  },
+  {
+    "id": 5,
+    "key": "hierophant",
+    "nameEn": "THE HIEROPHANT",
+    "keywordsUpright": [
+      "Tradition",
+      "Learning",
+      "Guidance"
+    ],
+    "keywordsReversed": [
+      "Dogma",
+      "Stubbornness",
+      "Outdated rules"
+    ],
+    "meaningUpright": "A proven path can save time. Learn from a trusted source.",
+    "meaningReversed": "Old rules are blocking progress. Keep the lesson, drop the unnecessary ritual.",
+    "talismanLine": "Borrow wisdom, not chains.",
+    "actionTip": "Ask one mentor-like question or read one reliable page."
+  },
+  {
+    "id": 6,
+    "key": "lovers",
+    "nameEn": "THE LOVERS",
+    "keywordsUpright": [
+      "Choice",
+      "Harmony",
+      "Values"
+    ],
+    "keywordsReversed": [
+      "Indecision",
+      "Temptation",
+      "Mismatch"
+    ],
+    "meaningUpright": "Choose what matches your values. Alignment beats excitement.",
+    "meaningReversed": "A split desire is draining you. Decide what matters most and let the rest go.",
+    "talismanLine": "Choose the honest yes.",
+    "actionTip": "Name your top value for this decision in one word."
+  },
+  {
+    "id": 7,
+    "key": "chariot",
+    "nameEn": "THE CHARIOT",
+    "keywordsUpright": [
+      "Drive",
+      "Focus",
+      "Victory"
+    ],
+    "keywordsReversed": [
+      "Overdrive",
+      "Loss of direction",
+      "Power struggle"
+    ],
+    "meaningUpright": "Pick a direction and push. Momentum rewards focus.",
+    "meaningReversed": "You're moving fast but not straight. Re-aim before you accelerate again.",
+    "talismanLine": "One road, full heart.",
+    "actionTip": "Remove one distraction and set a 45-minute sprint."
+  },
+  {
+    "id": 8,
+    "key": "strength",
+    "nameEn": "STRENGTH",
+    "keywordsUpright": [
+      "Courage",
+      "Patience",
+      "Gentle power"
+    ],
+    "keywordsReversed": [
+      "Self-doubt",
+      "Burnout",
+      "Anger"
+    ],
+    "meaningUpright": "Soft control is real strength. Keep steady; you're closer than you think.",
+    "meaningReversed": "Your inner voice is harsh. Rebuild stamina with kindness and one small win.",
+    "talismanLine": "Strong is calm.",
+    "actionTip": "Do the easiest hard thing first, then rest."
+  },
+  {
+    "id": 9,
+    "key": "hermit",
+    "nameEn": "THE HERMIT",
+    "keywordsUpright": [
+      "Reflection",
+      "Focus",
+      "Solitude"
+    ],
+    "keywordsReversed": [
+      "Isolation",
+      "Avoidance",
+      "Fog"
+    ],
+    "meaningUpright": "Step back to see clearly. A quiet hour can save a noisy week.",
+    "meaningReversed": "Hiding won't heal it. Reconnect with one person or one fact you can verify.",
+    "talismanLine": "Light the lamp inside.",
+    "actionTip": "Take a 20-minute quiet walk or no-phone break."
+  },
+  {
+    "id": 10,
+    "key": "wheel_of_fortune",
+    "nameEn": "WHEEL OF FORTUNE",
+    "keywordsUpright": [
+      "Turning point",
+      "Chance",
+      "Timing"
+    ],
+    "keywordsReversed": [
+      "Stuck cycle",
+      "Bad timing",
+      "Resistance"
+    ],
+    "meaningUpright": "The cycle shifts. Catch the opening and ride the change.",
+    "meaningReversed": "The same pattern repeats. Break it with one different choice today.",
+    "talismanLine": "Turn with the wheel.",
+    "actionTip": "Do one thing at a new time or in a new order."
+  },
+  {
+    "id": 11,
+    "key": "justice",
+    "nameEn": "JUSTICE",
+    "keywordsUpright": [
+      "Balance",
+      "Truth",
+      "Clear judgment"
+    ],
+    "keywordsReversed": [
+      "Bias",
+      "Excuses",
+      "Unfairness"
+    ],
+    "meaningUpright": "Be honest and precise. Clean decisions come from clean facts.",
+    "meaningReversed": "Your story might be tilted. Recheck assumptions and own your part.",
+    "talismanLine": "Truth is the sharpest blade.",
+    "actionTip": "Write the facts vs. feelings in two short lines."
+  },
+  {
+    "id": 12,
+    "key": "hanged_man",
+    "nameEn": "THE HANGED MAN",
+    "keywordsUpright": [
+      "Pause",
+      "New view",
+      "Letting go"
+    ],
+    "keywordsReversed": [
+      "Delay",
+      "Martyrdom",
+      "Stall"
+    ],
+    "meaningUpright": "Stop pushing. A new angle unlocks the next step.",
+    "meaningReversed": "Waiting is becoming stuck. Choose a deadline or a smaller move.",
+    "talismanLine": "Pause to progress.",
+    "actionTip": "Ask: what if I reverse the approach?"
+  },
+  {
+    "id": 13,
+    "key": "death",
+    "nameEn": "DEATH",
+    "keywordsUpright": [
+      "Endings",
+      "Reset",
+      "Rebirth"
+    ],
+    "keywordsReversed": [
+      "Clinging",
+      "Fear of change",
+      "Dragging"
+    ],
+    "meaningUpright": "Close the chapter to open the door. Clean endings are gifts.",
+    "meaningReversed": "You're holding what already left. Release one attachment—space invites renewal.",
+    "talismanLine": "End it to begin it.",
+    "actionTip": "Delete/declutter one thing you've been avoiding."
+  },
+  {
+    "id": 14,
+    "key": "temperance",
+    "nameEn": "TEMPERANCE",
+    "keywordsUpright": [
+      "Harmony",
+      "Healing",
+      "Moderation"
+    ],
+    "keywordsReversed": [
+      "Excess",
+      "Impatience",
+      "Imbalance"
+    ],
+    "meaningUpright": "Blend, don't force. Small adjustments create big stability.",
+    "meaningReversed": "Too much/too fast is cracking the balance. Return to basics.",
+    "talismanLine": "Steady mixes win.",
+    "actionTip": "Reduce one extreme: speed, spending, or screen time."
+  },
+  {
+    "id": 15,
+    "key": "devil",
+    "nameEn": "THE DEVIL",
+    "keywordsUpright": [
+      "Desire",
+      "Attachment",
+      "Temptation"
+    ],
+    "keywordsReversed": [
+      "Release",
+      "Detox",
+      "Breaking chains"
+    ],
+    "meaningUpright": "Name the craving. What you label, you can manage.",
+    "meaningReversed": "You can break the loop. One clean boundary starts freedom.",
+    "talismanLine": "Name it, tame it.",
+    "actionTip": "Replace one bad loop with a 5-minute good loop."
+  },
+  {
+    "id": 16,
+    "key": "tower",
+    "nameEn": "THE TOWER",
+    "keywordsUpright": [
+      "Shock",
+      "Truth revealed",
+      "Breakthrough"
+    ],
+    "keywordsReversed": [
+      "Avoidance",
+      "Delayed collapse",
+      "Fear"
+    ],
+    "meaningUpright": "A shaky thing falls so you can rebuild right. Don't cling to false safety.",
+    "meaningReversed": "You're sensing a crack. Fix it early or it will choose the timing for you.",
+    "talismanLine": "Clear the rubble.",
+    "actionTip": "Address the one uncomfortable truth with a small action."
+  },
+  {
+    "id": 17,
+    "key": "star",
+    "nameEn": "THE STAR",
+    "keywordsUpright": [
+      "Hope",
+      "Recovery",
+      "Guidance"
+    ],
+    "keywordsReversed": [
+      "Discouragement",
+      "Overidealizing",
+      "Drift"
+    ],
+    "meaningUpright": "Healing is happening. Keep going—small progress counts.",
+    "meaningReversed": "Hope needs a plan. Ground the dream with one real step.",
+    "talismanLine": "Hope with hands.",
+    "actionTip": "Do one tiny step that future-you will thank you for."
+  },
+  {
+    "id": 18,
+    "key": "moon",
+    "nameEn": "THE MOON",
+    "keywordsUpright": [
+      "Mystery",
+      "Emotion",
+      "Intuition"
+    ],
+    "keywordsReversed": [
+      "Illusion",
+      "Anxiety",
+      "Misread"
+    ],
+    "meaningUpright": "Not everything is clear yet. Move slowly and listen to subtle signals.",
+    "meaningReversed": "Your mind is filling gaps with fear. Verify before you conclude.",
+    "talismanLine": "When unsure, verify.",
+    "actionTip": "Ask one clarifying question instead of guessing."
+  },
+  {
+    "id": 19,
+    "key": "sun",
+    "nameEn": "THE SUN",
+    "keywordsUpright": [
+      "Success",
+      "Joy",
+      "Clarity"
+    ],
+    "keywordsReversed": [
+      "Overconfidence",
+      "Burnout",
+      "Rushing"
+    ],
+    "meaningUpright": "Visibility and energy are on your side. Share, lead, and enjoy the win.",
+    "meaningReversed": "Slow the celebration. Rest and double-check details so the win stays a win.",
+    "talismanLine": "Shine, then recharge.",
+    "actionTip": "Finish the last 5% and take a real break."
+  },
+  {
+    "id": 20,
+    "key": "judgement",
+    "nameEn": "JUDGEMENT",
+    "keywordsUpright": [
+      "Awakening",
+      "Review",
+      "Second chance"
+    ],
+    "keywordsReversed": [
+      "Regret",
+      "Self-blame",
+      "Avoiding the call"
+    ],
+    "meaningUpright": "It's time to answer the call. Learn from the past and step up.",
+    "meaningReversed": "Stop punishing yourself. Turn the lesson into a new attempt.",
+    "talismanLine": "Rise again.",
+    "actionTip": "Redo one small part instead of rewriting everything."
+  },
+  {
+    "id": 21,
+    "key": "world",
+    "nameEn": "THE WORLD",
+    "keywordsUpright": [
+      "Completion",
+      "Mastery",
+      "Closure"
+    ],
+    "keywordsReversed": [
+      "Loose ends",
+      "Almost there",
+      "No full stop"
+    ],
+    "meaningUpright": "A cycle completes. Celebrate—then lock it in with a clean finish.",
+    "meaningReversed": "You're close but unfinished. One final pass turns effort into result.",
+    "talismanLine": "Finish is a skill.",
+    "actionTip": "Close one open loop today (send, file, pay, confirm)."
+  }
+]
