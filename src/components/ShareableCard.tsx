@@ -7,6 +7,8 @@ import { TarotCard, CardOrientation } from '../types';
 import { getCardName, getMeaning, getTalismanLine, getCardImageSource } from '../utils/cards';
 import { useTranslation } from '../i18n';
 
+const SCALE = 3;
+
 interface ShareableCardProps {
   card: TarotCard;
   orientation: CardOrientation;
@@ -41,16 +43,19 @@ export const ShareableCard = forwardRef<ShareableCardRef, ShareableCardProps>(
     return (
       <ViewShot
         ref={viewShotRef}
-        options={{ format: 'jpg', quality: 0.9, result: 'tmpfile' }}
+        options={{ format: 'png', quality: 1, result: 'tmpfile' }}
         style={styles.container}
       >
         <View style={styles.card} collapsable={false}>
           <View style={styles.header}>
+            <View style={styles.brandingContainer}>
+              <PixelText variant="heading" style={styles.appName}>
+                DOT TAROT
+              </PixelText>
+              <View style={styles.brandingLine} />
+            </View>
             <PixelText variant="caption" style={styles.dateText}>
               {dateString}
-            </PixelText>
-            <PixelText variant="caption" style={styles.appName}>
-              DOT TAROT
             </PixelText>
           </View>
 
@@ -93,9 +98,14 @@ export const ShareableCard = forwardRef<ShareableCardRef, ShareableCardProps>(
           </View>
 
           <View style={styles.footer}>
-            <PixelText variant="caption" style={styles.footerText}>
-              {t('share.tagline')}
-            </PixelText>
+            <View style={styles.ctaContainer}>
+              <PixelText variant="body" style={styles.ctaText}>
+                {t('share.cta')}
+              </PixelText>
+              <PixelText variant="caption" style={styles.ctaSubtext}>
+                {t('share.ctaSubtext')}
+              </PixelText>
+            </View>
           </View>
         </View>
       </ViewShot>
@@ -112,34 +122,44 @@ const styles = StyleSheet.create({
     top: -9999,
   },
   card: {
-    width: 360,
+    width: 360 * SCALE,
     backgroundColor: COLORS.background,
-    padding: SPACING.lg,
-    borderWidth: BORDERS.thick,
+    padding: SPACING.lg * SCALE,
+    borderWidth: BORDERS.thick * SCALE,
     borderColor: COLORS.accent,
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: SPACING.md,
+    marginBottom: SPACING.lg * SCALE,
   },
-  dateText: {
-    color: COLORS.textMuted,
+  brandingContainer: {
+    alignItems: 'center',
+    marginBottom: SPACING.sm * SCALE,
   },
   appName: {
     color: COLORS.accent,
-    fontWeight: 'bold',
+    fontSize: FONTS.xl * SCALE,
+    letterSpacing: 4 * SCALE,
+  },
+  brandingLine: {
+    width: 120 * SCALE,
+    height: 3 * SCALE,
+    backgroundColor: COLORS.accent,
+    marginTop: SPACING.xs * SCALE,
+  },
+  dateText: {
+    color: COLORS.textMuted,
+    fontSize: FONTS.sm * SCALE,
   },
   cardImageArea: {
     alignItems: 'center',
-    marginBottom: SPACING.lg,
+    marginBottom: SPACING.lg * SCALE,
   },
   cardImageContainer: {
-    width: 160,
-    height: 240,
-    borderWidth: BORDERS.medium,
-    borderColor: COLORS.border,
+    width: 200 * SCALE,
+    height: 300 * SCALE,
+    borderWidth: BORDERS.thick * SCALE,
+    borderColor: COLORS.accent,
     overflow: 'hidden',
   },
   cardImage: {
@@ -151,52 +171,67 @@ const styles = StyleSheet.create({
   },
   cardInfo: {
     alignItems: 'center',
-    marginBottom: SPACING.md,
+    marginBottom: SPACING.md * SCALE,
   },
   cardName: {
     color: COLORS.text,
     textAlign: 'center',
-    marginBottom: SPACING.sm,
+    marginBottom: SPACING.sm * SCALE,
+    fontSize: FONTS.lg * SCALE,
   },
   orientationBadge: {
-    paddingHorizontal: SPACING.md,
-    paddingVertical: SPACING.xs,
+    paddingHorizontal: SPACING.md * SCALE,
+    paddingVertical: SPACING.xs * SCALE,
   },
   orientationText: {
     color: COLORS.background,
     fontWeight: 'bold',
+    fontSize: FONTS.sm * SCALE,
   },
   talismanSection: {
     backgroundColor: COLORS.primaryDark,
-    padding: SPACING.md,
-    marginBottom: SPACING.md,
-    borderWidth: BORDERS.thin,
+    padding: SPACING.md * SCALE,
+    marginBottom: SPACING.md * SCALE,
+    borderWidth: BORDERS.thin * SCALE,
     borderColor: COLORS.primary,
   },
   talismanText: {
     color: COLORS.accent,
     textAlign: 'center',
     fontStyle: 'italic',
+    fontSize: FONTS.md * SCALE,
   },
   meaningSection: {
     backgroundColor: COLORS.surface,
-    padding: SPACING.md,
-    marginBottom: SPACING.md,
-    borderWidth: BORDERS.thin,
+    padding: SPACING.md * SCALE,
+    marginBottom: SPACING.lg * SCALE,
+    borderWidth: BORDERS.thin * SCALE,
     borderColor: COLORS.border,
   },
   meaningText: {
     color: COLORS.text,
     textAlign: 'center',
-    lineHeight: FONTS.sm * 1.6,
+    lineHeight: FONTS.sm * 1.6 * SCALE,
+    fontSize: FONTS.sm * SCALE,
   },
   footer: {
     alignItems: 'center',
-    paddingTop: SPACING.sm,
-    borderTopWidth: BORDERS.thin,
-    borderTopColor: COLORS.border,
+    paddingTop: SPACING.md * SCALE,
+    borderTopWidth: BORDERS.medium * SCALE,
+    borderTopColor: COLORS.accent,
   },
-  footerText: {
+  ctaContainer: {
+    alignItems: 'center',
+  },
+  ctaText: {
+    color: COLORS.accent,
+    fontWeight: 'bold',
+    fontSize: FONTS.md * SCALE,
+    textAlign: 'center',
+  },
+  ctaSubtext: {
     color: COLORS.textMuted,
+    fontSize: FONTS.xs * SCALE,
+    marginTop: SPACING.xs * SCALE,
   },
 });
