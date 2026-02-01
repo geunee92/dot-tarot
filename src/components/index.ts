@@ -16,3 +16,5 @@ export { GlowText } from './GlowText';
 export { LanguageSwitcher } from './LanguageSwitcher';
 export { ShareableCard } from './ShareableCard';
 export type { ShareableCardRef } from './ShareableCard';
+export { ShareableSpreadCard } from './ShareableSpreadCard';
+export type { ShareableSpreadCardRef } from './ShareableSpreadCard';
