@@ -1,9 +1,9 @@
 import React, { forwardRef, useRef, useImperativeHandle } from 'react';
-import { View, Text, StyleSheet, ViewStyle } from 'react-native';
+import { View, Text, Image, StyleSheet, ViewStyle } from 'react-native';
 import { FlipCard, FlipCardRef } from './FlipCard';
 import { COLORS, SPACING, BORDERS, FONTS } from './theme';
 import { TarotCard, CardOrientation } from '../types';
-import { getCardPlaceholderColor, getKeywords } from '../utils/cards';
+import { getCardImageSource, getKeywords, getTalismanLine, getCardName } from '../utils/cards';
 import { useRewardStore } from '../stores/rewardStore';
 
 interface TarotCardFlipProps {
@@ -20,10 +20,30 @@ export interface TarotCardFlipRef {
   flipTo: (flipped: boolean) => void;
 }
 
-const CARD_DIMENSIONS = {
-  small: { width: 100, height: 150 },
-  medium: { width: 160, height: 240 },
-  large: { width: 220, height: 330 },
+const IMAGE_ASPECT_RATIO = 1.5;
+
+const CARD_WIDTHS = {
+  small: 100,
+  medium: 160,
+  large: 220,
+};
+
+const CARD_INFO_HEIGHTS = {
+  small: 95,
+  medium: 130,
+  large: 150,
+};
+
+const getCardDimensions = (size: 'small' | 'medium' | 'large') => {
+  const width = CARD_WIDTHS[size];
+  const imageHeight = width * IMAGE_ASPECT_RATIO;
+  const cardInfoHeight = CARD_INFO_HEIGHTS[size];
+  const totalHeight = imageHeight + cardInfoHeight;
+  return {
+    width,
+    imageHeight,
+    totalHeight,
+  };
 };
 
 export const TarotCardFlip = forwardRef<TarotCardFlipRef, TarotCardFlipProps>(
@@ -36,37 +56,45 @@ export const TarotCardFlip = forwardRef<TarotCardFlipRef, TarotCardFlipProps>(
       flipTo: (flipped: boolean) => flipCardRef.current?.flipTo(flipped),
     }));
 
-    const cardDimensions = CARD_DIMENSIONS[size];
-    const placeholderColor = getCardPlaceholderColor(card);
+    const { width, imageHeight, totalHeight } = getCardDimensions(size);
+    const cardImageSource = getCardImageSource(card);
     const keywords = getKeywords(card, orientation);
+    const cardName = getCardName(card);
+    const talismanLine = getTalismanLine(card);
     const isReversed = orientation === 'reversed';
 
     const backContent = (
-      <View style={[styles.cardBack, cardDimensions]}>
-        <View style={styles.backPattern}>
-          <Text style={styles.backSymbol}>✦</Text>
-          <Text style={styles.backText}>{selectedSkin.name}</Text>
-          <Text style={styles.backSymbol}>✦</Text>
-        </View>
+      <View style={[styles.cardBack, { width, height: totalHeight }]}>
+        {selectedSkin.image ? (
+          <Image
+            source={selectedSkin.image}
+            style={styles.backImage}
+            resizeMode="cover"
+          />
+        ) : (
+          <View style={styles.backPattern}>
+            <Text style={styles.backSymbol}>✦</Text>
+            <Text style={styles.backText}>{selectedSkin.name}</Text>
+            <Text style={styles.backSymbol}>✦</Text>
+          </View>
+        )}
         <Text style={styles.tapHint}>Tap to reveal</Text>
       </View>
     );
 
     const frontContent = (
-      <View style={[styles.cardFront, cardDimensions]}>
-        <View
-          style={[
-            styles.imagePlaceholder,
-            { backgroundColor: placeholderColor },
-            isReversed && styles.reversed,
-          ]}
-        >
-          <Text style={styles.cardNumber}>{card.id}</Text>
+      <View style={[styles.cardFront, { width, height: totalHeight }]}>
+        <View style={[styles.imageContainer, { height: imageHeight }, isReversed && styles.reversed]}>
+          <Image
+            source={cardImageSource}
+            style={styles.cardImage}
+            resizeMode="cover"
+          />
         </View>
 
         <View style={styles.cardInfo}>
           <Text style={styles.cardName} numberOfLines={1}>
-            {card.nameEn}
+            {cardName}
           </Text>
           
           <View style={[
@@ -84,7 +112,7 @@ export const TarotCardFlip = forwardRef<TarotCardFlipRef, TarotCardFlipProps>(
             ))}
           </View>
 
-          <Text style={styles.talismanLine}>"{card.talismanLine}"</Text>
+          <Text style={styles.talismanLine}>"{talismanLine}"</Text>
         </View>
       </View>
     );
@@ -101,7 +129,7 @@ export const TarotCardFlip = forwardRef<TarotCardFlipRef, TarotCardFlipProps>(
           }
         }}
         style={style}
-        cardStyle={cardDimensions}
+        cardStyle={{ width, height: totalHeight }}
       />
     );
   }
@@ -142,18 +170,20 @@ const styles = StyleSheet.create({
     borderColor: COLORS.border,
     overflow: 'hidden',
   },
-  imagePlaceholder: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+  imageContainer: {
+    overflow: 'hidden',
+  },
+  cardImage: {
+    width: '100%',
+    height: '100%',
+  },
+  backImage: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
   },
   reversed: {
     transform: [{ rotate: '180deg' }],
-  },
-  cardNumber: {
-    fontSize: 48,
-    fontWeight: 'bold',
-    color: 'rgba(255,255,255,0.2)',
   },
   cardInfo: {
     padding: SPACING.md,
