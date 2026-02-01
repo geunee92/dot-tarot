@@ -6,6 +6,7 @@ import Animated, {
   withTiming,
   interpolate,
   Easing,
+  runOnJS,
 } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 
@@ -76,9 +77,10 @@ export const FlipCard = forwardRef<FlipCardRef, FlipCardProps>(
       flipProgress.value = withTiming(
         toFlipped ? 1 : 0,
         { duration, easing: Easing.inOut(Easing.ease) },
-        () => {
-          if (onFlipEnd) {
-            onFlipEnd(toFlipped);
+        (finished) => {
+          'worklet';
+          if (finished && onFlipEnd) {
+            runOnJS(onFlipEnd)(toFlipped);
           }
         }
       );
@@ -118,7 +120,7 @@ export const FlipCard = forwardRef<FlipCardRef, FlipCardProps>(
       <Pressable
         onPress={handlePress}
         disabled={disabled || controlledFlipped !== undefined}
-        style={[styles.container, style]}
+        style={[styles.container, cardStyle, style]}
       >
         <Animated.View style={[styles.card, cardStyle, backAnimatedStyle]}>
           {backContent}
