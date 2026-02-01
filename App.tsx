@@ -4,8 +4,9 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { StyleSheet, View, Text } from 'react-native';
 import { useFonts, PressStart2P_400Regular } from '@expo-google-fonts/press-start-2p';
 import * as SplashScreen from 'expo-splash-screen';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { RootNavigator } from './src/navigation';
+import { initializeAds } from './src/services/ads';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -14,6 +15,10 @@ export default function App() {
     PressStart2P_400Regular,
     Galmuri11: require('./assets/fonts/Galmuri11.ttf'),
   });
+
+  useEffect(() => {
+    initializeAds();
+  }, []);
 
   const onLayoutRootView = useCallback(async () => {
     if (fontsLoaded) {

@@ -4,6 +4,7 @@ import {
   ScrollView,
   StyleSheet,
   Pressable,
+  Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
@@ -46,7 +47,7 @@ export function JourneyScreen({ navigation }: JourneyScreenProps) {
 
   const getDrawDates = useDrawStore((s) => s.getDrawDates);
   const loadDrawsForMonth = useDrawStore((s) => s.loadDrawsForMonth);
-  const getSpreadsForDate = useSpreadStore((s) => s.getSpreadsForDate);
+  const getSpreadDates = useSpreadStore((s) => s.getSpreadDates);
   const loadSpreadsForDate = useSpreadStore((s) => s.loadSpreadsForDate);
 
   const unlockedSkinIds = useRewardStore((s) => s.unlockedSkins);
@@ -89,15 +90,15 @@ export function JourneyScreen({ navigation }: JourneyScreenProps) {
   }, [drawDates]);
 
   const spreadDatesSet = useMemo(() => {
-    const spreads = getSpreadsForDate(getLocalDateKey());
-    return new Set(spreads.map((s) => s.dateKey));
-  }, [isHydrated]);
+    return new Set(getSpreadDates());
+  }, [isHydrated, getSpreadDates]);
 
   const handleCalendarDayPress = useCallback((dateKey: string) => {
-    if (!dateKey || !drawDatesSet.has(dateKey)) return;
+    if (!dateKey) return;
+    if (!drawDatesSet.has(dateKey) && !spreadDatesSet.has(dateKey)) return;
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     navigation.navigate('HistoryDetail', { dateKey });
-  }, [drawDatesSet, navigation]);
+  }, [drawDatesSet, spreadDatesSet, navigation]);
 
   const handlePreviousMonth = useCallback(() => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -196,8 +197,12 @@ export function JourneyScreen({ navigation }: JourneyScreenProps) {
                   skin.id === selectedSkinId && styles.skinItemSelected,
                 ]}
               >
-                <View style={[styles.skinPreview, { backgroundColor: getSkinColor(skin.id) }]}>
-                  <PixelText variant="body" style={styles.skinSymbol}>✦</PixelText>
+                <View style={styles.skinPreview}>
+                  <Image
+                    source={skin.image}
+                    style={styles.skinImage}
+                    resizeMode="cover"
+                  />
                 </View>
                 {skin.id === selectedSkinId && (
                   <View style={styles.activeBadge}>
@@ -211,7 +216,14 @@ export function JourneyScreen({ navigation }: JourneyScreenProps) {
             {lockedSkins.map((skin) => (
               <View key={skin.id} style={[styles.skinItem, styles.skinItemLocked]}>
                 <View style={styles.skinPreviewLocked}>
-                  <PixelText variant="body" style={styles.skinSymbol}>🔒</PixelText>
+                  <Image
+                    source={skin.image}
+                    style={[styles.skinImage, styles.skinImageLocked]}
+                    resizeMode="cover"
+                  />
+                  <View style={styles.lockOverlay}>
+                    <PixelText variant="body" style={styles.skinSymbol}>🔒</PixelText>
+                  </View>
                 </View>
                 <PixelText variant="caption" style={styles.unlockText}>
                   {skin.requiredDays}d
@@ -223,17 +235,6 @@ export function JourneyScreen({ navigation }: JourneyScreenProps) {
       </ScrollView>
     </SafeAreaView>
   );
-}
-
-function getSkinColor(skinId: string): string {
-  const colors: Record<string, string> = {
-    skin_default: COLORS.primary,
-    skin_1: '#1e3a5f',
-    skin_2: '#5c4033',
-    skin_3: '#4a1942',
-    skin_special: '#0f0f2d',
-  };
-  return colors[skinId] || COLORS.primary;
 }
 
 const styles = StyleSheet.create({
@@ -335,20 +336,41 @@ const styles = StyleSheet.create({
   },
   skinPreview: {
     width: 50,
-    height: 70,
-    justifyContent: 'center',
-    alignItems: 'center',
+    height: 75,
+    borderRadius: 4,
+    overflow: 'hidden',
+    borderWidth: BORDERS.thin,
+    borderColor: COLORS.border,
   },
   skinPreviewLocked: {
     width: 50,
-    height: 70,
-    backgroundColor: COLORS.background,
+    height: 75,
+    borderRadius: 4,
+    overflow: 'hidden',
+    borderWidth: BORDERS.thin,
+    borderColor: COLORS.border,
+    position: 'relative',
+  },
+  skinImage: {
+    width: '100%',
+    height: '100%',
+  },
+  skinImageLocked: {
+    opacity: 0.4,
+  },
+  lockOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
   },
   skinSymbol: {
     fontSize: FONTS.lg,
-    color: COLORS.accent,
+    color: COLORS.text,
   },
   activeBadge: {
     backgroundColor: COLORS.accent,

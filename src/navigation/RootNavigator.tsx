@@ -31,6 +31,7 @@ export function RootNavigator() {
           headerTitleStyle: {
             fontWeight: 'bold',
           },
+          headerBackTitle: '',
           contentStyle: {
             backgroundColor: COLORS.background,
           },
@@ -42,6 +43,8 @@ export function RootNavigator() {
           component={TabNavigator}
           options={{
             headerShown: false,
+            title: '',
+            headerBackTitle: ' ',
           }}
         />
         

@@ -29,9 +29,9 @@ const CARD_WIDTHS = {
 };
 
 const CARD_INFO_HEIGHTS = {
-  small: 95,
-  medium: 130,
-  large: 150,
+  small: 105,
+  medium: 150,
+  large: 165,
 };
 
 const getCardDimensions = (size: 'small' | 'medium' | 'large') => {
@@ -42,6 +42,7 @@ const getCardDimensions = (size: 'small' | 'medium' | 'large') => {
   return {
     width,
     imageHeight,
+    cardInfoHeight,
     totalHeight,
   };
 };
@@ -56,7 +57,7 @@ export const TarotCardFlip = forwardRef<TarotCardFlipRef, TarotCardFlipProps>(
       flipTo: (flipped: boolean) => flipCardRef.current?.flipTo(flipped),
     }));
 
-    const { width, imageHeight, totalHeight } = getCardDimensions(size);
+    const { width, imageHeight, cardInfoHeight, totalHeight } = getCardDimensions(size);
     const cardImageSource = getCardImageSource(card);
     const keywords = getKeywords(card, orientation);
     const cardName = getCardName(card);
@@ -92,7 +93,7 @@ export const TarotCardFlip = forwardRef<TarotCardFlipRef, TarotCardFlipProps>(
           />
         </View>
 
-        <View style={styles.cardInfo}>
+        <View style={[styles.cardInfo, { height: cardInfoHeight }]}>
           <Text style={styles.cardName} numberOfLines={1}>
             {cardName}
           </Text>
@@ -112,7 +113,7 @@ export const TarotCardFlip = forwardRef<TarotCardFlipRef, TarotCardFlipProps>(
             ))}
           </View>
 
-          <Text style={styles.talismanLine}>"{talismanLine}"</Text>
+          <Text style={styles.talismanLine} numberOfLines={2}>"{talismanLine}"</Text>
         </View>
       </View>
     );
@@ -188,7 +189,7 @@ const styles = StyleSheet.create({
   cardInfo: {
     padding: SPACING.md,
     backgroundColor: COLORS.surfaceLight,
-    gap: SPACING.sm,
+    justifyContent: 'space-between',
   },
   cardName: {
     fontSize: FONTS.lg,
@@ -222,6 +223,5 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
     color: COLORS.accent,
     textAlign: 'center',
-    marginTop: SPACING.xs,
   },
 });

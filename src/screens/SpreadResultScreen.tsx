@@ -3,7 +3,6 @@ import {
   View,
   ScrollView,
   StyleSheet,
-  Pressable,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
@@ -11,20 +10,19 @@ import {
   PixelButton,
   PixelText,
   PixelCard,
-  AdBadge,
   LoadingSpinner,
   TarotCardFlip,
   TarotCardFlipRef,
+  RewardedAdButton,
   COLORS,
   SPACING,
   FONTS,
   BORDERS,
 } from '../components';
-import { useSpreadStore, getPatternHintKeys, shouldSuggestClarifier } from '../stores/spreadStore';
-import { useGatingStore } from '../stores/gatingStore';
+import { useSpreadStore, shouldSuggestClarifier } from '../stores/spreadStore';
 import { SpreadResultScreenProps } from '../navigation/types';
 import { SpreadPosition, SpreadCard } from '../types';
-import { getMeaning } from '../utils/cards';
+import { getMeaning, getKeywords } from '../utils/cards';
 import { useTranslation } from '../i18n';
 
 const POSITION_KEYS: Record<SpreadPosition, string> = {
@@ -46,9 +44,6 @@ export function SpreadResultScreen({ route, navigation }: SpreadResultScreenProp
   const loadSpreadsForDate = useSpreadStore((s) => s.loadSpreadsForDate);
   const addClarifier = useSpreadStore((s) => s.addClarifier);
   const isHydrated = useSpreadStore((s) => s.isHydrated);
-
-  const canUseClarifier = useGatingStore((s) => s.canUseClarifier);
-  const useClarifierGate = useGatingStore((s) => s.useClarifier);
 
   useEffect(() => {
     if (isHydrated && !spread) {
@@ -74,26 +69,19 @@ export function SpreadResultScreen({ route, navigation }: SpreadResultScreenProp
     });
   }, []);
 
-  const handleAddClarifier = useCallback(async () => {
+  const handleClarifierAdReward = useCallback(async () => {
     if (!spread || isAddingClarifier) return;
-    
-    const canUse = canUseClarifier(dateKey);
-    if (!canUse) {
-      await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
-      return;
-    }
     
     setIsAddingClarifier(true);
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
     
     try {
-      await useClarifierGate(dateKey);
       await addClarifier(dateKey, spreadId);
       setShowClarifier(true);
     } finally {
       setIsAddingClarifier(false);
     }
-  }, [spread, canUseClarifier, useClarifierGate, addClarifier, dateKey, spreadId, isAddingClarifier]);
+  }, [spread, addClarifier, dateKey, spreadId, isAddingClarifier]);
 
   const handleGoBack = useCallback(() => {
     navigation.goBack();
@@ -113,10 +101,8 @@ export function SpreadResultScreen({ route, navigation }: SpreadResultScreenProp
   }
 
   const allRevealed = revealedCards.length === 3;
-  const patternHintKeys = getPatternHintKeys(spread.pattern);
   const suggestClarifier = shouldSuggestClarifier(spread);
   const hasClarifier = !!spread.clarifier;
-  const clarifierAvailable = canUseClarifier(dateKey);
 
   return (
     <SafeAreaView style={styles.container} edges={['bottom']}>
@@ -176,62 +162,67 @@ export function SpreadResultScreen({ route, navigation }: SpreadResultScreenProp
               {t('spreadResult.interpretation')}
             </PixelText>
             
-            <View style={styles.toneBox}>
-              <PixelText variant="caption" style={styles.toneLabel}>
-                {t('spreadResult.energyTone')}
-              </PixelText>
-              <PixelText variant="body" style={styles.toneText}>
-                {t(patternHintKeys.toneKey)}
-              </PixelText>
-            </View>
-            
-            <View style={styles.outputBox}>
-              <PixelText variant="caption" style={styles.outputLabel}>
-                {t('spreadResult.suggestedApproach')}
-              </PixelText>
-              <PixelText variant="body" style={styles.outputText}>
-                {t(patternHintKeys.outputStyleKey)}
+            <View style={styles.interpretationBox}>
+              <PixelText variant="body" style={styles.interpretationText}>
+                {t(`spreadResult.interpretations.${spread.pattern}.${topic.toLowerCase()}`)}
               </PixelText>
             </View>
 
-            {suggestClarifier && !hasClarifier && (
+            {!hasClarifier && (
               <View style={styles.clarifierSection}>
                 <PixelText variant="body" style={styles.clarifierHint}>
-                  {t('spreadResult.clarifierHint')}
+                  {spread.pattern === 'UUU'
+                    ? t('spreadResult.clarifierHintUUU')
+                    : t('spreadResult.clarifierHintReversed')}
                 </PixelText>
                 
-                {clarifierAvailable ? (
-                  <PixelButton
-                    title={isAddingClarifier ? t('common.drawing') : t('spreadResult.drawClarifier')}
-                    onPress={handleAddClarifier}
-                    variant="accent"
-                    size="medium"
-                    loading={isAddingClarifier}
-                  />
-                ) : (
-                  <View style={styles.adCta}>
-                    <AdBadge text={t('spreadResult.watchAdClarifier')} size="medium" />
-                  </View>
-                )}
+                <RewardedAdButton
+                  title={t('spreadResult.unlockClarifier')}
+                  subtitle={t('spreadResult.watchAdFor')}
+                  onRewardEarned={handleClarifierAdReward}
+                  disabled={isAddingClarifier}
+                />
               </View>
             )}
 
-            {hasClarifier && spread.clarifier && (
-              <View style={styles.clarifierResult}>
-                <PixelText variant="heading" style={styles.sectionTitle}>
-                  {t('spreadResult.clarifier')}
-                </PixelText>
-                
-                <View style={styles.clarifierCard}>
-                  <PixelCard
-                    card={spread.clarifier.drawnCard.card}
-                    orientation={spread.clarifier.drawnCard.orientation}
-                    size="large"
-                    showDetails
-                  />
+            {hasClarifier && spread.clarifier && (() => {
+              const isUpright = spread.clarifier.drawnCard.orientation === 'upright';
+              const orientation = isUpright ? 'upright' : 'reversed';
+              
+              return (
+                <View style={styles.clarifierResult}>
+                  <PixelText variant="heading" style={styles.sectionTitle}>
+                    {t('spreadResult.clarifier')}
+                  </PixelText>
+                  
+                  <View style={styles.clarifierCard}>
+                    <PixelCard
+                      card={spread.clarifier.drawnCard.card}
+                      orientation={spread.clarifier.drawnCard.orientation}
+                      size="large"
+                      showDetails
+                    />
+                  </View>
+                  
+                  <View style={[
+                    styles.clarifierInsightBox,
+                    { borderColor: isUpright ? COLORS.upright : COLORS.reversed }
+                  ]}>
+                    <PixelText
+                      variant="body"
+                      style={styles.clarifierInsightTitle}
+                      color={isUpright ? COLORS.upright : COLORS.reversed}
+                    >
+                      {isUpright ? '✨ ' : '⚠️ '}
+                      {t(`spreadResult.clarifierInsights.${spread.pattern}.${orientation}.title`)}
+                    </PixelText>
+                    <PixelText variant="caption" style={styles.clarifierInsightBody}>
+                      {t(`spreadResult.clarifierInsights.${spread.pattern}.${orientation}.body`)}
+                    </PixelText>
+                  </View>
                 </View>
-              </View>
-            )}
+              );
+            })()}
           </View>
         )}
 
@@ -268,7 +259,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: SPACING.lg,
-    paddingBottom: SPACING.xxl,
+    paddingBottom: SPACING.xxl * 2,
   },
   header: {
     alignItems: 'center',
@@ -279,6 +270,7 @@ const styles = StyleSheet.create({
   },
   cardsContainer: {
     gap: SPACING.xl,
+    paddingBottom: SPACING.md,
   },
   cardWrapper: {
     alignItems: 'center',
@@ -300,7 +292,8 @@ const styles = StyleSheet.create({
   },
   cardMeaning: {
     backgroundColor: COLORS.surface,
-    padding: SPACING.md,
+    paddingHorizontal: SPACING.lg,
+    paddingVertical: SPACING.md,
     marginTop: SPACING.md,
     borderWidth: BORDERS.thin,
     borderColor: COLORS.border,
@@ -319,34 +312,16 @@ const styles = StyleSheet.create({
     color: COLORS.text,
     marginBottom: SPACING.sm,
   },
-  toneBox: {
+  interpretationBox: {
     backgroundColor: COLORS.primaryDark,
     padding: SPACING.lg,
     borderWidth: BORDERS.medium,
     borderColor: COLORS.primary,
   },
-  toneLabel: {
-    color: COLORS.textMuted,
-    marginBottom: SPACING.xs,
-  },
-  toneText: {
+  interpretationText: {
     color: COLORS.text,
-    fontSize: FONTS.lg,
-    fontWeight: 'bold',
-  },
-  outputBox: {
-    backgroundColor: COLORS.surface,
-    padding: SPACING.lg,
-    borderWidth: BORDERS.medium,
-    borderColor: COLORS.border,
-  },
-  outputLabel: {
-    color: COLORS.accent,
-    marginBottom: SPACING.xs,
-    fontWeight: 'bold',
-  },
-  outputText: {
-    color: COLORS.text,
+    fontSize: FONTS.md,
+    lineHeight: FONTS.md * 1.6,
   },
   clarifierSection: {
     backgroundColor: COLORS.surface,
@@ -369,6 +344,21 @@ const styles = StyleSheet.create({
   clarifierCard: {
     alignItems: 'center',
     marginTop: SPACING.md,
+  },
+  clarifierInsightBox: {
+    marginTop: SPACING.lg,
+    padding: SPACING.lg,
+    backgroundColor: COLORS.surface,
+    borderWidth: BORDERS.medium,
+  },
+  clarifierInsightTitle: {
+    fontWeight: 'bold',
+    fontSize: FONTS.md,
+    marginBottom: SPACING.sm,
+  },
+  clarifierInsightBody: {
+    color: COLORS.text,
+    lineHeight: FONTS.sm * 1.5,
   },
   backButton: {
     alignSelf: 'center',

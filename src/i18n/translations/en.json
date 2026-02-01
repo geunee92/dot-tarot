@@ -68,10 +68,138 @@
       "RRU": { "tone": "Foggy but advice works", "outputStyle": "Highlight advice as headline" },
       "RRR": { "tone": "Inner reset", "outputStyle": "Suggestion tone (try...)" }
     },
+    "interpretations": {
+      "UUU": {
+        "love": "Today is a day of connection. Express yourself honestly—the other person will likely respond positively. It's a great time for confessions or meaningful conversations.",
+        "money": "Money flows smoothly today. Financial decisions you make now have a good chance of working out. Trust your judgment and move forward with confidence.",
+        "work": "Things are lining up well at work. Whatever you tackle today has a high chance of success, so it's a great time to handle important tasks you've been putting off."
+      },
+      "UUR": {
+        "love": "Your heart is in the right place, but actions might not land well. Avoid big confessions or commitments—just show small gestures of care today.",
+        "money": "Your plan is solid, but execution might slip. Avoid major expenses and stick to handling small amounts today.",
+        "work": "Progress is fine, but you might fumble at the finish line. Hold off on big decisions and focus on organizing and tidying up tasks."
+      },
+      "URU": {
+        "love": "It's easy to misread the other person's intentions today. Don't jump to conclusions—try asking 'Is that what you really mean?' to clarify.",
+        "money": "There may be hidden variables at play. Before making investments or big decisions, ask yourself: 'What might I be missing?'",
+        "work": "There's a hidden factor in the workflow. Before moving forward, ask: 'Is there anything else that could affect this?'"
+      },
+      "RUU": {
+        "love": "Your emotions are tangled, making it hard to start clean. Before reaching out, take a moment to sort through your own feelings first.",
+        "money": "Your mind is scattered, clouding your judgment. Before any financial decisions, take a breather and organize your thoughts.",
+        "work": "You're not at your best, so getting started might be slow. Spend 5 minutes tidying your desk or reviewing your to-do list before diving in."
+      },
+      "URR": {
+        "love": "Defensive energy is strong today. Avoid big romantic moves and just send a simple 'thinking of you' message instead.",
+        "money": "Stay away from situations that trigger spending. Stick to small management tasks like reviewing your budget today.",
+        "work": "Focus on wrapping up existing work rather than starting something new. Postpone meetings or presentations if you can."
+      },
+      "RUR": {
+        "love": "There's inner conflict and your approach might be off today. Just spend 10 minutes looking at photos and remembering good times together.",
+        "money": "Both your emotions and financial judgment are cloudy. Spend just 10 minutes checking this week's expenses in your budgeting app.",
+        "work": "Inner conflict meets confused approach. Take 10 minutes to jot down just 3 things you need to do today."
+      },
+      "RRU": {
+        "love": "The situation is murky, but the advice card shows the way. Trust its direction and take one small action based on its message.",
+        "money": "Money matters are unclear, but focus on the advice card's message. One small step in that direction is enough for today.",
+        "work": "Work feels complicated, but the advice card is your anchor. Just execute one thing it suggests today."
+      },
+      "RRR": {
+        "love": "Today is about taking care of yourself, not romance. Instead of reaching out, maybe give yourself some alone time?",
+        "money": "Your energy is too low for financial decisions. Maybe just rest today and think about it tomorrow?",
+        "work": "Focusing on work is tough today. Don't push yourself—maybe just do some light organizing or take notes?"
+      }
+    },
     "interpretation": "Reading Interpretation",
     "energyTone": "Energy Tone",
     "suggestedApproach": "Suggested Approach",
     "clarifierHint": "Your reading has some reversed energy. A clarifier card can provide additional guidance.",
+    "clarifierOptional": "Want more insight? Unlock a clarifier card for deeper understanding.",
+    "clarifierHintUUU": "Your reading is flowing smoothly. Get a concrete first action with the Clarifier.",
+    "clarifierHintReversed": "Want deeper insight? Get additional guidance with the Clarifier.",
+    "clarifierInsights": {
+      "UUU": {
+        "upright": {
+          "title": "A hint for your first action",
+          "body": "Your reading is smooth, and the card above reveals a concrete first step. Move forward with confidence in this direction."
+        },
+        "reversed": {
+          "title": "A note of caution in smooth waters",
+          "body": "Your reading is positive, but the card above warns against overconfidence. Stay grounded and stick to the basics."
+        }
+      },
+      "UUR": {
+        "upright": {
+          "title": "Strengthen your finish",
+          "body": "Execution may slip today. The card above says focus on finishing strong. Be thorough until the very end."
+        },
+        "reversed": {
+          "title": "Stop and check",
+          "body": "Execution is unstable today. The card above says to pause and review. Verification comes before progress."
+        }
+      },
+      "URU": {
+        "upright": {
+          "title": "A hint for finding hidden factors",
+          "body": "When looking for hidden variables, the card above points the way. Use this perspective to spot what you might have missed."
+        },
+        "reversed": {
+          "title": "Hold off on decisions",
+          "body": "Hidden factors are at play today. The card above advises against rushing. Delay your decision and gather more information."
+        }
+      },
+      "RUU": {
+        "upright": {
+          "title": "Organize before starting",
+          "body": "Your start feels unstable. The card above says to organize first. Take a moment to center yourself before beginning."
+        },
+        "reversed": {
+          "title": "Take a break today",
+          "body": "Your start is unsteady. The card above says don't push too hard. Rest and recharge your energy today."
+        }
+      },
+      "URR": {
+        "upright": {
+          "title": "Focus on just this",
+          "body": "Defensive energy is high today. The card above says focus only on essentials. Do just this one thing and save the rest for tomorrow."
+        },
+        "reversed": {
+          "title": "Just observe today",
+          "body": "Defensive energy is strong today. The card above says don't make moves. Just watch and wait for now."
+        }
+      },
+      "RUR": {
+        "upright": {
+          "title": "Just one small action",
+          "body": "Inner friction is present today. The card above says start small. Just do one tiny thing."
+        },
+        "reversed": {
+          "title": "Sort your feelings first",
+          "body": "Inner friction is present today. The card above says to tend to your heart first. Emotional clarity comes before action."
+        }
+      },
+      "RRU": {
+        "upright": {
+          "title": "Focus on the advice",
+          "body": "The situation is unclear, but the card above strengthens the advice. Take one step forward guided by the advice card and this insight."
+        },
+        "reversed": {
+          "title": "Reconsider the advice too",
+          "body": "Things are complicated today. The card above calls for extra caution. Think twice about the advice and move slowly."
+        }
+      },
+      "RRR": {
+        "upright": {
+          "title": "Direction for your reset",
+          "body": "Today calls for an inner reset. The card above shows the path to recovery. Let this energy replenish your spirit."
+        },
+        "reversed": {
+          "title": "Complete rest is needed",
+          "body": "Today calls for an inner reset. The card above recommends full rest. It's okay to do absolutely nothing today."
+        }
+      }
+    },
+    "clarifierLimitReached": "Clarifier limit reached for today",
     "drawClarifier": "Draw Clarifier Card",
     "watchAdClarifier": "Watch ad for clarifier",
     "clarifier": "Clarifier Card",

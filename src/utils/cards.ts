@@ -142,6 +142,21 @@ export function drawRandomCards(count: number): DrawnCard[] {
   }));
 }
 
+/**
+ * Draw a random card excluding specific card IDs
+ */
+export function drawRandomCardExcluding(excludeIds: number[]): DrawnCard {
+  const availableCards = TAROT_CARDS.filter(card => !excludeIds.includes(card.id));
+  if (availableCards.length === 0) {
+    return drawRandomCard();
+  }
+  const randomIndex = Math.floor(Math.random() * availableCards.length);
+  return {
+    card: availableCards[randomIndex],
+    orientation: getRandomOrientation(),
+  };
+}
+
 // ============================================
 // Card Content Helpers
 // ============================================

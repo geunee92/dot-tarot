@@ -12,11 +12,11 @@ import {
   AdBadge,
   LoadingSpinner,
   GradientBackground,
+  RewardedAdButton,
   COLORS,
   SPACING,
   FONTS,
   BORDERS,
-  RADIUS,
   SHADOWS,
 } from '../components';
 import { useSpreadStore } from '../stores/spreadStore';
@@ -42,6 +42,7 @@ const TOPIC_EMOJIS: Record<SpreadTopic, string> = {
 export function SpreadsScreen({ navigation }: SpreadsScreenProps) {
   const { t } = useTranslation();
   const [isCreatingSpread, setIsCreatingSpread] = useState<SpreadTopic | null>(null);
+  const [selectedAdTopic, setSelectedAdTopic] = useState<SpreadTopic | null>(null);
 
   const isSpreadHydrated = useSpreadStore((s) => s.isHydrated);
   const isGatingHydrated = useGatingStore((s) => s.isHydrated);
@@ -49,11 +50,19 @@ export function SpreadsScreen({ navigation }: SpreadsScreenProps) {
   const allSpreads = useSpreadStore((s) => s.spreads);
 
   const createSpread = useSpreadStore((s) => s.createSpread);
+  const getUsedTopicsForDate = useSpreadStore((s) => s.getUsedTopicsForDate);
   const canDoFreeSpread = useGatingStore((s) => s.canDoFreeSpread);
   const useFreeSpread = useGatingStore((s) => s.useFreeSpread);
+  const canUseAnotherTopic = useGatingStore((s) => s.canUseAnotherTopic);
+  const useAnotherTopic = useGatingStore((s) => s.useAnotherTopic);
   const loadGatingForDate = useGatingStore((s) => s.loadGatingForDate);
 
   const isHydrated = isSpreadHydrated && isGatingHydrated && isSettingsHydrated;
+  
+  const usedTopics = useMemo(() => {
+    if (!isHydrated) return new Set<SpreadTopic>();
+    return new Set(getUsedTopicsForDate());
+  }, [isHydrated, allSpreads, getUsedTopicsForDate]);
 
   const recentSpreads = useMemo(() => {
     const flatSpreads: SpreadRecord[] = [];
@@ -78,7 +87,12 @@ export function SpreadsScreen({ navigation }: SpreadsScreenProps) {
     const isFree = canDoFreeSpread(dateKey);
     
     if (!isFree) {
-      await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+      if (usedTopics.has(topic)) {
+        await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+        return;
+      }
+      setSelectedAdTopic(topic);
+      await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
       return;
     }
     
@@ -97,7 +111,32 @@ export function SpreadsScreen({ navigation }: SpreadsScreenProps) {
     } finally {
       setIsCreatingSpread(null);
     }
-  }, [canDoFreeSpread, useFreeSpread, createSpread, navigation, isCreatingSpread]);
+  }, [canDoFreeSpread, useFreeSpread, createSpread, navigation, isCreatingSpread, usedTopics]);
+
+  const handleAdReward = useCallback(async () => {
+    if (!selectedAdTopic || isCreatingSpread) return;
+    
+    const dateKey = getLocalDateKey();
+    setIsCreatingSpread(selectedAdTopic);
+    
+    try {
+      await useAnotherTopic(dateKey);
+      const spread = await createSpread(selectedAdTopic, dateKey);
+      setSelectedAdTopic(null);
+      navigation.navigate('SpreadResult', {
+        dateKey,
+        spreadId: spread.id,
+        topic: selectedAdTopic,
+        isNewSpread: true,
+      });
+    } finally {
+      setIsCreatingSpread(null);
+    }
+  }, [selectedAdTopic, isCreatingSpread, useAnotherTopic, createSpread, navigation]);
+
+  const handleCancelAdTopic = useCallback(() => {
+    setSelectedAdTopic(null);
+  }, []);
 
   const handleViewSpread = useCallback((spread: SpreadRecord) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -134,6 +173,7 @@ export function SpreadsScreen({ navigation }: SpreadsScreenProps) {
   }
 
   const freeSpreadAvailable = canDoFreeSpread();
+  const anotherTopicAvailable = canUseAnotherTopic();
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -159,32 +199,70 @@ export function SpreadsScreen({ navigation }: SpreadsScreenProps) {
         </View>
 
         <View style={styles.topicsRow}>
-          {TOPIC_IDS.map((topic) => (
-            <Pressable
-              key={topic.id}
-              onPress={() => handleTopicPress(topic.id)}
-              disabled={!freeSpreadAvailable || isCreatingSpread !== null}
-              style={({ pressed }) => [
-                styles.topicCard,
-                pressed && styles.topicCardPressed,
-                !freeSpreadAvailable && styles.topicCardDisabled,
-              ]}
-            >
-              <PixelText variant="title" style={styles.topicEmoji}>
-                {topic.emoji}
-              </PixelText>
-              <PixelText
-                variant="caption"
-                style={!freeSpreadAvailable ? styles.topicLabelDisabled : styles.topicLabel}
+          {TOPIC_IDS.map((topic) => {
+            const isSelected = selectedAdTopic === topic.id;
+            const isUsed = usedTopics.has(topic.id);
+            const noAdQuotaLeft = !anotherTopicAvailable;
+            const isDisabledForAd = !freeSpreadAvailable && (isUsed || noAdQuotaLeft);
+            const isDisabled = !freeSpreadAvailable && isDisabledForAd;
+            
+            return (
+              <Pressable
+                key={topic.id}
+                onPress={() => handleTopicPress(topic.id)}
+                disabled={isDisabled || isCreatingSpread !== null}
+                style={({ pressed }) => [
+                  styles.topicCard,
+                  pressed && styles.topicCardPressed,
+                  isSelected && styles.topicCardSelected,
+                  isDisabled && styles.topicCardDisabled,
+                ]}
               >
-                {t(`home.topics.${topic.id.toLowerCase()}`)}
-              </PixelText>
-              {isCreatingSpread === topic.id && (
-                <LoadingSpinner size={24} color={COLORS.accent} />
-              )}
-            </Pressable>
-          ))}
+                <PixelText variant="title" style={styles.topicEmoji}>
+                  {topic.emoji}
+                </PixelText>
+                <PixelText
+                  variant="caption"
+                  style={isDisabled ? styles.topicLabelDisabled : styles.topicLabel}
+                >
+                  {t(`home.topics.${topic.id.toLowerCase()}`)}
+                </PixelText>
+                {isCreatingSpread === topic.id && (
+                  <LoadingSpinner size={24} color={COLORS.accent} />
+                )}
+                {!freeSpreadAvailable && isUsed && (
+                  <View style={styles.doneBadge}>
+                    <PixelText variant="caption" style={styles.doneBadgeText}>✓</PixelText>
+                  </View>
+                )}
+                {!freeSpreadAvailable && !isUsed && !isSelected && anotherTopicAvailable && (
+                  <View style={styles.adIconBadge}>
+                    <PixelText variant="caption" style={styles.adIconText}>▶</PixelText>
+                  </View>
+                )}
+              </Pressable>
+            );
+          })}
         </View>
+
+        {selectedAdTopic && (
+          <View style={styles.adSection}>
+            <PixelText variant="body" style={styles.adSectionTitle}>
+              {t('home.topics.' + selectedAdTopic.toLowerCase())} {t('spreadResult.reading')}
+            </PixelText>
+            <RewardedAdButton
+              title={t('spreadResult.unlockAnother')}
+              subtitle={t('spreadResult.watchAdFor')}
+              onRewardEarned={handleAdReward}
+              disabled={isCreatingSpread !== null}
+            />
+            <Pressable onPress={handleCancelAdTopic} style={styles.cancelButton}>
+              <PixelText variant="caption" style={styles.cancelText}>
+                {t('common.cancel')}
+              </PixelText>
+            </Pressable>
+          </View>
+        )}
 
         {recentSpreads.length > 0 && (
           <View style={styles.historySection}>
@@ -319,6 +397,11 @@ const styles = StyleSheet.create({
   topicCardDisabled: {
     opacity: 0.5,
   },
+  topicCardSelected: {
+    borderColor: COLORS.accent,
+    borderWidth: BORDERS.thick,
+    backgroundColor: COLORS.surfaceLight,
+  },
   topicEmoji: {
     fontSize: FONTS.title,
   },
@@ -327,6 +410,56 @@ const styles = StyleSheet.create({
   },
   topicLabelDisabled: {
     color: COLORS.textDark,
+  },
+  adIconBadge: {
+    position: 'absolute',
+    top: SPACING.xs,
+    right: SPACING.xs,
+    backgroundColor: COLORS.accent,
+    width: 20,
+    height: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  adIconText: {
+    color: COLORS.background,
+    fontSize: 10,
+  },
+  doneBadge: {
+    position: 'absolute',
+    top: SPACING.xs,
+    right: SPACING.xs,
+    backgroundColor: COLORS.success,
+    width: 20,
+    height: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  doneBadgeText: {
+    color: COLORS.background,
+    fontSize: 10,
+    fontWeight: 'bold',
+  },
+  adSection: {
+    backgroundColor: COLORS.surface,
+    padding: SPACING.lg,
+    borderWidth: BORDERS.medium,
+    borderColor: COLORS.accent,
+    marginBottom: SPACING.xl,
+    gap: SPACING.md,
+  },
+  adSectionTitle: {
+    color: COLORS.text,
+    textAlign: 'center',
+    marginBottom: SPACING.sm,
+  },
+  cancelButton: {
+    alignSelf: 'center',
+    paddingVertical: SPACING.sm,
+    paddingHorizontal: SPACING.lg,
+  },
+  cancelText: {
+    color: COLORS.textMuted,
   },
   historySection: {
     marginTop: SPACING.md,

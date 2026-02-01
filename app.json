@@ -14,7 +14,13 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.geunee92.taro-app"
+      "bundleIdentifier": "com.geunee92.taro-app",
+      "buildNumber": "1",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false,
+        "CFBundleDisplayName": "도트 타로",
+        "NSUserTrackingUsageDescription": "이 앱은 맞춤형 광고를 제공하기 위해 기기 정보를 사용합니다. This app uses device information to provide personalized ads."
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -22,14 +28,28 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.geunee92.taroapp"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
       "expo-font",
-      "expo-localization"
-    ]
+      "expo-localization",
+      [
+        "react-native-google-mobile-ads",
+        {
+          "androidAppId": "ca-app-pub-3940256099942544~3347511713",
+          "iosAppId": "ca-app-pub-3940256099942544~1458002511"
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "552d60eb-d8f7-4a44-bea7-015ac799960d"
+      }
+    },
+    "owner": "geunee92"
   }
 }

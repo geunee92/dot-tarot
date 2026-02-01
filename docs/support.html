@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>도트 타로 - 고객지원 | DOT TAROT - Support</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #0f0f23;
+            color: #e0e0e0;
+            line-height: 1.8;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #ffd700;
+            font-size: 28px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .subtitle {
+            color: #888;
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 16px;
+        }
+        h2 {
+            color: #ffd700;
+            font-size: 20px;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+        p {
+            margin-bottom: 15px;
+        }
+        .contact-box {
+            background-color: #1a1a35;
+            padding: 30px;
+            border-radius: 12px;
+            margin: 30px 0;
+            text-align: center;
+        }
+        .contact-box a {
+            color: #ffd700;
+            font-size: 20px;
+            text-decoration: none;
+        }
+        .contact-box a:hover {
+            text-decoration: underline;
+        }
+        .faq {
+            background-color: #1a1a35;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        .faq-q {
+            color: #ffd700;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .lang-toggle {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .lang-toggle button {
+            background: #1a1a35;
+            color: #ffd700;
+            border: 1px solid #ffd700;
+            padding: 8px 20px;
+            margin: 0 5px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .lang-toggle button.active {
+            background: #ffd700;
+            color: #0f0f23;
+        }
+        .section {
+            display: none;
+        }
+        .section.active {
+            display: block;
+        }
+        .app-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            display: block;
+            border-radius: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>DOT TAROT</h1>
+        
+        <div class="lang-toggle">
+            <button id="btn-ko" class="active" onclick="showLang('ko')">한국어</button>
+            <button id="btn-en" onclick="showLang('en')">English</button>
+        </div>
+
+        <!-- Korean Version -->
+        <div id="section-ko" class="section active">
+            <p class="subtitle">고객지원 센터</p>
+            
+            <div class="contact-box">
+                <p style="margin-bottom: 15px;">문의사항이 있으신가요?</p>
+                <a href="mailto:geunee92@gmail.com">geunee92@gmail.com</a>
+                <p style="margin-top: 15px; font-size: 14px; color: #888;">
+                    영업일 기준 1-2일 내 답변 드립니다.
+                </p>
+            </div>
+
+            <h2>자주 묻는 질문 (FAQ)</h2>
+
+            <div class="faq">
+                <p class="faq-q">Q: 오늘의 카드는 하루에 몇 번 뽑을 수 있나요?</p>
+                <p>A: 오늘의 카드는 매일 1회 무료로 뽑을 수 있습니다. 자정(00:00)에 리셋됩니다.</p>
+            </div>
+
+            <div class="faq">
+                <p class="faq-q">Q: 3장 스프레드는 어떻게 이용하나요?</p>
+                <p>A: 각 주제(연애, 금전, 직장)별로 매일 1회 무료로 이용 가능합니다. 추가 리딩은 짧은 광고 시청 후 가능합니다.</p>
+            </div>
+
+            <div class="faq">
+                <p class="faq-q">Q: 내 리딩 기록은 어디에 저장되나요?</p>
+                <p>A: 모든 리딩 기록은 사용자의 기기에만 저장됩니다. 외부 서버로 전송되지 않으며, 앱 삭제 시 함께 삭제됩니다.</p>
+            </div>
+
+            <div class="faq">
+                <p class="faq-q">Q: 카드 뒷면 스킨은 어떻게 획득하나요?</p>
+                <p>A: 매일 앱을 사용하면 출석 보상으로 새로운 카드 뒷면 스킨을 획득할 수 있습니다.</p>
+            </div>
+
+            <div class="faq">
+                <p class="faq-q">Q: 앱에서 광고를 제거할 수 있나요?</p>
+                <p>A: 현재는 광고 제거 옵션이 없습니다. 향후 업데이트에서 프리미엄 버전을 고려 중입니다.</p>
+            </div>
+        </div>
+
+        <!-- English Version -->
+        <div id="section-en" class="section">
+            <p class="subtitle">Customer Support</p>
+            
+            <div class="contact-box">
+                <p style="margin-bottom: 15px;">Have a question?</p>
+                <a href="mailto:geunee92@gmail.com">geunee92@gmail.com</a>
+                <p style="margin-top: 15px; font-size: 14px; color: #888;">
+                    We typically respond within 1-2 business days.
+                </p>
+            </div>
+
+            <h2>Frequently Asked Questions (FAQ)</h2>
+
+            <div class="faq">
+                <p class="faq-q">Q: How many times can I draw the Daily Card?</p>
+                <p>A: You can draw the Daily Card once per day for free. It resets at midnight (00:00).</p>
+            </div>
+
+            <div class="faq">
+                <p class="faq-q">Q: How do I use the 3-Card Spread?</p>
+                <p>A: Each topic (Love, Money, Work) offers one free reading per day. Additional readings are available after watching a short ad.</p>
+            </div>
+
+            <div class="faq">
+                <p class="faq-q">Q: Where are my reading records stored?</p>
+                <p>A: All reading history is stored only on your device. No data is sent to external servers. Data is deleted when you uninstall the app.</p>
+            </div>
+
+            <div class="faq">
+                <p class="faq-q">Q: How do I unlock card back skins?</p>
+                <p>A: You can earn new card back skins as attendance rewards by using the app daily.</p>
+            </div>
+
+            <div class="faq">
+                <p class="faq-q">Q: Can I remove ads from the app?</p>
+                <p>A: Currently, there is no option to remove ads. We are considering a premium version in future updates.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showLang(lang) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.lang-toggle button').forEach(b => b.classList.remove('active'));
+            document.getElementById('section-' + lang).classList.add('active');
+            document.getElementById('btn-' + lang).classList.add('active');
+        }
+    </script>
+</body>
+</html>

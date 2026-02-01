@@ -12,7 +12,7 @@ import {
   CardOrientation,
 } from '../types';
 import { getLocalDateKey } from '../utils/date';
-import { drawRandomCards, drawRandomCard } from '../utils/cards';
+import { drawRandomCards, drawRandomCardExcluding } from '../utils/cards';
 import { getSpreadsKey, getItem, setItem } from '../utils/storage';
 
 const EMPTY_SPREADS: SpreadRecord[] = [];
@@ -58,6 +58,8 @@ interface SpreadState {
   getSpreadById: (dateKey: string, spreadId: string) => SpreadRecord | null;
   getTodaysSpreads: () => SpreadRecord[];
   getSpreadCountByTopic: (dateKey: string, topic: SpreadTopic) => number;
+  getUsedTopicsForDate: (dateKey?: string) => SpreadTopic[];
+  getSpreadDates: () => string[];
 }
 
 // ============================================
@@ -159,8 +161,8 @@ export const useSpreadStore = create<SpreadState>()(
           return spread;
         }
         
-        // Draw clarifier card
-        const clarifierDrawn = drawRandomCard();
+        const existingCardIds = spread.cards.map(c => c.drawnCard.card.id);
+        const clarifierDrawn = drawRandomCardExcluding(existingCardIds);
         const clarifier: ClarifierCard = {
           drawnCard: clarifierDrawn,
           unlockedAt: Date.now(),
@@ -209,6 +211,20 @@ export const useSpreadStore = create<SpreadState>()(
       getSpreadCountByTopic: (dateKey, topic) => {
         const spreads = get().spreads[dateKey] || EMPTY_SPREADS;
         return spreads.filter((s) => s.topic === topic).length;
+      },
+      
+      // Get unique topics used for a date
+      getUsedTopicsForDate: (dateKey) => {
+        const targetDate = dateKey || getLocalDateKey();
+        const spreads = get().spreads[targetDate] || EMPTY_SPREADS;
+        const usedTopics = new Set(spreads.map((s) => s.topic));
+        return Array.from(usedTopics) as SpreadTopic[];
+      },
+      
+      // Get all dates that have spreads
+      getSpreadDates: () => {
+        const spreads = get().spreads;
+        return Object.keys(spreads).filter((dateKey) => spreads[dateKey].length > 0);
       },
     }),
     {

@@ -6,7 +6,7 @@ export interface BackSkin {
   description: string;
   requiredDays: number;
   isDefault?: boolean;
-  image?: ImageSourcePropType;
+  image: ImageSourcePropType;
 }
 
 export interface RewardMilestone {
