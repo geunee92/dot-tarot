@@ -15,6 +15,8 @@ import { getLocalDateKey } from '../utils/date';
 import { drawRandomCards, drawRandomCard } from '../utils/cards';
 import { getSpreadsKey, getItem, setItem } from '../utils/storage';
 
+const EMPTY_SPREADS: SpreadRecord[] = [];
+
 // ============================================
 // Helper Functions
 // ============================================
@@ -187,7 +189,7 @@ export const useSpreadStore = create<SpreadState>()(
       
       // Get spreads for a specific date
       getSpreadsForDate: (dateKey) => {
-        return get().spreads[dateKey] || [];
+        return get().spreads[dateKey] || EMPTY_SPREADS;
       },
       
       // Get specific spread by ID
@@ -200,12 +202,12 @@ export const useSpreadStore = create<SpreadState>()(
       // Get today's spreads
       getTodaysSpreads: () => {
         const today = getLocalDateKey();
-        return get().spreads[today] || [];
+        return get().spreads[today] || EMPTY_SPREADS;
       },
       
       // Count spreads by topic for a date
       getSpreadCountByTopic: (dateKey, topic) => {
-        const spreads = get().spreads[dateKey] || [];
+        const spreads = get().spreads[dateKey] || EMPTY_SPREADS;
         return spreads.filter((s) => s.topic === topic).length;
       },
     }),
@@ -234,24 +236,16 @@ export const useIsSpreadHydrated = () => useSpreadStore((state) => state.isHydra
 // ============================================
 
 /**
- * Get interpretation hints for a pattern
+ * Get pattern hint translation keys
  */
-export function getPatternHints(pattern: CombinationPattern): {
-  tone: string;
-  outputStyle: string;
+export function getPatternHintKeys(pattern: CombinationPattern): {
+  toneKey: string;
+  outputStyleKey: string;
 } {
-  const hints: Record<CombinationPattern, { tone: string; outputStyle: string }> = {
-    UUU: { tone: 'Clear / Direct', outputStyle: 'Assertive action line' },
-    UUR: { tone: 'Execution slips', outputStyle: "1 DON'T line + 1 micro-action" },
-    URU: { tone: 'Hidden variable', outputStyle: '1 verification question' },
-    RUU: { tone: 'Unstable start', outputStyle: '1 reset/organize action first' },
-    URR: { tone: 'Defensive day', outputStyle: 'Avoid 1 thing + do 1 minimal thing' },
-    RUR: { tone: 'Inner friction', outputStyle: '10-minute micro-action only' },
-    RRU: { tone: 'Foggy but advice works', outputStyle: 'Highlight advice as headline' },
-    RRR: { tone: 'Inner reset', outputStyle: 'Suggestion tone (try...)' },
+  return {
+    toneKey: `spreadResult.patterns.${pattern}.tone`,
+    outputStyleKey: `spreadResult.patterns.${pattern}.outputStyle`,
   };
-  
-  return hints[pattern];
 }
 
 /**

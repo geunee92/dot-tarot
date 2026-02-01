@@ -8,7 +8,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import * as Haptics from 'expo-haptics';
-import { COLORS, SPACING, BORDERS, FONTS } from './theme';
+import { COLORS, SPACING, BORDERS, FONTS, SHADOWS, FONT_FAMILY } from './theme';
 
 interface PixelButtonProps {
   title: string;
@@ -67,9 +67,9 @@ export function PixelButton({
 
   const getTextSize = () => {
     switch (size) {
-      case 'small': return FONTS.sm;
-      case 'medium': return FONTS.md;
-      case 'large': return FONTS.lg;
+      case 'small': return FONTS.xs;
+      case 'medium': return FONTS.sm;
+      case 'large': return FONTS.md;
     }
   };
 
@@ -94,7 +94,7 @@ export function PixelButton({
           styles.text,
           { color: getTextColor(), fontSize: getTextSize() },
           textStyle,
-        ]}>{title}</Text>
+        ]}>{title.toUpperCase()}</Text>
       )}
     </Pressable>
   );
@@ -105,6 +105,7 @@ const styles = StyleSheet.create({
     borderWidth: BORDERS.medium,
     alignItems: 'center',
     justifyContent: 'center',
+    ...SHADOWS.block,
   },
   primary: {
     backgroundColor: COLORS.primary,
@@ -116,11 +117,14 @@ const styles = StyleSheet.create({
   },
   accent: {
     backgroundColor: COLORS.accent,
-    borderColor: COLORS.accentLight,
+    borderColor: COLORS.accentDark,
+    ...SHADOWS.glow,
   },
   ghost: {
     backgroundColor: 'transparent',
     borderColor: COLORS.border,
+    shadowOpacity: 0,
+    elevation: 0,
   },
   small: {
     paddingVertical: SPACING.xs,
@@ -144,11 +148,14 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   pressed: {
-    transform: [{ translateY: 2 }],
+    transform: [{ translateY: 3 }],
     opacity: 0.9,
+    shadowOffset: { width: 1, height: 1 },
   },
   text: {
+    fontFamily: FONT_FAMILY.pixel,
     fontWeight: 'bold',
     textAlign: 'center',
+    letterSpacing: 1,
   },
 });

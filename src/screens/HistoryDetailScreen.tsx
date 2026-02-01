@@ -21,34 +21,39 @@ import { useDrawStore } from '../stores/drawStore';
 import { useSpreadStore } from '../stores/spreadStore';
 import { HistoryDetailScreenProps } from '../navigation/types';
 import { SpreadRecord } from '../types';
-import { formatMonthDisplay, parseDateKey } from '../utils/date';
+import { parseDateKey } from '../utils/date';
+import { useTranslation, getLocale } from '../i18n';
+import { getCardName } from '../utils/cards';
 
 export function HistoryDetailScreen({ route, navigation }: HistoryDetailScreenProps) {
-  const { dateKey } = route.params;
+  const { t } = useTranslation();
+  const dateKey = route.params?.dateKey;
   
-  const draw = useDrawStore((s) => s.draws[dateKey]);
+  const draw = useDrawStore((s) => dateKey ? s.draws[dateKey] : undefined);
   const loadDraw = useDrawStore((s) => s.loadDraw);
   const isDrawHydrated = useDrawStore((s) => s.isHydrated);
 
-  const spreads = useSpreadStore((s) => s.getSpreadsForDate(dateKey));
+  const spreads = useSpreadStore((s) => s.getSpreadsForDate(dateKey ?? ''));
   const loadSpreadsForDate = useSpreadStore((s) => s.loadSpreadsForDate);
   const isSpreadHydrated = useSpreadStore((s) => s.isHydrated);
 
   const isHydrated = isDrawHydrated && isSpreadHydrated;
 
   useEffect(() => {
-    if (isHydrated) {
+    if (isHydrated && dateKey) {
       loadDraw(dateKey);
       loadSpreadsForDate(dateKey);
     }
-  }, [isHydrated, dateKey]);
+  }, [isHydrated, dateKey, loadDraw, loadSpreadsForDate]);
 
   const handleViewDraw = useCallback(() => {
+    if (!dateKey) return;
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     navigation.navigate('DailyResult', { dateKey, isNewDraw: false });
   }, [navigation, dateKey]);
 
   const handleViewSpread = useCallback((spread: SpreadRecord) => {
+    if (!dateKey) return;
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     navigation.navigate('SpreadResult', {
       dateKey,
@@ -62,9 +67,29 @@ export function HistoryDetailScreen({ route, navigation }: HistoryDetailScreenPr
     navigation.goBack();
   }, [navigation]);
 
+  if (!dateKey) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={styles.loadingContainer}>
+          <PixelText variant="body" style={styles.loadingText}>
+            {t('common.error')}
+          </PixelText>
+          <PixelButton
+            title={t('common.close')}
+            onPress={handleClose}
+            variant="secondary"
+            size="medium"
+            style={styles.closeButton}
+          />
+        </View>
+      </SafeAreaView>
+    );
+  }
+
   const parsedDate = parseDateKey(dateKey);
+  const locale = getLocale();
   const formattedDate = parsedDate
-    ? parsedDate.toLocaleDateString('en-US', {
+    ? parsedDate.toLocaleDateString(locale === 'ko' ? 'ko-KR' : 'en-US', {
         weekday: 'long',
         year: 'numeric',
         month: 'long',
@@ -78,7 +103,7 @@ export function HistoryDetailScreen({ route, navigation }: HistoryDetailScreenPr
         <View style={styles.loadingContainer}>
           <LoadingSpinner size={60} />
           <PixelText variant="body" style={styles.loadingText}>
-            Loading history...
+            {t('common.loading')}
           </PixelText>
         </View>
       </SafeAreaView>
@@ -101,7 +126,7 @@ export function HistoryDetailScreen({ route, navigation }: HistoryDetailScreenPr
         {draw && (
           <View style={styles.section}>
             <PixelText variant="heading" style={styles.sectionTitle}>
-              Daily Card
+              {t('history.dailyCard')}
             </PixelText>
             
             <Pressable
@@ -119,20 +144,20 @@ export function HistoryDetailScreen({ route, navigation }: HistoryDetailScreenPr
               
               <View style={styles.drawInfo}>
                 <PixelText variant="body" style={styles.cardName}>
-                  {draw.drawnCard.card.nameEn}
+                  {getCardName(draw.drawnCard.card)}
                 </PixelText>
                 <PixelText
                   variant="caption"
                   color={draw.drawnCard.orientation === 'upright' ? COLORS.upright : COLORS.reversed}
                   style={styles.orientation}
                 >
-                  {draw.drawnCard.orientation === 'upright' ? 'Upright' : 'Reversed'}
+                  {draw.drawnCard.orientation === 'upright' ? t('card.upright') : t('card.reversed')}
                 </PixelText>
                 
                 {draw.memo && (
                   <View style={styles.memoPreview}>
                     <PixelText variant="caption" style={styles.memoLabel}>
-                      Memo:
+                      {t('history.memo')}:
                     </PixelText>
                     <PixelText variant="caption" style={styles.memoText} numberOfLines={2}>
                       {draw.memo}
@@ -141,7 +166,7 @@ export function HistoryDetailScreen({ route, navigation }: HistoryDetailScreenPr
                 )}
                 
                 <PixelText variant="caption" style={styles.tapHint}>
-                  Tap to view details
+                  {t('common.tapToView')}
                 </PixelText>
               </View>
             </Pressable>
@@ -151,7 +176,7 @@ export function HistoryDetailScreen({ route, navigation }: HistoryDetailScreenPr
         {spreads.length > 0 && (
           <View style={styles.section}>
             <PixelText variant="heading" style={styles.sectionTitle}>
-              3-Card Spreads ({spreads.length})
+              {t('home.spreadTitle')} ({spreads.length})
             </PixelText>
             
             <View style={styles.spreadsList}>
@@ -166,10 +191,7 @@ export function HistoryDetailScreen({ route, navigation }: HistoryDetailScreenPr
                 >
                   <View style={styles.spreadHeader}>
                     <PixelText variant="body" style={styles.spreadTopic}>
-                      {spread.topic}
-                    </PixelText>
-                    <PixelText variant="caption" style={styles.spreadPattern}>
-                      {spread.pattern}
+                      {t(`home.topics.${spread.topic.toLowerCase()}`)}
                     </PixelText>
                   </View>
                   
@@ -181,12 +203,11 @@ export function HistoryDetailScreen({ route, navigation }: HistoryDetailScreenPr
                         </PixelText>
                         <PixelText
                           variant="caption"
-                          style={{
-                            color:
-                              sc.drawnCard.orientation === 'upright'
-                                ? COLORS.upright
-                                : COLORS.reversed,
-                          }}
+                          color={
+                            sc.drawnCard.orientation === 'upright'
+                              ? COLORS.upright
+                              : COLORS.reversed
+                          }
                         >
                           {sc.drawnCard.orientation === 'upright' ? '↑' : '↓'}
                         </PixelText>
@@ -203,7 +224,7 @@ export function HistoryDetailScreen({ route, navigation }: HistoryDetailScreenPr
                   </View>
                   
                   <PixelText variant="caption" style={styles.tapHint}>
-                    Tap to view details
+                    {t('common.tapToView')}
                   </PixelText>
                 </Pressable>
               ))}
@@ -214,13 +235,13 @@ export function HistoryDetailScreen({ route, navigation }: HistoryDetailScreenPr
         {!draw && spreads.length === 0 && (
           <View style={styles.emptyState}>
             <PixelText variant="body" style={styles.emptyText}>
-              No readings found for this date.
+              {t('history.noReadings')}
             </PixelText>
           </View>
         )}
 
         <PixelButton
-          title="Close"
+          title={t('common.close')}
           onPress={handleClose}
           variant="secondary"
           size="medium"
@@ -327,12 +348,6 @@ const styles = StyleSheet.create({
     color: COLORS.accent,
     fontWeight: 'bold',
     fontSize: FONTS.lg,
-  },
-  spreadPattern: {
-    color: COLORS.textMuted,
-    backgroundColor: COLORS.background,
-    paddingHorizontal: SPACING.sm,
-    paddingVertical: SPACING.xs,
   },
   spreadCards: {
     flexDirection: 'row',

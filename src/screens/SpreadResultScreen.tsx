@@ -20,19 +20,21 @@ import {
   FONTS,
   BORDERS,
 } from '../components';
-import { useSpreadStore, getPatternHints, shouldSuggestClarifier } from '../stores/spreadStore';
+import { useSpreadStore, getPatternHintKeys, shouldSuggestClarifier } from '../stores/spreadStore';
 import { useGatingStore } from '../stores/gatingStore';
 import { SpreadResultScreenProps } from '../navigation/types';
 import { SpreadPosition, SpreadCard } from '../types';
 import { getMeaning } from '../utils/cards';
+import { useTranslation } from '../i18n';
 
-const POSITION_LABELS: Record<SpreadPosition, { title: string; description: string }> = {
-  FLOW: { title: 'Flow', description: 'Current energy and momentum' },
-  INFLUENCE: { title: 'Influence', description: 'External factors affecting you' },
-  ADVICE: { title: 'Advice', description: 'Guidance for moving forward' },
+const POSITION_KEYS: Record<SpreadPosition, string> = {
+  FLOW: 'flow',
+  INFLUENCE: 'influence',
+  ADVICE: 'advice',
 };
 
 export function SpreadResultScreen({ route, navigation }: SpreadResultScreenProps) {
+  const { t } = useTranslation();
   const { dateKey, spreadId, topic, isNewSpread } = route.params;
   
   const [revealedCards, setRevealedCards] = useState<number[]>(isNewSpread ? [] : [0, 1, 2]);
@@ -103,7 +105,7 @@ export function SpreadResultScreen({ route, navigation }: SpreadResultScreenProp
         <View style={styles.loadingContainer}>
           <LoadingSpinner size={60} />
           <PixelText variant="body" style={styles.loadingText}>
-            Loading spread...
+            {t('spreadResult.loadingSpread')}
           </PixelText>
         </View>
       </SafeAreaView>
@@ -111,7 +113,7 @@ export function SpreadResultScreen({ route, navigation }: SpreadResultScreenProp
   }
 
   const allRevealed = revealedCards.length === 3;
-  const patternHints = getPatternHints(spread.pattern);
+  const patternHintKeys = getPatternHintKeys(spread.pattern);
   const suggestClarifier = shouldSuggestClarifier(spread);
   const hasClarifier = !!spread.clarifier;
   const clarifierAvailable = canUseClarifier(dateKey);
@@ -125,28 +127,23 @@ export function SpreadResultScreen({ route, navigation }: SpreadResultScreenProp
       >
         <View style={styles.header}>
           <PixelText variant="heading" style={styles.topicTitle}>
-            {topic} Reading
+            {t(`home.topics.${topic.toLowerCase()}`)} {t('spreadResult.reading')}
           </PixelText>
-          <View style={styles.patternBadge}>
-            <PixelText variant="caption" style={styles.patternText}>
-              Pattern: {spread.pattern}
-            </PixelText>
-          </View>
         </View>
 
         <View style={styles.cardsContainer}>
           {spread.cards.map((spreadCard: SpreadCard, index: number) => {
-            const positionInfo = POSITION_LABELS[spreadCard.position];
+            const positionKey = POSITION_KEYS[spreadCard.position];
             const isRevealed = revealedCards.includes(index);
             
             return (
               <View key={spreadCard.position} style={styles.cardWrapper}>
                 <View style={styles.positionHeader}>
                   <PixelText variant="body" style={styles.positionTitle}>
-                    {positionInfo.title}
+                    {t(`spreadResult.positions.${positionKey}`)}
                   </PixelText>
                   <PixelText variant="caption" style={styles.positionDesc}>
-                    {positionInfo.description}
+                    {t(`spreadResult.positions.${positionKey}Desc`)}
                   </PixelText>
                 </View>
                 
@@ -176,36 +173,36 @@ export function SpreadResultScreen({ route, navigation }: SpreadResultScreenProp
         {allRevealed && (
           <View style={styles.interpretationSection}>
             <PixelText variant="heading" style={styles.sectionTitle}>
-              Reading Interpretation
+              {t('spreadResult.interpretation')}
             </PixelText>
             
             <View style={styles.toneBox}>
               <PixelText variant="caption" style={styles.toneLabel}>
-                Energy Tone
+                {t('spreadResult.energyTone')}
               </PixelText>
               <PixelText variant="body" style={styles.toneText}>
-                {patternHints.tone}
+                {t(patternHintKeys.toneKey)}
               </PixelText>
             </View>
             
             <View style={styles.outputBox}>
               <PixelText variant="caption" style={styles.outputLabel}>
-                Suggested Approach
+                {t('spreadResult.suggestedApproach')}
               </PixelText>
               <PixelText variant="body" style={styles.outputText}>
-                {patternHints.outputStyle}
+                {t(patternHintKeys.outputStyleKey)}
               </PixelText>
             </View>
 
             {suggestClarifier && !hasClarifier && (
               <View style={styles.clarifierSection}>
                 <PixelText variant="body" style={styles.clarifierHint}>
-                  Your reading has some reversed energy. A clarifier card can provide additional guidance.
+                  {t('spreadResult.clarifierHint')}
                 </PixelText>
                 
                 {clarifierAvailable ? (
                   <PixelButton
-                    title={isAddingClarifier ? 'Drawing...' : 'Draw Clarifier Card'}
+                    title={isAddingClarifier ? t('common.drawing') : t('spreadResult.drawClarifier')}
                     onPress={handleAddClarifier}
                     variant="accent"
                     size="medium"
@@ -213,7 +210,7 @@ export function SpreadResultScreen({ route, navigation }: SpreadResultScreenProp
                   />
                 ) : (
                   <View style={styles.adCta}>
-                    <AdBadge text="Watch ad for clarifier" size="medium" />
+                    <AdBadge text={t('spreadResult.watchAdClarifier')} size="medium" />
                   </View>
                 )}
               </View>
@@ -222,14 +219,14 @@ export function SpreadResultScreen({ route, navigation }: SpreadResultScreenProp
             {hasClarifier && spread.clarifier && (
               <View style={styles.clarifierResult}>
                 <PixelText variant="heading" style={styles.sectionTitle}>
-                  Clarifier Card
+                  {t('spreadResult.clarifier')}
                 </PixelText>
                 
                 <View style={styles.clarifierCard}>
                   <PixelCard
                     card={spread.clarifier.drawnCard.card}
                     orientation={spread.clarifier.drawnCard.orientation}
-                    size="small"
+                    size="large"
                     showDetails
                   />
                 </View>
@@ -240,7 +237,7 @@ export function SpreadResultScreen({ route, navigation }: SpreadResultScreenProp
 
         {allRevealed && (
           <PixelButton
-            title="Back to Home"
+            title={t('common.backHome')}
             onPress={handleGoBack}
             variant="ghost"
             size="medium"
@@ -274,24 +271,11 @@ const styles = StyleSheet.create({
     paddingBottom: SPACING.xxl,
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
     paddingVertical: SPACING.lg,
   },
   topicTitle: {
     color: COLORS.accent,
-  },
-  patternBadge: {
-    backgroundColor: COLORS.surface,
-    paddingHorizontal: SPACING.md,
-    paddingVertical: SPACING.xs,
-    borderWidth: BORDERS.thin,
-    borderColor: COLORS.border,
-  },
-  patternText: {
-    color: COLORS.textMuted,
-    fontWeight: 'bold',
   },
   cardsContainer: {
     gap: SPACING.xl,

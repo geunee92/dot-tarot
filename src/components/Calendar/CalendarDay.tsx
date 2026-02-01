@@ -21,7 +21,12 @@ export function CalendarDay({
   onPress,
 }: CalendarDayProps) {
   if (day === 0) {
-    return <View style={styles.emptyCell} />;
+    return (
+      <View style={styles.cell}>
+        <Text style={styles.dayText}> </Text>
+        <View style={styles.indicators} />
+      </View>
+    );
   }
 
   const handlePress = async () => {
@@ -61,18 +66,11 @@ export function CalendarDay({
 }
 
 const styles = StyleSheet.create({
-  emptyCell: {
-    flex: 1,
-    aspectRatio: 1,
-    backgroundColor: COLORS.background,
-    borderWidth: 1,
-    borderColor: COLORS.background,
-  },
   cell: {
     flex: 1,
     aspectRatio: 1,
     backgroundColor: COLORS.surface,
-    borderWidth: 1,
+    borderWidth: BORDERS.thin,
     borderColor: COLORS.border,
     justifyContent: 'center',
     alignItems: 'center',
@@ -80,7 +78,6 @@ const styles = StyleSheet.create({
   },
   todayCell: {
     borderColor: COLORS.accent,
-    borderWidth: BORDERS.medium,
   },
   activeCell: {
     backgroundColor: COLORS.surfaceLight,

@@ -11,3 +11,8 @@ export { TarotCardFlip } from './TarotCardFlip';
 export type { TarotCardFlipRef } from './TarotCardFlip';
 export { RewardedAdButton } from './RewardedAdButton';
 export * from './Calendar';
+export { GradientBackground } from './GradientBackground';
+export { GlowText } from './GlowText';
+export { LanguageSwitcher } from './LanguageSwitcher';
+export { ShareableCard } from './ShareableCard';
+export type { ShareableCardRef } from './ShareableCard';

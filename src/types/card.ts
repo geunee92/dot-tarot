@@ -2,6 +2,7 @@ export interface TarotCard {
   id: number;
   key: string;
   nameEn: string;
+  name?: string;
   keywordsUpright: string[];
   keywordsReversed: string[];
   meaningUpright: string;

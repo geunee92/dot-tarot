@@ -2,27 +2,27 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { RootStackParamList } from './types';
+import { TabNavigator } from './TabNavigator';
 import {
-  HomeScreen,
   DailyResultScreen,
   SpreadResultScreen,
-  DeckScreen,
   HistoryDetailScreen,
 } from '../screens';
+import { t } from '../i18n';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const COLORS = {
-  background: '#1a1a2e',
-  surface: '#16213e',
-  text: '#e0e0e0',
+  background: '#0c0a1d',
+  surface: '#1a1633',
+  text: '#f5f5f5',
 };
 
 export function RootNavigator() {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName="Home"
+        initialRouteName="MainTabs"
         screenOptions={{
           headerStyle: {
             backgroundColor: COLORS.surface,
@@ -38,10 +38,9 @@ export function RootNavigator() {
         }}
       >
         <Stack.Screen
-          name="Home"
-          component={HomeScreen}
+          name="MainTabs"
+          component={TabNavigator}
           options={{
-            title: 'Pixel Talisman',
             headerShown: false,
           }}
         />
@@ -50,7 +49,7 @@ export function RootNavigator() {
           name="DailyResult"
           component={DailyResultScreen}
           options={{
-            title: "Today's Card",
+            title: t('home.dailyCard'),
             animation: 'fade',
           }}
         />
@@ -59,23 +58,15 @@ export function RootNavigator() {
           name="SpreadResult"
           component={SpreadResultScreen}
           options={({ route }) => ({
-            title: `${route.params.topic} Reading`,
+            title: `${t(`home.topics.${route.params.topic.toLowerCase()}`)} ${t('spreadResult.reading')}`,
           })}
-        />
-        
-        <Stack.Screen
-          name="Deck"
-          component={DeckScreen}
-          options={{
-            title: 'Card Backs',
-          }}
         />
         
         <Stack.Screen
           name="HistoryDetail"
           component={HistoryDetailScreen}
           options={{
-            title: 'Reading History',
+            title: t('history.title'),
             presentation: 'modal',
             animation: 'slide_from_bottom',
           }}

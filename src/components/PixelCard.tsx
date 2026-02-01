@@ -1,8 +1,8 @@
 import React from 'react';
-import { View, Text, StyleSheet, ViewStyle } from 'react-native';
-import { COLORS, SPACING, BORDERS, FONTS } from './theme';
+import { View, Text, Image, StyleSheet, ViewStyle } from 'react-native';
+import { COLORS, SPACING, BORDERS, FONTS, SHADOWS, FONT_FAMILY } from './theme';
 import { TarotCard, CardOrientation } from '../types';
-import { getCardPlaceholderColor, getKeywords, getMeaning } from '../utils/cards';
+import { getCardImageSource, getKeywords, getMeaning, getCardName } from '../utils/cards';
 
 interface PixelCardProps {
   card: TarotCard;
@@ -12,6 +12,14 @@ interface PixelCardProps {
   style?: ViewStyle;
 }
 
+const IMAGE_ASPECT_RATIO = 1.5;
+
+const CARD_WIDTHS: Record<'small' | 'medium' | 'large', number> = {
+  small: 100,
+  medium: 160,
+  large: 220,
+};
+
 export function PixelCard({
   card,
   orientation,
@@ -19,32 +27,33 @@ export function PixelCard({
   size = 'medium',
   style,
 }: PixelCardProps) {
-  const placeholderColor = getCardPlaceholderColor(card);
+  const cardImageSource = getCardImageSource(card);
   const keywords = getKeywords(card, orientation);
   const meaning = getMeaning(card, orientation);
+  const cardName = getCardName(card);
   const isReversed = orientation === 'reversed';
   const orientationColor = isReversed ? COLORS.reversed : COLORS.upright;
+  
+  const width = CARD_WIDTHS[size];
+  const imageHeight = width * IMAGE_ASPECT_RATIO;
 
   return (
-    <View style={[styles.card, styles[size], style]}>
-      <View
-        style={[
-          styles.imagePlaceholder,
-          { backgroundColor: placeholderColor },
-          isReversed && styles.reversed,
-        ]}
-      >
-        <Text style={styles.cardNumber}>{card.id}</Text>
-        <Text style={styles.cardKey}>{card.key.toUpperCase()}</Text>
+    <View style={[styles.card, { width }, style]}>
+      <View style={[styles.imageContainer, { height: imageHeight }, isReversed && styles.reversed]}>
+        <Image
+          source={cardImageSource}
+          style={styles.cardImage}
+          resizeMode="cover"
+        />
       </View>
       
       <View style={styles.nameContainer}>
         <Text style={styles.cardName} numberOfLines={1}>
-          {card.nameEn}
+          {cardName.toUpperCase()}
         </Text>
         <View style={[styles.orientationBadge, { backgroundColor: orientationColor }]}>
           <Text style={styles.orientationText}>
-            {isReversed ? '↓' : '↑'}
+            {isReversed ? '▼' : '▲'}
           </Text>
         </View>
       </View>
@@ -54,7 +63,7 @@ export function PixelCard({
           <View style={styles.keywordsContainer}>
             {keywords.map((kw, i) => (
               <View key={i} style={styles.keywordBadge}>
-                <Text style={styles.keywordText}>{kw}</Text>
+                <Text style={styles.keywordText}>{kw.toUpperCase()}</Text>
               </View>
             ))}
           </View>
@@ -73,30 +82,19 @@ const styles = StyleSheet.create({
     borderWidth: BORDERS.medium,
     borderColor: COLORS.border,
     overflow: 'hidden',
+    ...SHADOWS.block,
   },
-  small: { width: 80, minHeight: 120 },
-  medium: { width: 140, minHeight: 200 },
-  large: { width: 200, minHeight: 280 },
-  imagePlaceholder: {
-    flex: 1,
-    minHeight: 100,
-    justifyContent: 'center',
-    alignItems: 'center',
+  imageContainer: {
+    overflow: 'hidden',
     borderBottomWidth: BORDERS.thin,
     borderBottomColor: COLORS.border,
   },
+  cardImage: {
+    width: '100%',
+    height: '100%',
+  },
   reversed: {
     transform: [{ rotate: '180deg' }],
-  },
-  cardNumber: {
-    fontSize: FONTS.title,
-    fontWeight: 'bold',
-    color: 'rgba(255,255,255,0.3)',
-  },
-  cardKey: {
-    fontSize: FONTS.sm,
-    color: 'rgba(255,255,255,0.5)',
-    marginTop: SPACING.xs,
   },
   nameContainer: {
     flexDirection: 'row',
@@ -107,18 +105,22 @@ const styles = StyleSheet.create({
   },
   cardName: {
     flex: 1,
-    fontSize: FONTS.sm,
+    fontFamily: FONT_FAMILY.pixel,
+    fontSize: FONTS.xs,
     fontWeight: 'bold',
     color: COLORS.text,
+    letterSpacing: 0.5,
   },
   orientationBadge: {
     paddingHorizontal: SPACING.xs,
     paddingVertical: 2,
-    borderRadius: 2,
     marginLeft: SPACING.xs,
+    borderWidth: 1,
+    borderColor: COLORS.background,
   },
   orientationText: {
-    fontSize: FONTS.sm,
+    fontFamily: FONT_FAMILY.pixel,
+    fontSize: FONTS.xs,
     fontWeight: 'bold',
     color: COLORS.background,
   },
@@ -135,14 +137,19 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.primary,
     paddingHorizontal: SPACING.xs,
     paddingVertical: 2,
+    borderWidth: 1,
+    borderColor: COLORS.primaryLight,
   },
   keywordText: {
+    fontFamily: FONT_FAMILY.pixel,
     fontSize: FONTS.xs,
     color: COLORS.text,
+    letterSpacing: 0.5,
   },
   meaning: {
-    fontSize: FONTS.sm,
+    fontFamily: FONT_FAMILY.pixel,
+    fontSize: FONTS.xs,
     color: COLORS.textMuted,
-    lineHeight: FONTS.sm * 1.5,
+    lineHeight: FONTS.xs * 2,
   },
 });

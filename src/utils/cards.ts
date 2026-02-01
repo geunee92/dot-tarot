@@ -1,5 +1,44 @@
+import { ImageSourcePropType } from 'react-native';
 import { TarotCard, CardOrientation, DrawnCard } from '../types';
-import { TAROT_CARDS, TOTAL_CARDS } from '../data';
+import { TAROT_CARDS, TAROT_CARDS_EN, TAROT_CARDS_KO, TOTAL_CARDS } from '../data';
+import { getLocale } from '../i18n';
+
+// ============================================
+// Image Mappings (Static require for bundler)
+// ============================================
+
+const CARD_IMAGES: Record<string, ImageSourcePropType> = {
+  fool: require('../../assets/cards/fool.png'),
+  magician: require('../../assets/cards/magician.png'),
+  high_priestess: require('../../assets/cards/high_priestess.png'),
+  empress: require('../../assets/cards/empress.png'),
+  emperor: require('../../assets/cards/emperor.png'),
+  hierophant: require('../../assets/cards/hierophant.png'),
+  lovers: require('../../assets/cards/lovers.png'),
+  chariot: require('../../assets/cards/chariot.png'),
+  strength: require('../../assets/cards/strength.png'),
+  hermit: require('../../assets/cards/hermit.png'),
+  wheel_of_fortune: require('../../assets/cards/wheel_of_fortune.png'),
+  justice: require('../../assets/cards/justice.png'),
+  hanged_man: require('../../assets/cards/hanged_man.png'),
+  death: require('../../assets/cards/death.png'),
+  temperance: require('../../assets/cards/temperance.png'),
+  devil: require('../../assets/cards/devil.png'),
+  tower: require('../../assets/cards/tower.png'),
+  star: require('../../assets/cards/star.png'),
+  moon: require('../../assets/cards/moon.png'),
+  sun: require('../../assets/cards/sun.png'),
+  judgement: require('../../assets/cards/judgement.png'),
+  world: require('../../assets/cards/world.png'),
+};
+
+const BACK_SKIN_IMAGES: Record<string, ImageSourcePropType> = {
+  skin_default: require('../../assets/backs/skin_default.png'),
+  skin_1: require('../../assets/backs/skin_1.png'),
+  skin_2: require('../../assets/backs/skin_2.png'),
+  skin_3: require('../../assets/backs/skin_3.png'),
+  skin_special: require('../../assets/backs/skin_special.png'),
+};
 
 // ============================================
 // Card Access
@@ -108,17 +147,53 @@ export function drawRandomCards(count: number): DrawnCard[] {
 // ============================================
 
 /**
- * Get keywords based on orientation
+ * Get localized card by key
+ * Looks up the card translation based on current locale
  */
-export function getKeywords(card: TarotCard, orientation: CardOrientation): string[] {
-  return orientation === 'upright' ? card.keywordsUpright : card.keywordsReversed;
+export function getLocalizedCard(card: TarotCard): TarotCard {
+  const locale = getLocale();
+  const cards = locale === 'ko' ? TAROT_CARDS_KO : TAROT_CARDS_EN;
+  return cards.find(c => c.key === card.key) || card;
 }
 
 /**
- * Get meaning based on orientation
+ * Get keywords based on orientation (localized)
+ */
+export function getKeywords(card: TarotCard, orientation: CardOrientation): string[] {
+  const localizedCard = getLocalizedCard(card);
+  return orientation === 'upright' ? localizedCard.keywordsUpright : localizedCard.keywordsReversed;
+}
+
+/**
+ * Get meaning based on orientation (localized)
  */
 export function getMeaning(card: TarotCard, orientation: CardOrientation): string {
-  return orientation === 'upright' ? card.meaningUpright : card.meaningReversed;
+  const localizedCard = getLocalizedCard(card);
+  return orientation === 'upright' ? localizedCard.meaningUpright : localizedCard.meaningReversed;
+}
+
+/**
+ * Get card name (localized)
+ */
+export function getCardName(card: TarotCard): string {
+  const localizedCard = getLocalizedCard(card);
+  return localizedCard.name || localizedCard.nameEn;
+}
+
+/**
+ * Get talisman line (localized)
+ */
+export function getTalismanLine(card: TarotCard): string {
+  const localizedCard = getLocalizedCard(card);
+  return localizedCard.talismanLine;
+}
+
+/**
+ * Get action tip (localized)
+ */
+export function getActionTip(card: TarotCard): string {
+  const localizedCard = getLocalizedCard(card);
+  return localizedCard.actionTip;
 }
 
 /**
@@ -129,45 +204,18 @@ export function getOrientationLabel(orientation: CardOrientation): string {
 }
 
 // ============================================
-// Image Placeholder (for future asset mapping)
+// Image Helpers
 // ============================================
 
-/**
- * Placeholder for card image mapping
- * When actual images are added, this will return the require() path
- * For now, returns a placeholder identifier
- */
-export function getCardImageSource(card: TarotCard): string {
-  // TODO: Replace with actual image mapping when assets are ready
-  // Example future implementation:
-  // const images: Record<string, any> = {
-  //   fool: require('../assets/cards/fool.png'),
-  //   magician: require('../assets/cards/magician.png'),
-  //   ...
-  // };
-  // return images[card.key];
-  
-  return `card_${card.key}`;
+export function getCardImageSource(card: TarotCard): ImageSourcePropType {
+  return CARD_IMAGES[card.key];
 }
 
-/**
- * Get placeholder color for card (based on card ID)
- * Used for visual distinction before real images are added
- */
+export function getBackSkinImageSource(skinId: string): ImageSourcePropType {
+  return BACK_SKIN_IMAGES[skinId];
+}
+
 export function getCardPlaceholderColor(card: TarotCard): string {
-  // Generate a consistent color based on card ID
-  const hue = (card.id * 16.36) % 360; // Spread across color wheel
+  const hue = (card.id * 16.36) % 360;
   return `hsl(${hue}, 60%, 45%)`;
-}
-
-// ============================================
-// Card Back Skin Helpers
-// ============================================
-
-/**
- * Placeholder for card back image mapping
- */
-export function getBackSkinImageSource(skinId: string): string {
-  // TODO: Replace with actual image mapping when assets are ready
-  return `back_${skinId}`;
 }

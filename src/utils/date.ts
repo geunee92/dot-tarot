@@ -25,9 +25,11 @@ export function getMonthKey(date: Date = new Date()): string {
 
 /**
  * Parse a date key (YYYY-MM-DD) into a Date object
- * Returns null if invalid format
+ * Returns null if invalid format or input
  */
-export function parseDateKey(dateKey: string): Date | null {
+export function parseDateKey(dateKey: string | undefined | null): Date | null {
+  if (!dateKey) return null;
+  
   const match = dateKey.match(/^(\d{4})-(\d{2})-(\d{2})$/);
   if (!match) return null;
   

@@ -1,40 +1,111 @@
-// Pixel Talisman Color Palette
 export const COLORS = {
-  // Backgrounds
-  background: '#1a1a2e',
-  surface: '#16213e',
-  surfaceLight: '#1f2b47',
+  background: '#0f0f23',
+  surface: '#1a1a2e',
+  surfaceLight: '#16213e',
   
-  // Primary colors
-  primary: '#6b21a8',
-  primaryLight: '#9333ea',
-  primaryDark: '#4c1d95',
+  primary: '#1f4068',
+  primaryLight: '#4a69bd',
+  primaryDark: '#0c1829',
   
-  // Accent
-  accent: '#f59e0b',
-  accentLight: '#fbbf24',
+  accent: '#f8b500',
+  accentLight: '#ffd700',
+  accentDark: '#c49000',
   
-  // Text
-  text: '#e0e0e0',
-  textMuted: '#9ca3af',
-  textDark: '#6b7280',
+  aurora: '#00d9ff',
+  auroraLight: '#7fecff',
   
-  // Semantic
-  success: '#10b981',
-  warning: '#f59e0b',
+  text: '#f5f5f5',
+  textMuted: '#a0a0a0',
+  textDark: '#606060',
+  
+  success: '#4ade80',
+  warning: '#fbbf24',
   error: '#ef4444',
   
-  // Card orientations
-  upright: '#10b981',
-  reversed: '#f59e0b',
+  upright: '#4ade80',
+  reversed: '#f97316',
   
-  // Borders (pixel style)
-  border: '#4a5568',
-  borderLight: '#6b7280',
-  borderAccent: '#f59e0b',
+  border: '#4a69bd',
+  borderLight: '#6b8cce',
+  borderAccent: '#f8b500',
 } as const;
 
-// Pixel-style spacing (multiples of 4 for pixel grid alignment)
+export const BACKGROUNDS = {
+  cosmic: '#0f0f23',
+  plum: '#1a1a2e',
+  aurora: '#0c1829',
+  gold: '#16213e',
+  card: '#1a1a2e',
+} as const;
+
+export const GRADIENTS = {
+  cosmic: ['#0f0f23', '#0f0f23', '#0f0f23'],
+  plum: ['#1a1a2e', '#1a1a2e', '#1a1a2e'],
+  aurora: ['#0c1829', '#0c1829', '#0c1829'],
+  gold: ['#16213e', '#16213e', '#16213e'],
+  card: ['#1a1a2e', '#1a1a2e', '#1a1a2e'],
+} as const;
+
+export const RADIUS = {
+  sm: 0,
+  md: 0,
+  lg: 0,
+  xl: 0,
+  round: 999,
+} as const;
+
+export const SHADOWS = {
+  block: {
+    shadowColor: '#000',
+    shadowOffset: { width: 4, height: 4 },
+    shadowOpacity: 0.8,
+    shadowRadius: 0,
+    elevation: 4,
+  },
+  blockLight: {
+    shadowColor: '#000',
+    shadowOffset: { width: 2, height: 2 },
+    shadowOpacity: 0.6,
+    shadowRadius: 0,
+    elevation: 3,
+  },
+  glow: {
+    shadowColor: '#f8b500',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.6,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  glowPrimary: {
+    shadowColor: '#4a69bd',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.5,
+    shadowRadius: 8,
+    elevation: 6,
+  },
+  glowAurora: {
+    shadowColor: '#00d9ff',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.5,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  soft: {
+    shadowColor: '#000',
+    shadowOffset: { width: 3, height: 3 },
+    shadowOpacity: 0.5,
+    shadowRadius: 0,
+    elevation: 4,
+  },
+  subtle: {
+    shadowColor: '#000',
+    shadowOffset: { width: 2, height: 2 },
+    shadowOpacity: 0.4,
+    shadowRadius: 0,
+    elevation: 2,
+  },
+} as const;
+
 export const SPACING = {
   xs: 4,
   sm: 8,
@@ -44,14 +115,12 @@ export const SPACING = {
   xxl: 32,
 } as const;
 
-// Border widths for pixel aesthetic
 export const BORDERS = {
   thin: 2,
   medium: 3,
   thick: 4,
 } as const;
 
-// Font sizes
 export const FONTS = {
   xs: 10,
   sm: 12,
@@ -59,5 +128,11 @@ export const FONTS = {
   lg: 16,
   xl: 20,
   xxl: 24,
-  title: 32,
+  title: 28,
+} as const;
+
+export const FONT_FAMILY = {
+  pixel: 'PressStart2P_400Regular',
+  korean: 'Galmuri11',
+  system: undefined,
 } as const;

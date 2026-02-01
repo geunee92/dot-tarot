@@ -1,5 +1,7 @@
-export { HomeScreen } from './HomeScreen';
+export { DailyScreen } from './DailyScreen';
+export { SpreadsScreen } from './SpreadsScreen';
+export { JourneyScreen } from './JourneyScreen';
 export { DailyResultScreen } from './DailyResultScreen';
 export { SpreadResultScreen } from './SpreadResultScreen';
-export { DeckScreen } from './DeckScreen';
 export { HistoryDetailScreen } from './HistoryDetailScreen';
+export { SettingsScreen } from './SettingsScreen';

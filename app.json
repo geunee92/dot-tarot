@@ -1,19 +1,20 @@
 {
   "expo": {
-    "name": "taro-app",
-    "slug": "taro-app",
+    "name": "도트 타로",
+    "slug": "dot-tarot",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "dark",
     "newArchEnabled": true,
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#0f0f23"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.geunee92.taro-app"
     },
     "android": {
       "adaptiveIcon": {
@@ -27,13 +28,8 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      [
-        "react-native-google-mobile-ads",
-        {
-          "androidAppId": "ca-app-pub-3940256099942544~3347511713",
-          "iosAppId": "ca-app-pub-3940256099942544~1458002511"
-        }
-      ]
+      "expo-font",
+      "expo-localization"
     ]
   }
 }
