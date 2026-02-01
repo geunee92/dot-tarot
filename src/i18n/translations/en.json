@@ -1,0 +1,148 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "back": "Back",
+    "close": "Close",
+    "save": "Save",
+    "cancel": "Cancel",
+    "tapToView": "Tap to view details",
+    "drawing": "Drawing...",
+    "loadingCard": "Loading card...",
+    "backHome": "Back to Home",
+    "saving": "Saving...",
+    "retry": "Retry",
+    "share": "Share",
+    "sharing": "Sharing..."
+  },
+  "share": {
+    "tagline": "Discover your destiny with DOT TAROT",
+    "success": "Shared successfully!",
+    "error": "Failed to share"
+  },
+  "home": {
+    "title": "DOT TAROT",
+    "cardBacks": "Card Backs",
+    "dailyCard": "Daily Card",
+    "drawCard": "Draw Today's Card",
+    "spreadTitle": "3-Card Spread",
+    "freeUsed": "Free used",
+    "freeDaily": "Choose a topic for your daily reading",
+    "watchAd": "Watch an ad for another reading",
+    "attendance": "Attendance",
+    "settings": "Settings",
+    "topics": {
+      "love": "Love",
+      "money": "Money",
+      "work": "Work"
+    }
+  },
+  "dailyResult": {
+    "reveal": "Reveal Your Card",
+    "meaning": "Card Meaning",
+    "talisman": "Today's Talisman",
+    "actionTip": "Action Tip",
+    "reflection": "Your Reflection",
+    "memoPlaceholder": "Write your thoughts about this card...",
+    "saveMemo": "Save Memo"
+  },
+  "spreadResult": {
+    "title": "3-Card Reading",
+    "reading": "Reading",
+    "pattern": "Pattern",
+    "loadingSpread": "Loading spread...",
+    "positions": {
+      "flow": "Flow",
+      "flowDesc": "Current energy and momentum",
+      "influence": "Influence",
+      "influenceDesc": "External factors affecting you",
+      "advice": "Advice",
+      "adviceDesc": "Guidance for moving forward"
+    },
+    "patterns": {
+      "UUU": { "tone": "Clear / Direct", "outputStyle": "Assertive action line" },
+      "UUR": { "tone": "Execution slips", "outputStyle": "1 DON'T line + 1 micro-action" },
+      "URU": { "tone": "Hidden variable", "outputStyle": "1 verification question" },
+      "RUU": { "tone": "Unstable start", "outputStyle": "1 reset/organize action first" },
+      "URR": { "tone": "Defensive day", "outputStyle": "Avoid 1 thing + do 1 minimal thing" },
+      "RUR": { "tone": "Inner friction", "outputStyle": "10-minute micro-action only" },
+      "RRU": { "tone": "Foggy but advice works", "outputStyle": "Highlight advice as headline" },
+      "RRR": { "tone": "Inner reset", "outputStyle": "Suggestion tone (try...)" }
+    },
+    "interpretation": "Reading Interpretation",
+    "energyTone": "Energy Tone",
+    "suggestedApproach": "Suggested Approach",
+    "clarifierHint": "Your reading has some reversed energy. A clarifier card can provide additional guidance.",
+    "drawClarifier": "Draw Clarifier Card",
+    "watchAdClarifier": "Watch ad for clarifier",
+    "clarifier": "Clarifier Card",
+    "unlockClarifier": "Unlock Clarifier",
+    "unlockAnother": "Unlock Another Topic",
+    "insight": "Spread Insight",
+    "watchAdFor": "Watch ad to unlock"
+  },
+  "deck": {
+    "title": "Card Backs",
+    "progress": "Attendance Progress",
+    "thisMonth": "This Month",
+    "days": "days",
+    "daysThisMonth": "days this month",
+    "nextRewardAt": "Next reward at %{days} days (%{remaining} more)",
+    "allUnlocked": "All rewards unlocked this month!",
+    "unlockedSkins": "Unlocked Skins",
+    "lockedSkins": "Locked Skins",
+    "active": "Active",
+    "unlockAt": "Unlock at %{days} days",
+    "unlocked": "Unlocked",
+    "locked": "Locked",
+    "current": "Current",
+    "select": "Select",
+    "requirement": "Reach %{days} days to unlock"
+  },
+  "history": {
+    "title": "Reading History",
+    "dailyCard": "Daily Card",
+    "spreads": "Spreads",
+    "noReadings": "No readings on this day",
+    "memo": "Memo",
+    "noMemo": "No memo saved",
+    "topic": "Topic"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "languageDesc": "Choose your preferred language",
+    "english": "English",
+    "korean": "Korean",
+    "system": "System Default",
+    "version": "Version",
+    "dangerZone": "Danger Zone",
+    "resetData": "Reset Data",
+    "resetDataConfirm": "All data will be deleted. Continue?",
+    "reset": "Reset",
+    "resetting": "Resetting...",
+    "resetComplete": "Data has been reset. Please restart the app."
+  },
+  "card": {
+    "upright": "UPRIGHT",
+    "reversed": "REVERSED",
+    "tapReveal": "Tap to reveal",
+    "keywords": "Keywords"
+  },
+  "tabs": {
+    "daily": "Daily",
+    "spreads": "Spreads",
+    "journey": "Journey",
+    "settings": "Settings"
+  },
+  "journey": {
+    "title": "My Journey",
+    "calendar": "Calendar",
+    "collection": "Collection",
+    "history": "History"
+  },
+  "spreads": {
+    "title": "Choose a Topic",
+    "subtitle": "Select a topic for your 3-card reading",
+    "recentReadings": "Recent Readings"
+  }
+}
