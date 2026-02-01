@@ -6,15 +6,19 @@ import {
   TextInput,
   KeyboardAvoidingView,
   Platform,
+  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
+import * as Sharing from 'expo-sharing';
 import {
   PixelButton,
   PixelText,
   TarotCardFlip,
   TarotCardFlipRef,
   LoadingSpinner,
+  ShareableCard,
+  ShareableCardRef,
   COLORS,
   SPACING,
   FONTS,
@@ -22,20 +26,30 @@ import {
 } from '../components';
 import { useDrawStore } from '../stores/drawStore';
 import { DailyResultScreenProps } from '../navigation/types';
-import { getMeaning, getKeywords } from '../utils/cards';
+import { getMeaning, getKeywords, getTalismanLine, getActionTip } from '../utils/cards';
+import { useTranslation, getLocale } from '../i18n';
+import { parseDateKey } from '../utils/date';
 
 export function DailyResultScreen({ route, navigation }: DailyResultScreenProps) {
+  const { t } = useTranslation();
   const { dateKey, isNewDraw } = route.params;
   
   const [hasFlipped, setHasFlipped] = useState(!isNewDraw);
   const [memo, setMemo] = useState('');
   const [isSavingMemo, setIsSavingMemo] = useState(false);
+  const [isSharing, setIsSharing] = useState(false);
   const flipRef = useRef<TarotCardFlipRef>(null);
+  const shareableCardRef = useRef<ShareableCardRef>(null);
 
-  const draw = useDrawStore((s) => s.draws[dateKey]);
+  const confirmedDraw = useDrawStore((s) => s.draws[dateKey]);
+  const pendingDraw = useDrawStore((s) => s.pendingDraw);
   const addMemo = useDrawStore((s) => s.addMemo);
   const loadDraw = useDrawStore((s) => s.loadDraw);
+  const confirmDraw = useDrawStore((s) => s.confirmDraw);
+  const clearPendingDraw = useDrawStore((s) => s.clearPendingDraw);
   const isHydrated = useDrawStore((s) => s.isHydrated);
+
+  const draw = confirmedDraw || (pendingDraw?.dateKey === dateKey ? pendingDraw : null);
 
   useEffect(() => {
     if (isHydrated && !draw) {
@@ -49,14 +63,29 @@ export function DailyResultScreen({ route, navigation }: DailyResultScreenProps)
     }
   }, [draw?.memo]);
 
+  useEffect(() => {
+    if (!isNewDraw) return;
+
+    const unsubscribe = navigation.addListener('beforeRemove', (e) => {
+      if (!hasFlipped && pendingDraw) {
+        clearPendingDraw();
+      }
+    });
+
+    return unsubscribe;
+  }, [navigation, isNewDraw, hasFlipped, pendingDraw, clearPendingDraw]);
+
   const handleFlip = useCallback(() => {
     flipRef.current?.flip();
   }, []);
 
-  const handleFlipComplete = useCallback(() => {
+  const handleFlipComplete = useCallback(async () => {
     setHasFlipped(true);
+    if (isNewDraw) {
+      await confirmDraw();
+    }
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-  }, []);
+  }, [isNewDraw, confirmDraw]);
 
   const handleSaveMemo = useCallback(async () => {
     if (!memo.trim() || isSavingMemo) return;
@@ -75,13 +104,47 @@ export function DailyResultScreen({ route, navigation }: DailyResultScreenProps)
     navigation.goBack();
   }, [navigation]);
 
+  const handleShare = useCallback(async () => {
+    if (isSharing) return;
+    
+    setIsSharing(true);
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    
+    try {
+      if (!shareableCardRef.current) {
+        throw new Error('ShareableCard ref not ready');
+      }
+      
+      const uri = await shareableCardRef.current.capture();
+      if (!uri) {
+        throw new Error('Failed to capture image');
+      }
+      
+      const isAvailable = await Sharing.isAvailableAsync();
+      if (!isAvailable) {
+        Alert.alert(t('share.error'), 'Sharing is not available on this device');
+        return;
+      }
+      
+      await Sharing.shareAsync(`file://${uri}`, {
+        mimeType: 'image/jpeg',
+        UTI: 'image/jpeg',
+      });
+    } catch (error) {
+      console.error('Share error:', error);
+      Alert.alert(t('share.error'));
+    } finally {
+      setIsSharing(false);
+    }
+  }, [isSharing, t]);
+
   if (!draw) {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.loadingContainer}>
           <LoadingSpinner size={60} />
           <PixelText variant="body" style={styles.loadingText}>
-            Loading card...
+            {t('common.loadingCard')}
           </PixelText>
         </View>
       </SafeAreaView>
@@ -91,7 +154,19 @@ export function DailyResultScreen({ route, navigation }: DailyResultScreenProps)
   const { card, orientation } = draw.drawnCard;
   const meaning = getMeaning(card, orientation);
   const keywords = getKeywords(card, orientation);
+  const talismanLine = getTalismanLine(card);
+  const actionTip = getActionTip(card);
   const isReversed = orientation === 'reversed';
+
+  const locale = getLocale();
+  const parsedDate = parseDateKey(dateKey);
+  const dateString = parsedDate
+    ? parsedDate.toLocaleDateString(locale === 'ko' ? 'ko-KR' : 'en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      })
+    : dateKey;
 
   return (
     <SafeAreaView style={styles.container} edges={['bottom']}>
@@ -116,7 +191,7 @@ export function DailyResultScreen({ route, navigation }: DailyResultScreenProps)
             
             {!hasFlipped && isNewDraw && (
               <PixelButton
-                title="Reveal Your Card"
+                title={t('dailyResult.reveal')}
                 onPress={handleFlip}
                 variant="accent"
                 size="large"
@@ -129,7 +204,7 @@ export function DailyResultScreen({ route, navigation }: DailyResultScreenProps)
             <View style={styles.detailsSection}>
               <View style={styles.meaningSection}>
                 <PixelText variant="heading" style={styles.sectionTitle}>
-                  Card Meaning
+                  {t('dailyResult.meaning')}
                 </PixelText>
                 
                 <View style={styles.keywordsRow}>
@@ -155,30 +230,30 @@ export function DailyResultScreen({ route, navigation }: DailyResultScreenProps)
 
               <View style={styles.talismanSection}>
                 <PixelText variant="caption" style={styles.talismanLabel}>
-                  Today's Talisman
+                  {t('dailyResult.talisman')}
                 </PixelText>
                 <PixelText variant="talisman">
-                  "{card.talismanLine}"
+                  "{talismanLine}"
                 </PixelText>
               </View>
 
               <View style={styles.actionSection}>
                 <PixelText variant="caption" style={styles.actionLabel}>
-                  Action Tip
+                  {t('dailyResult.actionTip')}
                 </PixelText>
                 <PixelText variant="body" style={styles.actionText}>
-                  {card.actionTip}
+                  {actionTip}
                 </PixelText>
               </View>
 
               <View style={styles.memoSection}>
                 <PixelText variant="heading" style={styles.sectionTitle}>
-                  Your Reflection
+                  {t('dailyResult.reflection')}
                 </PixelText>
                 
                 <TextInput
                   style={styles.memoInput}
-                  placeholder="Write your thoughts about this card..."
+                  placeholder={t('dailyResult.memoPlaceholder')}
                   placeholderTextColor={COLORS.textDark}
                   value={memo}
                   onChangeText={setMemo}
@@ -188,7 +263,7 @@ export function DailyResultScreen({ route, navigation }: DailyResultScreenProps)
                 />
                 
                 <PixelButton
-                  title={isSavingMemo ? 'Saving...' : 'Save Memo'}
+                  title={isSavingMemo ? t('common.saving') : t('dailyResult.saveMemo')}
                   onPress={handleSaveMemo}
                   variant="secondary"
                   size="medium"
@@ -197,17 +272,32 @@ export function DailyResultScreen({ route, navigation }: DailyResultScreenProps)
                 />
               </View>
 
-              <PixelButton
-                title="Back to Home"
-                onPress={handleGoBack}
-                variant="ghost"
-                size="medium"
-                style={styles.backButton}
-              />
+              <View style={styles.actionButtons}>
+                <PixelButton
+                  title={isSharing ? t('common.sharing') : t('common.share')}
+                  onPress={handleShare}
+                  variant="primary"
+                  size="medium"
+                  loading={isSharing}
+                />
+                <PixelButton
+                  title={t('common.backHome')}
+                  onPress={handleGoBack}
+                  variant="ghost"
+                  size="medium"
+                />
+              </View>
             </View>
           )}
         </ScrollView>
       </KeyboardAvoidingView>
+      
+      <ShareableCard
+        ref={shareableCardRef}
+        card={card}
+        orientation={orientation}
+        dateString={dateString}
+      />
     </SafeAreaView>
   );
 }
@@ -315,8 +405,10 @@ const styles = StyleSheet.create({
     minHeight: 100,
     marginBottom: SPACING.md,
   },
-  backButton: {
-    alignSelf: 'center',
+  actionButtons: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: SPACING.md,
     marginTop: SPACING.md,
   },
 });

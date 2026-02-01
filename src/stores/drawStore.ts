@@ -4,7 +4,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DailyDraw } from '../types';
 import { getLocalDateKey, getMonthKey } from '../utils/date';
 import { drawRandomCard } from '../utils/cards';
-import { getDrawKey, getAllDrawKeys, getItem, setItem } from '../utils/storage';
+import { getDrawKey, getAllDrawKeys, getItem, setItem, removeItem } from '../utils/storage';
+
+const PENDING_DRAW_KEY = 'taro-pending-draw';
 
 // ============================================
 // Store Interface
@@ -13,6 +15,7 @@ import { getDrawKey, getAllDrawKeys, getItem, setItem } from '../utils/storage';
 interface DrawState {
   // State
   draws: Record<string, DailyDraw>; // dateKey -> DailyDraw
+  pendingDraw: DailyDraw | null;
   isLoading: boolean;
   isHydrated: boolean;
   
@@ -22,7 +25,11 @@ interface DrawState {
   loadDrawsForMonth: (monthKey: string) => Promise<void>;
   getTodaysDraw: () => DailyDraw | null;
   hasDrawnToday: () => boolean;
+  hasPendingDrawToday: () => boolean;
   createDraw: (dateKey?: string) => Promise<DailyDraw>;
+  prepareDraw: (dateKey?: string) => Promise<DailyDraw>;
+  confirmDraw: () => Promise<DailyDraw | null>;
+  clearPendingDraw: () => Promise<void>;
   addMemo: (dateKey: string, memo: string) => Promise<boolean>;
   getDrawsForMonth: (monthKey: string) => DailyDraw[];
   getDrawDates: () => string[];
@@ -37,6 +44,7 @@ export const useDrawStore = create<DrawState>()(
     (set, get) => ({
       // Initial State
       draws: {},
+      pendingDraw: null,
       isLoading: false,
       isHydrated: false,
       
@@ -88,29 +96,34 @@ export const useDrawStore = create<DrawState>()(
         }
       },
       
-      // Get today's draw (if exists)
+      // Get today's confirmed draw only
       getTodaysDraw: () => {
         const today = getLocalDateKey();
         return get().draws[today] || null;
       },
       
-      // Check if already drawn today
+      // Check if already drawn and confirmed today
       hasDrawnToday: () => {
         const today = getLocalDateKey();
         return !!get().draws[today];
       },
       
-      // Create a new draw (returns existing if already drawn)
+      // Check if there's a pending (unrevealed) draw for today
+      hasPendingDrawToday: () => {
+        const today = getLocalDateKey();
+        const pending = get().pendingDraw;
+        return !!(pending && pending.dateKey === today);
+      },
+      
+      // Create a new draw (returns existing if already drawn) - used by SpreadScreen
       createDraw: async (dateKey) => {
         const targetDate = dateKey || getLocalDateKey();
         
-        // Check if already exists
         const existing = get().draws[targetDate];
         if (existing) {
           return existing;
         }
         
-        // Check storage as well
         const storageKey = getDrawKey(targetDate);
         const fromStorage = await getItem<DailyDraw>(storageKey);
         if (fromStorage) {
@@ -120,7 +133,6 @@ export const useDrawStore = create<DrawState>()(
           return fromStorage;
         }
         
-        // Create new draw
         const drawnCard = drawRandomCard();
         const newDraw: DailyDraw = {
           dateKey: targetDate,
@@ -128,15 +140,72 @@ export const useDrawStore = create<DrawState>()(
           createdAt: Date.now(),
         };
         
-        // Save to storage
         await setItem(storageKey, newDraw);
         
-        // Update state
         set((state) => ({
           draws: { ...state.draws, [targetDate]: newDraw },
         }));
         
         return newDraw;
+      },
+      
+      // Prepare draw without persisting (for DailyScreen)
+      prepareDraw: async (dateKey) => {
+        const targetDate = dateKey || getLocalDateKey();
+        
+        const existing = get().draws[targetDate];
+        if (existing) {
+          return existing;
+        }
+        
+        const storageKey = getDrawKey(targetDate);
+        const fromStorage = await getItem<DailyDraw>(storageKey);
+        if (fromStorage) {
+          set((state) => ({
+            draws: { ...state.draws, [targetDate]: fromStorage },
+          }));
+          return fromStorage;
+        }
+        
+        const pending = get().pendingDraw;
+        if (pending && pending.dateKey === targetDate) {
+          return pending;
+        }
+        
+        const drawnCard = drawRandomCard();
+        const newDraw: DailyDraw = {
+          dateKey: targetDate,
+          drawnCard,
+          createdAt: Date.now(),
+        };
+        
+        await setItem(PENDING_DRAW_KEY, newDraw);
+        set({ pendingDraw: newDraw });
+        
+        return newDraw;
+      },
+      
+      // Confirm pending draw (persist to main storage)
+      confirmDraw: async () => {
+        const pending = get().pendingDraw;
+        if (!pending) return null;
+        
+        const storageKey = getDrawKey(pending.dateKey);
+        await setItem(storageKey, pending);
+        await removeItem(PENDING_DRAW_KEY);
+        
+        set((state) => ({
+          draws: { ...state.draws, [pending.dateKey]: pending },
+          pendingDraw: null,
+        }));
+        
+        return pending;
+      },
+      
+      // Clear pending draw without saving
+      clearPendingDraw: async () => {
+        await removeItem(PENDING_DRAW_KEY);
+        set({ pendingDraw: null });
       },
       
       // Add memo to existing draw
@@ -178,8 +247,14 @@ export const useDrawStore = create<DrawState>()(
     {
       name: 'taro-draws',
       storage: createJSONStorage(() => AsyncStorage),
-      onRehydrateStorage: () => (state) => {
-        state?.setHydrated(true);
+      onRehydrateStorage: () => async (state) => {
+        if (state) {
+          const pending = await getItem<DailyDraw>(PENDING_DRAW_KEY);
+          if (pending) {
+            useDrawStore.setState({ pendingDraw: pending });
+          }
+          state.setHydrated(true);
+        }
       },
       partialize: (state) => ({
         draws: state.draws,
