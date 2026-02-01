@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
-import * as Sharing from 'expo-sharing';
+import Share from 'react-native-share';
 import {
   PixelButton,
   PixelText,
@@ -120,17 +120,15 @@ export function DailyResultScreen({ route, navigation }: DailyResultScreenProps)
         throw new Error('Failed to capture image');
       }
       
-      const isAvailable = await Sharing.isAvailableAsync();
-      if (!isAvailable) {
-        Alert.alert(t('share.error'), 'Sharing is not available on this device');
+      await Share.open({
+        message: t('share.message'),
+        url: `file://${uri}`,
+        type: 'image/png',
+      });
+    } catch (error: unknown) {
+      if (error instanceof Error && error.message?.includes('User did not share')) {
         return;
       }
-      
-      await Sharing.shareAsync(`file://${uri}`, {
-        mimeType: 'image/jpeg',
-        UTI: 'image/jpeg',
-      });
-    } catch (error) {
       console.error('Share error:', error);
       Alert.alert(t('share.error'));
     } finally {

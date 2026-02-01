@@ -3,9 +3,11 @@ import {
   View,
   ScrollView,
   StyleSheet,
+  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
+import Share from 'react-native-share';
 import {
   PixelButton,
   PixelText,
@@ -14,6 +16,8 @@ import {
   TarotCardFlip,
   TarotCardFlipRef,
   RewardedAdButton,
+  ShareableSpreadCard,
+  ShareableSpreadCardRef,
   COLORS,
   SPACING,
   FONTS,
@@ -23,7 +27,8 @@ import { useSpreadStore, shouldSuggestClarifier } from '../stores/spreadStore';
 import { SpreadResultScreenProps } from '../navigation/types';
 import { SpreadPosition, SpreadCard } from '../types';
 import { getMeaning, getKeywords } from '../utils/cards';
-import { useTranslation } from '../i18n';
+import { useTranslation, getLocale } from '../i18n';
+import { parseDateKey } from '../utils/date';
 
 const POSITION_KEYS: Record<SpreadPosition, string> = {
   FLOW: 'flow',
@@ -38,7 +43,9 @@ export function SpreadResultScreen({ route, navigation }: SpreadResultScreenProp
   const [revealedCards, setRevealedCards] = useState<number[]>(isNewSpread ? [] : [0, 1, 2]);
   const [showClarifier, setShowClarifier] = useState(false);
   const [isAddingClarifier, setIsAddingClarifier] = useState(false);
+  const [isSharing, setIsSharing] = useState(false);
   const cardRefs = useRef<(TarotCardFlipRef | null)[]>([null, null, null]);
+  const shareableCardRef = useRef<ShareableSpreadCardRef>(null);
 
   const spread = useSpreadStore((s) => s.getSpreadById(dateKey, spreadId));
   const loadSpreadsForDate = useSpreadStore((s) => s.loadSpreadsForDate);
@@ -86,6 +93,38 @@ export function SpreadResultScreen({ route, navigation }: SpreadResultScreenProp
   const handleGoBack = useCallback(() => {
     navigation.goBack();
   }, [navigation]);
+
+  const handleShare = useCallback(async () => {
+    if (isSharing || !spread) return;
+    
+    setIsSharing(true);
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    
+    try {
+      if (!shareableCardRef.current) {
+        throw new Error('ShareableSpreadCard ref not ready');
+      }
+      
+      const uri = await shareableCardRef.current.capture();
+      if (!uri) {
+        throw new Error('Failed to capture image');
+      }
+      
+      await Share.open({
+        message: t('share.message'),
+        url: `file://${uri}`,
+        type: 'image/png',
+      });
+    } catch (error: unknown) {
+      if (error instanceof Error && error.message?.includes('User did not share')) {
+        return;
+      }
+      console.error('Share error:', error);
+      Alert.alert(t('share.error'));
+    } finally {
+      setIsSharing(false);
+    }
+  }, [isSharing, spread, t]);
 
   if (!spread) {
     return (
@@ -227,15 +266,43 @@ export function SpreadResultScreen({ route, navigation }: SpreadResultScreenProp
         )}
 
         {allRevealed && (
-          <PixelButton
-            title={t('common.backHome')}
-            onPress={handleGoBack}
-            variant="ghost"
-            size="medium"
-            style={styles.backButton}
-          />
+          <View style={styles.actionButtons}>
+            <PixelButton
+              title={isSharing ? t('common.sharing') : t('common.share')}
+              onPress={handleShare}
+              variant="primary"
+              size="medium"
+              loading={isSharing}
+            />
+            <PixelButton
+              title={t('common.backHome')}
+              onPress={handleGoBack}
+              variant="ghost"
+              size="medium"
+            />
+          </View>
         )}
       </ScrollView>
+
+      {spread && (() => {
+        const locale = getLocale();
+        const parsedDate = parseDateKey(dateKey);
+        const dateString = parsedDate
+          ? parsedDate.toLocaleDateString(locale === 'ko' ? 'ko-KR' : 'en-US', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+            })
+          : dateKey;
+
+        return (
+          <ShareableSpreadCard
+            ref={shareableCardRef}
+            spread={spread}
+            dateString={dateString}
+          />
+        );
+      })()}
     </SafeAreaView>
   );
 }
@@ -362,6 +429,12 @@ const styles = StyleSheet.create({
   },
   backButton: {
     alignSelf: 'center',
+    marginTop: SPACING.xxl,
+  },
+  actionButtons: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: SPACING.md,
     marginTop: SPACING.xxl,
   },
 });
