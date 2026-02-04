@@ -90,8 +90,7 @@ export const useDrawStore = create<DrawState>()(
             draws: { ...state.draws, ...monthDraws },
             isLoading: false,
           }));
-        } catch (error) {
-          console.error('[DrawStore] Error loading month draws:', error);
+        } catch {
           set({ isLoading: false });
         }
       },
