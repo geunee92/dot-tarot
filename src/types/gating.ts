@@ -14,6 +14,6 @@ export interface GatingLimits {
 
 export const DEFAULT_GATING_LIMITS: GatingLimits = {
   maxClarifierPerDay: 1,
-  maxAnotherTopicPerDay: 2,
+  maxAnotherTopicPerDay: 999,
   adCooldownMs: 2500,
 };

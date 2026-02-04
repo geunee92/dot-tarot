@@ -7,23 +7,23 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
-import Share from 'react-native-share';
+import { shareImage } from '../utils/share';
 import {
   PixelButton,
   PixelText,
-  PixelCard,
   LoadingSpinner,
   TarotCardFlip,
   TarotCardFlipRef,
-  RewardedAdButton,
   ShareableSpreadCard,
   ShareableSpreadCardRef,
+  SkeletonText,
   COLORS,
   SPACING,
   FONTS,
   BORDERS,
 } from '../components';
-import { useSpreadStore, shouldSuggestClarifier } from '../stores/spreadStore';
+import { generateInterpretation } from '../services/ai';
+import { useSpreadStore } from '../stores/spreadStore';
 import { SpreadResultScreenProps } from '../navigation/types';
 import { SpreadPosition, SpreadCard } from '../types';
 import { getMeaning, getKeywords } from '../utils/cards';
@@ -41,15 +41,17 @@ export function SpreadResultScreen({ route, navigation }: SpreadResultScreenProp
   const { dateKey, spreadId, topic, isNewSpread } = route.params;
   
   const [revealedCards, setRevealedCards] = useState<number[]>(isNewSpread ? [] : [0, 1, 2]);
-  const [showClarifier, setShowClarifier] = useState(false);
-  const [isAddingClarifier, setIsAddingClarifier] = useState(false);
   const [isSharing, setIsSharing] = useState(false);
+  const [isLoadingAI, setIsLoadingAI] = useState(false);
+  const [aiInterpretation, setAiInterpretation] = useState<string | null>(null);
+  const [aiError, setAiError] = useState(false);
   const cardRefs = useRef<(TarotCardFlipRef | null)[]>([null, null, null]);
   const shareableCardRef = useRef<ShareableSpreadCardRef>(null);
+  const aiRequestedRef = useRef(false);
 
   const spread = useSpreadStore((s) => s.getSpreadById(dateKey, spreadId));
   const loadSpreadsForDate = useSpreadStore((s) => s.loadSpreadsForDate);
-  const addClarifier = useSpreadStore((s) => s.addClarifier);
+  const updateInterpretation = useSpreadStore((s) => s.updateInterpretation);
   const isHydrated = useSpreadStore((s) => s.isHydrated);
 
   useEffect(() => {
@@ -57,6 +59,12 @@ export function SpreadResultScreen({ route, navigation }: SpreadResultScreenProp
       loadSpreadsForDate(dateKey);
     }
   }, [isHydrated, dateKey, spread]);
+
+  useEffect(() => {
+    aiRequestedRef.current = false;
+    setAiInterpretation(null);
+    setAiError(false);
+  }, [spreadId]);
 
   useEffect(() => {
     if (isNewSpread && revealedCards.length < 3) {
@@ -68,6 +76,33 @@ export function SpreadResultScreen({ route, navigation }: SpreadResultScreenProp
     }
   }, [isNewSpread, revealedCards.length]);
 
+  useEffect(() => {
+    if (!spread) return;
+    
+    if (spread.aiInterpretation) {
+      setAiInterpretation(spread.aiInterpretation);
+      return;
+    }
+    
+    const allRevealed = revealedCards.length === 3;
+    if (!allRevealed || aiRequestedRef.current || isLoadingAI) return;
+    
+    aiRequestedRef.current = true;
+    setIsLoadingAI(true);
+    
+    generateInterpretation(spread)
+      .then(async (interpretation) => {
+        setAiInterpretation(interpretation);
+        await updateInterpretation(dateKey, spreadId, interpretation);
+      })
+      .catch(() => {
+        setAiError(true);
+      })
+      .finally(() => {
+        setIsLoadingAI(false);
+      });
+  }, [spread, revealedCards.length, dateKey, spreadId, updateInterpretation, isLoadingAI]);
+
   const handleCardFlipComplete = useCallback((index: number) => {
     setRevealedCards((prev) => {
       if (prev.includes(index)) return prev;
@@ -75,20 +110,6 @@ export function SpreadResultScreen({ route, navigation }: SpreadResultScreenProp
       return [...prev, index];
     });
   }, []);
-
-  const handleClarifierAdReward = useCallback(async () => {
-    if (!spread || isAddingClarifier) return;
-    
-    setIsAddingClarifier(true);
-    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-    
-    try {
-      await addClarifier(dateKey, spreadId);
-      setShowClarifier(true);
-    } finally {
-      setIsAddingClarifier(false);
-    }
-  }, [spread, addClarifier, dateKey, spreadId, isAddingClarifier]);
 
   const handleGoBack = useCallback(() => {
     navigation.goBack();
@@ -110,16 +131,11 @@ export function SpreadResultScreen({ route, navigation }: SpreadResultScreenProp
         throw new Error('Failed to capture image');
       }
       
-      await Share.open({
+      await shareImage({
+        imageUri: uri,
         message: t('share.message'),
-        url: `file://${uri}`,
-        type: 'image/png',
       });
-    } catch (error: unknown) {
-      if (error instanceof Error && error.message?.includes('User did not share')) {
-        return;
-      }
-      console.error('Share error:', error);
+    } catch {
       Alert.alert(t('share.error'));
     } finally {
       setIsSharing(false);
@@ -140,8 +156,6 @@ export function SpreadResultScreen({ route, navigation }: SpreadResultScreenProp
   }
 
   const allRevealed = revealedCards.length === 3;
-  const suggestClarifier = shouldSuggestClarifier(spread);
-  const hasClarifier = !!spread.clarifier;
 
   return (
     <SafeAreaView style={styles.container} edges={['bottom']}>
@@ -197,71 +211,36 @@ export function SpreadResultScreen({ route, navigation }: SpreadResultScreenProp
 
         {allRevealed && (
           <View style={styles.interpretationSection}>
+            {spread.userQuestion && (
+              <View style={styles.userQuestionBox}>
+                <PixelText variant="caption" style={styles.userQuestionLabel}>
+                  {t('spreadResult.yourQuestion')}
+                </PixelText>
+                <PixelText variant="body" style={styles.userQuestionText}>
+                  "{spread.userQuestion}"
+                </PixelText>
+              </View>
+            )}
+
             <PixelText variant="heading" style={styles.sectionTitle}>
               {t('spreadResult.interpretation')}
             </PixelText>
             
-            <View style={styles.interpretationBox}>
-              <PixelText variant="body" style={styles.interpretationText}>
-                {t(`spreadResult.interpretations.${spread.pattern}.${topic.toLowerCase()}`)}
-              </PixelText>
-            </View>
-
-            {!hasClarifier && (
-              <View style={styles.clarifierSection}>
-                <PixelText variant="body" style={styles.clarifierHint}>
-                  {spread.pattern === 'UUU'
-                    ? t('spreadResult.clarifierHintUUU')
-                    : t('spreadResult.clarifierHintReversed')}
+            {isLoadingAI ? (
+              <SkeletonText lines={5} label={t('spreadResult.aiThinking')} />
+            ) : aiInterpretation ? (
+              <View style={styles.aiInterpretationBox}>
+                <PixelText variant="body" style={styles.interpretationText}>
+                  {aiInterpretation}
                 </PixelText>
-                
-                <RewardedAdButton
-                  title={t('spreadResult.unlockClarifier')}
-                  subtitle={t('spreadResult.watchAdFor')}
-                  onRewardEarned={handleClarifierAdReward}
-                  disabled={isAddingClarifier}
-                />
+              </View>
+            ) : (
+              <View style={styles.interpretationBox}>
+                <PixelText variant="body" style={styles.interpretationText}>
+                  {t(`spreadResult.interpretations.${spread.pattern}.${topic.toLowerCase()}`)}
+                </PixelText>
               </View>
             )}
-
-            {hasClarifier && spread.clarifier && (() => {
-              const isUpright = spread.clarifier.drawnCard.orientation === 'upright';
-              const orientation = isUpright ? 'upright' : 'reversed';
-              
-              return (
-                <View style={styles.clarifierResult}>
-                  <PixelText variant="heading" style={styles.sectionTitle}>
-                    {t('spreadResult.clarifier')}
-                  </PixelText>
-                  
-                  <View style={styles.clarifierCard}>
-                    <PixelCard
-                      card={spread.clarifier.drawnCard.card}
-                      orientation={spread.clarifier.drawnCard.orientation}
-                      size="large"
-                      showDetails
-                    />
-                  </View>
-                  
-                  <View style={[
-                    styles.clarifierInsightBox,
-                    { borderColor: isUpright ? COLORS.upright : COLORS.reversed }
-                  ]}>
-                    <PixelText
-                      variant="body"
-                      style={styles.clarifierInsightTitle}
-                      color={isUpright ? COLORS.upright : COLORS.reversed}
-                    >
-                      {isUpright ? '✨ ' : '⚠️ '}
-                      {t(`spreadResult.clarifierInsights.${spread.pattern}.${orientation}.title`)}
-                    </PixelText>
-                    <PixelText variant="caption" style={styles.clarifierInsightBody}>
-                      {t(`spreadResult.clarifierInsights.${spread.pattern}.${orientation}.body`)}
-                    </PixelText>
-                  </View>
-                </View>
-              );
-            })()}
           </View>
         )}
 
@@ -375,6 +354,21 @@ const styles = StyleSheet.create({
     marginTop: SPACING.xxl,
     gap: SPACING.lg,
   },
+  userQuestionBox: {
+    backgroundColor: COLORS.surface,
+    padding: SPACING.md,
+    borderWidth: BORDERS.thin,
+    borderColor: COLORS.accent,
+    marginBottom: SPACING.md,
+  },
+  userQuestionLabel: {
+    color: COLORS.accent,
+    marginBottom: SPACING.xs,
+  },
+  userQuestionText: {
+    color: COLORS.text,
+    fontStyle: 'italic',
+  },
   sectionTitle: {
     color: COLORS.text,
     marginBottom: SPACING.sm,
@@ -385,47 +379,16 @@ const styles = StyleSheet.create({
     borderWidth: BORDERS.medium,
     borderColor: COLORS.primary,
   },
+  aiInterpretationBox: {
+    backgroundColor: COLORS.surface,
+    padding: SPACING.lg,
+    borderWidth: BORDERS.medium,
+    borderColor: COLORS.accent,
+  },
   interpretationText: {
     color: COLORS.text,
     fontSize: FONTS.md,
     lineHeight: FONTS.md * 1.6,
-  },
-  clarifierSection: {
-    backgroundColor: COLORS.surface,
-    padding: SPACING.lg,
-    borderWidth: BORDERS.medium,
-    borderColor: COLORS.warning,
-    alignItems: 'center',
-    gap: SPACING.md,
-  },
-  clarifierHint: {
-    color: COLORS.textMuted,
-    textAlign: 'center',
-  },
-  adCta: {
-    marginTop: SPACING.sm,
-  },
-  clarifierResult: {
-    marginTop: SPACING.lg,
-  },
-  clarifierCard: {
-    alignItems: 'center',
-    marginTop: SPACING.md,
-  },
-  clarifierInsightBox: {
-    marginTop: SPACING.lg,
-    padding: SPACING.lg,
-    backgroundColor: COLORS.surface,
-    borderWidth: BORDERS.medium,
-  },
-  clarifierInsightTitle: {
-    fontWeight: 'bold',
-    fontSize: FONTS.md,
-    marginBottom: SPACING.sm,
-  },
-  clarifierInsightBody: {
-    color: COLORS.text,
-    lineHeight: FONTS.sm * 1.5,
   },
   backButton: {
     alignSelf: 'center',
