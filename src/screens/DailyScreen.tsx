@@ -110,6 +110,7 @@ export function DailyScreen({ navigation }: DailyScreenProps) {
                 card={todaysDraw.drawnCard.card}
                 orientation={todaysDraw.drawnCard.orientation}
                 size="large"
+                showFullInfo
               />
               <PixelText variant="caption" style={styles.tapHint}>
                 {t('common.tapToView')}
@@ -190,7 +191,7 @@ const styles = StyleSheet.create({
   },
   cardPlaceholder: {
     width: 220,
-    height: 480,
+    height: 495,
     backgroundColor: COLORS.surface,
     borderWidth: BORDERS.medium,
     borderColor: COLORS.border,
