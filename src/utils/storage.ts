@@ -13,8 +13,7 @@ export async function getItem<T>(key: string): Promise<T | null> {
     const value = await AsyncStorage.getItem(key);
     if (value === null) return null;
     return JSON.parse(value) as T;
-  } catch (error) {
-    console.error(`[Storage] Error getting item "${key}":`, error);
+  } catch {
     return null;
   }
 }
@@ -27,8 +26,7 @@ export async function setItem<T>(key: string, value: T): Promise<boolean> {
   try {
     await AsyncStorage.setItem(key, JSON.stringify(value));
     return true;
-  } catch (error) {
-    console.error(`[Storage] Error setting item "${key}":`, error);
+  } catch {
     return false;
   }
 }
@@ -41,8 +39,7 @@ export async function removeItem(key: string): Promise<boolean> {
   try {
     await AsyncStorage.removeItem(key);
     return true;
-  } catch (error) {
-    console.error(`[Storage] Error removing item "${key}":`, error);
+  } catch {
     return false;
   }
 }
@@ -53,9 +50,8 @@ export async function removeItem(key: string): Promise<boolean> {
 export async function getAllKeys(): Promise<string[]> {
   try {
     const keys = await AsyncStorage.getAllKeys();
-    return [...keys]; // Convert readonly to mutable
-  } catch (error) {
-    console.error('[Storage] Error getting all keys:', error);
+    return [...keys];
+  } catch {
     return [];
   }
 }
@@ -68,8 +64,7 @@ export async function clearAll(): Promise<boolean> {
   try {
     await AsyncStorage.clear();
     return true;
-  } catch (error) {
-    console.error('[Storage] Error clearing storage:', error);
+  } catch {
     return false;
   }
 }
@@ -85,8 +80,7 @@ export async function multiGet<T>(keys: string[]): Promise<Map<string, T | null>
       result.set(key, value ? JSON.parse(value) : null);
     }
     return result;
-  } catch (error) {
-    console.error('[Storage] Error in multiGet:', error);
+  } catch {
     return new Map();
   }
 }
