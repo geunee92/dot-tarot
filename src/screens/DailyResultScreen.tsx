@@ -3,14 +3,11 @@ import {
   View,
   ScrollView,
   StyleSheet,
-  TextInput,
-  KeyboardAvoidingView,
-  Platform,
   Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
-import Share from 'react-native-share';
+import { shareImage } from '../utils/share';
 import {
   PixelButton,
   PixelText,
@@ -26,7 +23,7 @@ import {
 } from '../components';
 import { useDrawStore } from '../stores/drawStore';
 import { DailyResultScreenProps } from '../navigation/types';
-import { getMeaning, getKeywords, getTalismanLine, getActionTip } from '../utils/cards';
+import { getMeaning, getKeywords, getDailyContext } from '../utils/cards';
 import { useTranslation, getLocale } from '../i18n';
 import { parseDateKey } from '../utils/date';
 
@@ -35,15 +32,12 @@ export function DailyResultScreen({ route, navigation }: DailyResultScreenProps)
   const { dateKey, isNewDraw } = route.params;
   
   const [hasFlipped, setHasFlipped] = useState(!isNewDraw);
-  const [memo, setMemo] = useState('');
-  const [isSavingMemo, setIsSavingMemo] = useState(false);
   const [isSharing, setIsSharing] = useState(false);
   const flipRef = useRef<TarotCardFlipRef>(null);
   const shareableCardRef = useRef<ShareableCardRef>(null);
 
   const confirmedDraw = useDrawStore((s) => s.draws[dateKey]);
   const pendingDraw = useDrawStore((s) => s.pendingDraw);
-  const addMemo = useDrawStore((s) => s.addMemo);
   const loadDraw = useDrawStore((s) => s.loadDraw);
   const confirmDraw = useDrawStore((s) => s.confirmDraw);
   const clearPendingDraw = useDrawStore((s) => s.clearPendingDraw);
@@ -56,12 +50,6 @@ export function DailyResultScreen({ route, navigation }: DailyResultScreenProps)
       loadDraw(dateKey);
     }
   }, [isHydrated, dateKey, draw]);
-
-  useEffect(() => {
-    if (draw?.memo) {
-      setMemo(draw.memo);
-    }
-  }, [draw?.memo]);
 
   useEffect(() => {
     if (!isNewDraw) return;
@@ -87,19 +75,6 @@ export function DailyResultScreen({ route, navigation }: DailyResultScreenProps)
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
   }, [isNewDraw, confirmDraw]);
 
-  const handleSaveMemo = useCallback(async () => {
-    if (!memo.trim() || isSavingMemo) return;
-    
-    setIsSavingMemo(true);
-    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    
-    try {
-      await addMemo(dateKey, memo.trim());
-    } finally {
-      setIsSavingMemo(false);
-    }
-  }, [addMemo, dateKey, memo, isSavingMemo]);
-
   const handleGoBack = useCallback(() => {
     navigation.goBack();
   }, [navigation]);
@@ -120,16 +95,11 @@ export function DailyResultScreen({ route, navigation }: DailyResultScreenProps)
         throw new Error('Failed to capture image');
       }
       
-      await Share.open({
+      await shareImage({
+        imageUri: uri,
         message: t('share.message'),
-        url: `file://${uri}`,
-        type: 'image/png',
       });
-    } catch (error: unknown) {
-      if (error instanceof Error && error.message?.includes('User did not share')) {
-        return;
-      }
-      console.error('Share error:', error);
+    } catch {
       Alert.alert(t('share.error'));
     } finally {
       setIsSharing(false);
@@ -152,8 +122,7 @@ export function DailyResultScreen({ route, navigation }: DailyResultScreenProps)
   const { card, orientation } = draw.drawnCard;
   const meaning = getMeaning(card, orientation);
   const keywords = getKeywords(card, orientation);
-  const talismanLine = getTalismanLine(card);
-  const actionTip = getActionTip(card);
+  const dailyContext = getDailyContext(card, orientation);
   const isReversed = orientation === 'reversed';
 
   const locale = getLocale();
@@ -168,127 +137,87 @@ export function DailyResultScreen({ route, navigation }: DailyResultScreenProps)
 
   return (
     <SafeAreaView style={styles.container} edges={['bottom']}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.keyboardView}
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
       >
-        <ScrollView
-          style={styles.scrollView}
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-        >
-          <View style={styles.cardSection}>
-            <TarotCardFlip
-              ref={flipRef}
-              card={card}
-              orientation={orientation}
-              isFlipped={!isNewDraw}
-              onFlipComplete={handleFlipComplete}
+        <View style={styles.cardSection}>
+          <TarotCardFlip
+            ref={flipRef}
+            card={card}
+            orientation={orientation}
+            isFlipped={!isNewDraw}
+            onFlipComplete={handleFlipComplete}
+            size="large"
+          />
+          
+          {!hasFlipped && isNewDraw && (
+            <PixelButton
+              title={t('dailyResult.reveal')}
+              onPress={handleFlip}
+              variant="accent"
               size="large"
+              style={styles.revealButton}
             />
-            
-            {!hasFlipped && isNewDraw && (
-              <PixelButton
-                title={t('dailyResult.reveal')}
-                onPress={handleFlip}
-                variant="accent"
-                size="large"
-                style={styles.revealButton}
-              />
-            )}
-          </View>
-
-          {hasFlipped && (
-            <View style={styles.detailsSection}>
-              <View style={styles.meaningSection}>
-                <PixelText variant="heading" style={styles.sectionTitle}>
-                  {t('dailyResult.meaning')}
-                </PixelText>
-                
-                <View style={styles.keywordsRow}>
-                  {keywords.map((kw, i) => (
-                    <View
-                      key={i}
-                      style={[
-                        styles.keywordBadge,
-                        { backgroundColor: isReversed ? COLORS.reversed : COLORS.upright },
-                      ]}
-                    >
-                      <PixelText variant="caption" style={styles.keywordText}>
-                        {kw}
-                      </PixelText>
-                    </View>
-                  ))}
-                </View>
-
-                <PixelText variant="body" style={styles.meaningText}>
-                  {meaning}
-                </PixelText>
-              </View>
-
-              <View style={styles.talismanSection}>
-                <PixelText variant="caption" style={styles.talismanLabel}>
-                  {t('dailyResult.talisman')}
-                </PixelText>
-                <PixelText variant="talisman">
-                  "{talismanLine}"
-                </PixelText>
-              </View>
-
-              <View style={styles.actionSection}>
-                <PixelText variant="caption" style={styles.actionLabel}>
-                  {t('dailyResult.actionTip')}
-                </PixelText>
-                <PixelText variant="body" style={styles.actionText}>
-                  {actionTip}
-                </PixelText>
-              </View>
-
-              <View style={styles.memoSection}>
-                <PixelText variant="heading" style={styles.sectionTitle}>
-                  {t('dailyResult.reflection')}
-                </PixelText>
-                
-                <TextInput
-                  style={styles.memoInput}
-                  placeholder={t('dailyResult.memoPlaceholder')}
-                  placeholderTextColor={COLORS.textDark}
-                  value={memo}
-                  onChangeText={setMemo}
-                  multiline
-                  numberOfLines={4}
-                  textAlignVertical="top"
-                />
-                
-                <PixelButton
-                  title={isSavingMemo ? t('common.saving') : t('dailyResult.saveMemo')}
-                  onPress={handleSaveMemo}
-                  variant="secondary"
-                  size="medium"
-                  loading={isSavingMemo}
-                  disabled={!memo.trim() || memo === draw.memo}
-                />
-              </View>
-
-              <View style={styles.actionButtons}>
-                <PixelButton
-                  title={isSharing ? t('common.sharing') : t('common.share')}
-                  onPress={handleShare}
-                  variant="primary"
-                  size="medium"
-                  loading={isSharing}
-                />
-                <PixelButton
-                  title={t('common.backHome')}
-                  onPress={handleGoBack}
-                  variant="ghost"
-                  size="medium"
-                />
-              </View>
-            </View>
           )}
-        </ScrollView>
-      </KeyboardAvoidingView>
+        </View>
+
+        {hasFlipped && (
+          <View style={styles.detailsSection}>
+            <View style={styles.meaningSection}>
+              <PixelText variant="heading" style={styles.sectionTitle}>
+                {t('dailyResult.meaning')}
+              </PixelText>
+              
+              <View style={styles.keywordsRow}>
+                {keywords.map((kw, i) => (
+                  <View
+                    key={i}
+                    style={[
+                      styles.keywordBadge,
+                      { backgroundColor: isReversed ? COLORS.reversed : COLORS.upright },
+                    ]}
+                  >
+                    <PixelText variant="caption" style={styles.keywordText}>
+                      {kw}
+                    </PixelText>
+                  </View>
+                ))}
+              </View>
+
+              <PixelText variant="body" style={styles.meaningText}>
+                {meaning}
+              </PixelText>
+            </View>
+
+            <View style={styles.dailyContextSection}>
+              <PixelText variant="caption" style={styles.dailyContextLabel}>
+                {t('dailyResult.dailyContext')}
+              </PixelText>
+              <PixelText variant="body" style={styles.dailyContextText}>
+                {dailyContext}
+              </PixelText>
+            </View>
+
+            <View style={styles.actionButtons}>
+              <PixelButton
+                title={isSharing ? t('common.sharing') : t('common.share')}
+                onPress={handleShare}
+                variant="primary"
+                size="medium"
+                loading={isSharing}
+              />
+              <PixelButton
+                title={t('common.backHome')}
+                onPress={handleGoBack}
+                variant="ghost"
+                size="medium"
+              />
+            </View>
+          </View>
+        )}
+      </ScrollView>
       
       <ShareableCard
         ref={shareableCardRef}
@@ -304,9 +233,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.background,
-  },
-  keyboardView: {
-    flex: 1,
   },
   loadingContainer: {
     flex: 1,
@@ -362,46 +288,22 @@ const styles = StyleSheet.create({
     color: COLORS.text,
     lineHeight: FONTS.md * 1.6,
   },
-  talismanSection: {
-    backgroundColor: COLORS.primaryDark,
-    padding: SPACING.lg,
-    borderWidth: BORDERS.medium,
-    borderColor: COLORS.primary,
-    alignItems: 'center',
-  },
-  talismanLabel: {
-    color: COLORS.textMuted,
-    marginBottom: SPACING.sm,
-  },
-  actionSection: {
+  dailyContextSection: {
     backgroundColor: COLORS.surface,
     padding: SPACING.lg,
     borderWidth: BORDERS.medium,
-    borderColor: COLORS.border,
+    borderColor: COLORS.accent,
+    borderLeftWidth: 4,
   },
-  actionLabel: {
+  dailyContextLabel: {
     color: COLORS.accent,
     marginBottom: SPACING.sm,
     fontWeight: 'bold',
   },
-  actionText: {
+  dailyContextText: {
     color: COLORS.text,
-  },
-  memoSection: {
-    backgroundColor: COLORS.surface,
-    padding: SPACING.lg,
-    borderWidth: BORDERS.medium,
-    borderColor: COLORS.border,
-  },
-  memoInput: {
-    backgroundColor: COLORS.background,
-    borderWidth: BORDERS.thin,
-    borderColor: COLORS.border,
-    padding: SPACING.md,
-    color: COLORS.text,
-    fontSize: FONTS.md,
-    minHeight: 100,
-    marginBottom: SPACING.md,
+    lineHeight: FONTS.md * 1.6,
+    fontStyle: 'italic',
   },
   actionButtons: {
     flexDirection: 'row',
