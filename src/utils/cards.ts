@@ -212,6 +212,15 @@ export function getActionTip(card: TarotCard): string {
 }
 
 /**
+ * Get daily context based on orientation (localized)
+ * Provides personal context for why this card is meaningful as today's talisman
+ */
+export function getDailyContext(card: TarotCard, orientation: CardOrientation): string {
+  const localizedCard = getLocalizedCard(card);
+  return orientation === 'upright' ? localizedCard.dailyContextUpright : localizedCard.dailyContextReversed;
+}
+
+/**
  * Get display text for orientation
  */
 export function getOrientationLabel(orientation: CardOrientation): string {

@@ -9,6 +9,8 @@ export interface TarotCard {
   meaningReversed: string;
   talismanLine: string;
   actionTip: string;
+  dailyContextUpright: string;
+  dailyContextReversed: string;
 }
 
 export type CardOrientation = 'upright' | 'reversed';

@@ -16,7 +16,9 @@
     "meaningUpright": "A fresh start wants your first step. Keep it light and learn as you go.",
     "meaningReversed": "Slow down—your excitement is outrunning your plan. Check one risk before you jump.",
     "talismanLine": "Step lightly, but step.",
-    "actionTip": "Try the smallest version of the plan in 10 minutes."
+    "actionTip": "Try the smallest version of the plan in 10 minutes.",
+    "dailyContextUpright": "Today carries the energy of new beginnings. You don't have to be perfect—the courage to take that first step is your talisman today.",
+    "dailyContextReversed": "Today is a day to pause and check. Let your excitement settle for a moment, verify just one thing, and then move forward."
   },
   {
     "id": 1,
@@ -35,7 +37,9 @@
     "meaningUpright": "You already have enough tools. Focus and turn intent into action.",
     "meaningReversed": "Energy is leaking into distractions. Cut one promise or one tab and commit to one move.",
     "talismanLine": "One tool, one spell.",
-    "actionTip": "Pick one task and finish the first 20% today."
+    "actionTip": "Pick one task and finish the first 20% today.",
+    "dailyContextUpright": "Everything you need is already in your hands today. This talisman reminds you: 'I can do this.'",
+    "dailyContextReversed": "Today your focus may scatter easily. Look at this talisman and remember: 'just one thing.' Promise less, deliver more."
   },
   {
     "id": 2,
@@ -54,7 +58,9 @@
     "meaningUpright": "Your gut knows what your mouth can't say yet. Listen before you act.",
     "meaningReversed": "Noise is masking your signal. Pause the debate and ask what you actually feel.",
     "talismanLine": "Quiet reveals the answer.",
-    "actionTip": "Write the question, then the first honest sentence that comes."
+    "actionTip": "Write the question, then the first honest sentence that comes.",
+    "dailyContextUpright": "Today you can trust your intuition. Your heart knows things your mind hasn't caught up to yet. This talisman reminds you to listen to your inner voice.",
+    "dailyContextReversed": "Today your thoughts may run wild. Look at this talisman, pause for a moment, and quietly ask yourself what you truly feel."
   },
   {
     "id": 3,
@@ -73,7 +79,9 @@
     "meaningUpright": "Care creates momentum. Feed the right thing and it will grow.",
     "meaningReversed": "Too much or too little is draining you. Restore balance—protect your time and energy.",
     "talismanLine": "Care is power.",
-    "actionTip": "Do one supportive act for your future self (food, rest, tidy)."
+    "actionTip": "Do one supportive act for your future self (food, rest, tidy).",
+    "dailyContextUpright": "Today, taking care of yourself is the most productive thing you can do. This talisman says: 'It's okay to nurture yourself first.'",
+    "dailyContextReversed": "Today calls for balance. Are you giving too much or too little to yourself? Look at this talisman and check in."
   },
   {
     "id": 4,
@@ -92,7 +100,9 @@
     "meaningUpright": "Make a rule and follow it. Clear boundaries reduce chaos.",
     "meaningReversed": "Control is turning into friction. Loosen the grip where it doesn't matter.",
     "talismanLine": "Rule the day, not the people.",
-    "actionTip": "Define one boundary: what you will not do today."
+    "actionTip": "Define one boundary: what you will not do today.",
+    "dailyContextUpright": "Today, clear boundaries and structure will protect you. Look at this talisman and hold to the rules you've set for yourself.",
+    "dailyContextReversed": "Today is a time to loosen your grip. Don't try to control everything—look at this talisman and focus only on what truly matters."
   },
   {
     "id": 5,
@@ -111,7 +121,9 @@
     "meaningUpright": "A proven path can save time. Learn from a trusted source.",
     "meaningReversed": "Old rules are blocking progress. Keep the lesson, drop the unnecessary ritual.",
     "talismanLine": "Borrow wisdom, not chains.",
-    "actionTip": "Ask one mentor-like question or read one reliable page."
+    "actionTip": "Ask one mentor-like question or read one reliable page.",
+    "dailyContextUpright": "Today you don't have to figure it out alone—it's okay to borrow wisdom. This talisman says: 'Asking for help is also a skill.'",
+    "dailyContextReversed": "Today, question the thought 'that's just how it's always been.' Look at this talisman and boldly let go of one outdated rule."
   },
   {
     "id": 6,
@@ -130,7 +142,9 @@
     "meaningUpright": "Choose what matches your values. Alignment beats excitement.",
     "meaningReversed": "A split desire is draining you. Decide what matters most and let the rest go.",
     "talismanLine": "Choose the honest yes.",
-    "actionTip": "Name your top value for this decision in one word."
+    "actionTip": "Name your top value for this decision in one word.",
+    "dailyContextUpright": "Today you can make a choice that aligns with your heart. This talisman gives you courage to follow your values.",
+    "dailyContextReversed": "Today decisions may feel hard. Look at this talisman and be honest with yourself about what you truly want."
   },
   {
     "id": 7,
@@ -149,7 +163,9 @@
     "meaningUpright": "Pick a direction and push. Momentum rewards focus.",
     "meaningReversed": "You're moving fast but not straight. Re-aim before you accelerate again.",
     "talismanLine": "One road, full heart.",
-    "actionTip": "Remove one distraction and set a 45-minute sprint."
+    "actionTip": "Remove one distraction and set a 45-minute sprint.",
+    "dailyContextUpright": "Today momentum is on your side. Choose a direction and push forward—this talisman fuels your drive.",
+    "dailyContextReversed": "Today you might be moving fast but not straight. Look at this talisman and re-aim before you accelerate again."
   },
   {
     "id": 8,
@@ -168,7 +184,9 @@
     "meaningUpright": "Soft control is real strength. Keep steady; you're closer than you think.",
     "meaningReversed": "Your inner voice is harsh. Rebuild stamina with kindness and one small win.",
     "talismanLine": "Strong is calm.",
-    "actionTip": "Do the easiest hard thing first, then rest."
+    "actionTip": "Do the easiest hard thing first, then rest.",
+    "dailyContextUpright": "Today, gentle persistence is your superpower. This talisman reminds you: you're closer than you think. Stay steady.",
+    "dailyContextReversed": "Today your inner critic may be loud. Look at this talisman and be kind to yourself. One small win will rebuild your strength."
   },
   {
     "id": 9,
@@ -187,7 +205,9 @@
     "meaningUpright": "Step back to see clearly. A quiet hour can save a noisy week.",
     "meaningReversed": "Hiding won't heal it. Reconnect with one person or one fact you can verify.",
     "talismanLine": "Light the lamp inside.",
-    "actionTip": "Take a 20-minute quiet walk or no-phone break."
+    "actionTip": "Take a 20-minute quiet walk or no-phone break.",
+    "dailyContextUpright": "Today solitude is your ally. Step back from the noise—this talisman lights your inner lamp so you can see clearly.",
+    "dailyContextReversed": "Today hiding won't help. Look at this talisman and reach out to one person or verify one fact. Connection heals."
   },
   {
     "id": 10,
@@ -206,7 +226,9 @@
     "meaningUpright": "The cycle shifts. Catch the opening and ride the change.",
     "meaningReversed": "The same pattern repeats. Break it with one different choice today.",
     "talismanLine": "Turn with the wheel.",
-    "actionTip": "Do one thing at a new time or in a new order."
+    "actionTip": "Do one thing at a new time or in a new order.",
+    "dailyContextUpright": "Today the wheel turns in your favor. This talisman says: catch the opening and ride the momentum of change.",
+    "dailyContextReversed": "Today an old pattern might repeat. Look at this talisman and break the cycle with one different choice."
   },
   {
     "id": 11,
@@ -225,7 +247,9 @@
     "meaningUpright": "Be honest and precise. Clean decisions come from clean facts.",
     "meaningReversed": "Your story might be tilted. Recheck assumptions and own your part.",
     "talismanLine": "Truth is the sharpest blade.",
-    "actionTip": "Write the facts vs. feelings in two short lines."
+    "actionTip": "Write the facts vs. feelings in two short lines.",
+    "dailyContextUpright": "Today clarity comes from honesty. This talisman sharpens your judgment—clean facts lead to clean decisions.",
+    "dailyContextReversed": "Today your perspective might be tilted. Look at this talisman and recheck your assumptions. Own your part."
   },
   {
     "id": 12,
@@ -244,7 +268,9 @@
     "meaningUpright": "Stop pushing. A new angle unlocks the next step.",
     "meaningReversed": "Waiting is becoming stuck. Choose a deadline or a smaller move.",
     "talismanLine": "Pause to progress.",
-    "actionTip": "Ask: what if I reverse the approach?"
+    "actionTip": "Ask: what if I reverse the approach?",
+    "dailyContextUpright": "Today, stop pushing. This talisman invites you to see things from a new angle—sometimes pausing is progress.",
+    "dailyContextReversed": "Today waiting is becoming stalling. Look at this talisman and set a deadline or take one small step forward."
   },
   {
     "id": 13,
@@ -263,7 +289,9 @@
     "meaningUpright": "Close the chapter to open the door. Clean endings are gifts.",
     "meaningReversed": "You're holding what already left. Release one attachment—space invites renewal.",
     "talismanLine": "End it to begin it.",
-    "actionTip": "Delete/declutter one thing you've been avoiding."
+    "actionTip": "Delete/declutter one thing you've been avoiding.",
+    "dailyContextUpright": "Today is a day for clean endings. This talisman reminds you: closing one door opens another. Let go to move forward.",
+    "dailyContextReversed": "Today you might be holding onto something that's already gone. Look at this talisman and release one attachment. Space invites renewal."
   },
   {
     "id": 14,
@@ -282,7 +310,9 @@
     "meaningUpright": "Blend, don't force. Small adjustments create big stability.",
     "meaningReversed": "Too much/too fast is cracking the balance. Return to basics.",
     "talismanLine": "Steady mixes win.",
-    "actionTip": "Reduce one extreme: speed, spending, or screen time."
+    "actionTip": "Reduce one extreme: speed, spending, or screen time.",
+    "dailyContextUpright": "Today harmony comes through moderation. This talisman guides you: blend, don't force. Small adjustments create stability.",
+    "dailyContextReversed": "Today too much or too fast is throwing things off. Look at this talisman and return to basics. Slow and steady."
   },
   {
     "id": 15,
@@ -301,7 +331,9 @@
     "meaningUpright": "Name the craving. What you label, you can manage.",
     "meaningReversed": "You can break the loop. One clean boundary starts freedom.",
     "talismanLine": "Name it, tame it.",
-    "actionTip": "Replace one bad loop with a 5-minute good loop."
+    "actionTip": "Replace one bad loop with a 5-minute good loop.",
+    "dailyContextUpright": "Today, name what pulls at you. This talisman reminds you: what you can label, you can manage. Awareness is the first step.",
+    "dailyContextReversed": "Today you have the power to break a loop. Look at this talisman and set one clean boundary. Freedom starts with one 'no.'"
   },
   {
     "id": 16,
@@ -320,7 +352,9 @@
     "meaningUpright": "A shaky thing falls so you can rebuild right. Don't cling to false safety.",
     "meaningReversed": "You're sensing a crack. Fix it early or it will choose the timing for you.",
     "talismanLine": "Clear the rubble.",
-    "actionTip": "Address the one uncomfortable truth with a small action."
+    "actionTip": "Address the one uncomfortable truth with a small action.",
+    "dailyContextUpright": "Today something shaky may fall—so you can rebuild right. This talisman says: don't cling to false safety. Clear the rubble.",
+    "dailyContextReversed": "Today you're sensing a crack somewhere. Look at this talisman and fix it early—before it chooses the timing for you."
   },
   {
     "id": 17,
@@ -339,7 +373,9 @@
     "meaningUpright": "Healing is happening. Keep going—small progress counts.",
     "meaningReversed": "Hope needs a plan. Ground the dream with one real step.",
     "talismanLine": "Hope with hands.",
-    "actionTip": "Do one tiny step that future-you will thank you for."
+    "actionTip": "Do one tiny step that future-you will thank you for.",
+    "dailyContextUpright": "Today healing is happening, even if you can't see it yet. This talisman reminds you: keep going. Small progress counts.",
+    "dailyContextReversed": "Today hope needs grounding. Look at this talisman and take one real step toward your dream. Hope with hands."
   },
   {
     "id": 18,
@@ -358,7 +394,9 @@
     "meaningUpright": "Not everything is clear yet. Move slowly and listen to subtle signals.",
     "meaningReversed": "Your mind is filling gaps with fear. Verify before you conclude.",
     "talismanLine": "When unsure, verify.",
-    "actionTip": "Ask one clarifying question instead of guessing."
+    "actionTip": "Ask one clarifying question instead of guessing.",
+    "dailyContextUpright": "Today not everything is clear, and that's okay. This talisman guides you: move slowly and listen to subtle signals.",
+    "dailyContextReversed": "Today your mind may fill gaps with fear. Look at this talisman and verify before you conclude. Ask, don't assume."
   },
   {
     "id": 19,
@@ -377,7 +415,9 @@
     "meaningUpright": "Visibility and energy are on your side. Share, lead, and enjoy the win.",
     "meaningReversed": "Slow the celebration. Rest and double-check details so the win stays a win.",
     "talismanLine": "Shine, then recharge.",
-    "actionTip": "Finish the last 5% and take a real break."
+    "actionTip": "Finish the last 5% and take a real break.",
+    "dailyContextUpright": "Today the sun shines on you. This talisman says: share your light, lead with confidence, and enjoy your wins.",
+    "dailyContextReversed": "Today, don't rush the celebration. Look at this talisman and double-check the details. Rest so your win stays a win."
   },
   {
     "id": 20,
@@ -396,7 +436,9 @@
     "meaningUpright": "It's time to answer the call. Learn from the past and step up.",
     "meaningReversed": "Stop punishing yourself. Turn the lesson into a new attempt.",
     "talismanLine": "Rise again.",
-    "actionTip": "Redo one small part instead of rewriting everything."
+    "actionTip": "Redo one small part instead of rewriting everything.",
+    "dailyContextUpright": "Today is a day of awakening. This talisman calls you to rise—learn from the past and step up to what's next.",
+    "dailyContextReversed": "Today, stop punishing yourself for the past. Look at this talisman and turn that lesson into a new attempt. Rise again."
   },
   {
     "id": 21,
@@ -415,6 +457,8 @@
     "meaningUpright": "A cycle completes. Celebrate—then lock it in with a clean finish.",
     "meaningReversed": "You're close but unfinished. One final pass turns effort into result.",
     "talismanLine": "Finish is a skill.",
-    "actionTip": "Close one open loop today (send, file, pay, confirm)."
+    "actionTip": "Close one open loop today (send, file, pay, confirm).",
+    "dailyContextUpright": "Today a cycle completes. This talisman celebrates your journey—lock in your win with a clean finish.",
+    "dailyContextReversed": "Today you're close but not quite done. Look at this talisman and make one final pass. Finishing is a skill."
   }
 ]
