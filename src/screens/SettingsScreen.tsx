@@ -13,7 +13,11 @@ import {
   SPACING,
   BORDERS,
 } from '../components';
-import { clearAll } from '../utils/storage';
+import { clearAll, setItem } from '../utils/storage';
+import { useDrawStore } from '../stores/drawStore';
+import { useRewardStore } from '../stores/rewardStore';
+import { drawRandomCard } from '../utils/cards';
+import { getDrawKey } from '../utils/storage';
 
 const { DevSettings } = NativeModules;
 
@@ -22,6 +26,42 @@ const APP_VERSION = '1.0.0';
 export function SettingsScreen({ navigation }: SettingsScreenProps) {
   const { t } = useTranslation();
   const [isResetting, setIsResetting] = useState(false);
+  const [isInjecting, setIsInjecting] = useState(false);
+
+  const handleInject56Days = useCallback(async () => {
+    if (isInjecting) return;
+    setIsInjecting(true);
+
+    try {
+      const now = Date.now();
+      const fakeDraws: Record<string, any> = {};
+
+      for (let i = 0; i < 56; i++) {
+        const date = new Date(now - i * 24 * 60 * 60 * 1000);
+        const dateKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+        const draw = {
+          dateKey,
+          drawnCard: drawRandomCard(),
+          createdAt: date.getTime(),
+        };
+        fakeDraws[dateKey] = draw;
+        await setItem(getDrawKey(dateKey), draw);
+      }
+
+      useDrawStore.setState((state) => ({
+        draws: { ...state.draws, ...fakeDraws },
+      }));
+
+      const allDates = Object.keys(useDrawStore.getState().draws);
+      await useRewardStore.getState().checkAndUnlockRewards(allDates);
+
+      Alert.alert('Dev', `Injected 56 days. Total draws: ${allDates.length}. Check card backs!`);
+    } catch (e: any) {
+      Alert.alert('Error', e.message);
+    } finally {
+      setIsInjecting(false);
+    }
+  }, [isInjecting]);
 
   const handleResetData = useCallback(() => {
     Alert.alert(
@@ -78,19 +118,37 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
           </PixelText>
         </View>
 
-        <View style={styles.dangerZone}>
-          <PixelText variant="caption" style={styles.dangerLabel}>
-            {t('settings.dangerZone')}
-          </PixelText>
-          <PixelButton
-            title={isResetting ? t('settings.resetting') : t('settings.resetData')}
-            onPress={handleResetData}
-            variant="secondary"
-            size="medium"
-            loading={isResetting}
-            disabled={isResetting}
-          />
-        </View>
+        {__DEV__ && (
+          <View style={styles.dangerZone}>
+            <PixelText variant="caption" style={styles.dangerLabel}>
+              {t('settings.dangerZone')}
+            </PixelText>
+            <PixelButton
+              title={isResetting ? t('settings.resetting') : t('settings.resetData')}
+              onPress={handleResetData}
+              variant="secondary"
+              size="medium"
+              loading={isResetting}
+              disabled={isResetting}
+            />
+          </View>
+        )}
+
+        {__DEV__ && (
+          <View style={styles.devZone}>
+            <PixelText variant="caption" style={styles.devLabel}>
+              DEV TOOLS
+            </PixelText>
+            <PixelButton
+              title={isInjecting ? 'Injecting...' : 'Inject 56 Days Attendance'}
+              onPress={handleInject56Days}
+              variant="primary"
+              size="medium"
+              loading={isInjecting}
+              disabled={isInjecting}
+            />
+          </View>
+        )}
 
         <PixelButton
           title={t('common.backHome')}
@@ -148,5 +206,16 @@ const styles = StyleSheet.create({
   },
   dangerLabel: {
     color: COLORS.error,
+  },
+  devZone: {
+    padding: SPACING.lg,
+    backgroundColor: COLORS.surface,
+    borderWidth: BORDERS.medium,
+    borderColor: COLORS.accent,
+    gap: SPACING.md,
+  },
+  devLabel: {
+    color: COLORS.accent,
+    fontWeight: 'bold',
   },
 });

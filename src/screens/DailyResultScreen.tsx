@@ -3,19 +3,15 @@ import {
   View,
   ScrollView,
   StyleSheet,
-  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
-import { shareImage } from '../utils/share';
 import {
   PixelButton,
   PixelText,
   TarotCardFlip,
   TarotCardFlipRef,
   LoadingSpinner,
-  ShareableCard,
-  ShareableCardRef,
   COLORS,
   SPACING,
   FONTS,
@@ -24,17 +20,14 @@ import {
 import { useDrawStore } from '../stores/drawStore';
 import { DailyResultScreenProps } from '../navigation/types';
 import { getMeaning, getKeywords, getDailyContext } from '../utils/cards';
-import { useTranslation, getLocale } from '../i18n';
-import { parseDateKey } from '../utils/date';
+import { useTranslation } from '../i18n';
 
 export function DailyResultScreen({ route, navigation }: DailyResultScreenProps) {
   const { t } = useTranslation();
   const { dateKey, isNewDraw } = route.params;
   
   const [hasFlipped, setHasFlipped] = useState(!isNewDraw);
-  const [isSharing, setIsSharing] = useState(false);
   const flipRef = useRef<TarotCardFlipRef>(null);
-  const shareableCardRef = useRef<ShareableCardRef>(null);
 
   const confirmedDraw = useDrawStore((s) => s.draws[dateKey]);
   const pendingDraw = useDrawStore((s) => s.pendingDraw);
@@ -79,33 +72,6 @@ export function DailyResultScreen({ route, navigation }: DailyResultScreenProps)
     navigation.goBack();
   }, [navigation]);
 
-  const handleShare = useCallback(async () => {
-    if (isSharing) return;
-    
-    setIsSharing(true);
-    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    
-    try {
-      if (!shareableCardRef.current) {
-        throw new Error('ShareableCard ref not ready');
-      }
-      
-      const uri = await shareableCardRef.current.capture();
-      if (!uri) {
-        throw new Error('Failed to capture image');
-      }
-      
-      await shareImage({
-        imageUri: uri,
-        message: t('share.message'),
-      });
-    } catch {
-      Alert.alert(t('share.error'));
-    } finally {
-      setIsSharing(false);
-    }
-  }, [isSharing, t]);
-
   if (!draw) {
     return (
       <SafeAreaView style={styles.container}>
@@ -124,16 +90,6 @@ export function DailyResultScreen({ route, navigation }: DailyResultScreenProps)
   const keywords = getKeywords(card, orientation);
   const dailyContext = getDailyContext(card, orientation);
   const isReversed = orientation === 'reversed';
-
-  const locale = getLocale();
-  const parsedDate = parseDateKey(dateKey);
-  const dateString = parsedDate
-    ? parsedDate.toLocaleDateString(locale === 'ko' ? 'ko-KR' : 'en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      })
-    : dateKey;
 
   return (
     <SafeAreaView style={styles.container} edges={['bottom']}>
@@ -202,13 +158,6 @@ export function DailyResultScreen({ route, navigation }: DailyResultScreenProps)
 
             <View style={styles.actionButtons}>
               <PixelButton
-                title={isSharing ? t('common.sharing') : t('common.share')}
-                onPress={handleShare}
-                variant="primary"
-                size="medium"
-                loading={isSharing}
-              />
-              <PixelButton
                 title={t('common.backHome')}
                 onPress={handleGoBack}
                 variant="ghost"
@@ -218,13 +167,6 @@ export function DailyResultScreen({ route, navigation }: DailyResultScreenProps)
           </View>
         )}
       </ScrollView>
-      
-      <ShareableCard
-        ref={shareableCardRef}
-        card={card}
-        orientation={orientation}
-        dateString={dateString}
-      />
     </SafeAreaView>
   );
 }
