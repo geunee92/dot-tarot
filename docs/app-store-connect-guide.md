@@ -224,17 +224,24 @@ https://geunee92.github.io/dot-tarot/support.html
 This is a tarot card reading app with pixel art style.
 
 Key features:
-- Free daily tarot card reading
+- Free daily tarot card reading with personalized daily context
 - 3-card spread readings for Love, Money, and Work topics
+- AI-powered interpretation for 3-card spreads (via Cloudflare Workers API)
+- Optional user question input before spread reading
 - Calendar to track reading history
 - Card back skin rewards for daily attendance
 
 Monetization:
-- Free with Google AdMob ads (test IDs currently in use)
+- Free with Google AdMob rewarded video ads (production IDs)
+- Daily card is always free
+- One free 3-card spread per day
 - Additional readings unlocked via rewarded video ads
 
-No user login or account required.
-All data stored locally on device.
+Technical:
+- No user login or account required
+- All reading data stored locally on device
+- AI interpretation calls external API (Cloudflare Workers)
+- No personal data collected or transmitted
 ```
 
 ---
