@@ -57,7 +57,7 @@ https://geunee92.github.io/dot-tarot/privacy.html
 
 ### 프로모션 텍스트 (Promotional Text) - 170자 제한
 ```
-픽셀 감성으로 만나는 나만의 타로 리딩! 매일 무료로 오늘의 카드를 뽑고, 3장 스프레드로 연애/금전/직장 운세를 확인하세요. 레트로 게임 감성의 힐링 타로 앱.
+픽셀 감성으로 만나는 나만의 타로 리딩! 매일 무료로 오늘의 카드를 뽑고, AI가 해석하는 3장 스프레드로 연애/금전/직장 운세를 확인하세요. 레트로 감성 타로 앱.
 ```
 
 ### 설명 (Description)
@@ -71,14 +71,13 @@ https://geunee92.github.io/dot-tarot/privacy.html
 오늘의 카드
 • 매일 1장 무료 카드 리딩
 • 정방향/역방향 해석 제공
-• 오늘의 부적과 실천 팁
-• 나만의 메모 저장
+• "오늘, 이 카드가 당신에게" - 매일 새로운 개인 메시지
+• 공유 기능으로 친구에게 오늘의 카드 전달
 
 3장 스프레드
 • 연애, 금전, 직장 주제별 리딩
 • 흐름 - 영향 - 조언 3장 구성
-• 에너지 패턴 분석
-• 클래리파이어 카드로 심화 해석
+• AI가 해석하는 맞춤형 리딩 결과
 
 나의 여정
 • 캘린더로 리딩 기록 확인
@@ -90,6 +89,10 @@ https://geunee92.github.io/dot-tarot/privacy.html
 픽셀 아트 타로 카드
 22장의 메이저 아르카나를 레트로 픽셀 아트로 재해석했습니다.
 8비트 게임 감성으로 친근하게 다가가는 타로 경험을 선사합니다.
+
+AI 타로 해석
+3장 스프레드의 결과를 AI가 맥락에 맞게 해석해드립니다.
+단순 키워드가 아닌, 당신의 질문에 맞춘 깊은 통찰을 제공합니다.
 
 무료로 즐기는 타로
 오늘의 카드는 매일 무료! 
@@ -131,7 +134,7 @@ tarot,free tarot,daily tarot,tarot cards,fortune,horoscope,pixel,retro,8bit,card
 
 ### 프로모션 텍스트 (Promotional Text) - 170자 제한
 ```
-Discover daily guidance through beautiful pixel art tarot! Free daily card readings, 3-card spreads for love, money & career. Retro gaming meets mystical insight.
+Discover daily guidance through beautiful pixel art tarot! Free daily readings with AI-powered 3-card spreads for love, money & career. Retro gaming meets insight.
 ```
 
 ### 설명 (Description)
@@ -145,14 +148,13 @@ A cozy, 8-bit approach to mindful moments ✨
 Daily Card
 • Free daily tarot reading
 • Upright & reversed interpretations
-• Today's talisman and action tips
-• Save personal reflections
+• "Today, This Card Says to You" - personalized daily message
+• Share your card with friends
 
 3-Card Spread
 • Choose your focus: Love, Money, or Work
 • Flow - Influence - Advice layout
-• Energy pattern analysis
-• Clarifier card for deeper insight
+• AI-powered contextual interpretations
 
 My Journey
 • Calendar view of your readings
@@ -164,6 +166,10 @@ My Journey
 Pixel Art Tarot Cards
 22 Major Arcana cards reimagined in beautiful pixel art.
 Experience tarot with nostalgic 8-bit gaming charm.
+
+AI-Powered Readings
+Our 3-card spreads feature AI interpretations tailored to your question.
+Get meaningful insights, not just generic keywords.
 
 Free to Enjoy
 Daily card is always free!
