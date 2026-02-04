@@ -13,6 +13,7 @@ import {
   LoadingSpinner,
   GradientBackground,
   RewardedAdButton,
+  QuestionInputModal,
   COLORS,
   SPACING,
   FONTS,
@@ -43,6 +44,8 @@ export function SpreadsScreen({ navigation }: SpreadsScreenProps) {
   const { t } = useTranslation();
   const [isCreatingSpread, setIsCreatingSpread] = useState<SpreadTopic | null>(null);
   const [selectedAdTopic, setSelectedAdTopic] = useState<SpreadTopic | null>(null);
+  const [questionModalTopic, setQuestionModalTopic] = useState<SpreadTopic | null>(null);
+  const [pendingSpreadType, setPendingSpreadType] = useState<'free' | 'ad' | null>(null);
 
   const isSpreadHydrated = useSpreadStore((s) => s.isHydrated);
   const isGatingHydrated = useGatingStore((s) => s.isHydrated);
@@ -50,19 +53,12 @@ export function SpreadsScreen({ navigation }: SpreadsScreenProps) {
   const allSpreads = useSpreadStore((s) => s.spreads);
 
   const createSpread = useSpreadStore((s) => s.createSpread);
-  const getUsedTopicsForDate = useSpreadStore((s) => s.getUsedTopicsForDate);
   const canDoFreeSpread = useGatingStore((s) => s.canDoFreeSpread);
   const useFreeSpread = useGatingStore((s) => s.useFreeSpread);
-  const canUseAnotherTopic = useGatingStore((s) => s.canUseAnotherTopic);
   const useAnotherTopic = useGatingStore((s) => s.useAnotherTopic);
   const loadGatingForDate = useGatingStore((s) => s.loadGatingForDate);
 
   const isHydrated = isSpreadHydrated && isGatingHydrated && isSettingsHydrated;
-  
-  const usedTopics = useMemo(() => {
-    if (!isHydrated) return new Set<SpreadTopic>();
-    return new Set(getUsedTopicsForDate());
-  }, [isHydrated, allSpreads, getUsedTopicsForDate]);
 
   const recentSpreads = useMemo(() => {
     const flatSpreads: SpreadRecord[] = [];
@@ -87,21 +83,47 @@ export function SpreadsScreen({ navigation }: SpreadsScreenProps) {
     const isFree = canDoFreeSpread(dateKey);
     
     if (!isFree) {
-      if (usedTopics.has(topic)) {
-        await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
-        return;
-      }
       setSelectedAdTopic(topic);
       await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
       return;
     }
     
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    setQuestionModalTopic(topic);
+    setPendingSpreadType('free');
+  }, [canDoFreeSpread, isCreatingSpread]);
+
+  const handleAdReward = useCallback(async () => {
+    if (!selectedAdTopic || isCreatingSpread) return;
+    
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    setQuestionModalTopic(selectedAdTopic);
+    setPendingSpreadType('ad');
+    setSelectedAdTopic(null);
+  }, [selectedAdTopic, isCreatingSpread]);
+
+  const handleCancelAdTopic = useCallback(() => {
+    setSelectedAdTopic(null);
+  }, []);
+
+  const handleQuestionSubmit = useCallback(async (userQuestion: string | undefined) => {
+    if (!questionModalTopic || isCreatingSpread) return;
+    
+    const topic = questionModalTopic;
+    const dateKey = getLocalDateKey();
+    
+    setQuestionModalTopic(null);
     setIsCreatingSpread(topic);
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
     
     try {
-      await useFreeSpread(dateKey);
-      const spread = await createSpread(topic, dateKey);
+      if (pendingSpreadType === 'free') {
+        await useFreeSpread(dateKey);
+      } else if (pendingSpreadType === 'ad') {
+        await useAnotherTopic(dateKey);
+      }
+      
+      const spread = await createSpread(topic, userQuestion, dateKey);
       navigation.navigate('SpreadResult', {
         dateKey,
         spreadId: spread.id,
@@ -110,32 +132,13 @@ export function SpreadsScreen({ navigation }: SpreadsScreenProps) {
       });
     } finally {
       setIsCreatingSpread(null);
+      setPendingSpreadType(null);
     }
-  }, [canDoFreeSpread, useFreeSpread, createSpread, navigation, isCreatingSpread, usedTopics]);
+  }, [questionModalTopic, isCreatingSpread, pendingSpreadType, useFreeSpread, useAnotherTopic, createSpread, navigation]);
 
-  const handleAdReward = useCallback(async () => {
-    if (!selectedAdTopic || isCreatingSpread) return;
-    
-    const dateKey = getLocalDateKey();
-    setIsCreatingSpread(selectedAdTopic);
-    
-    try {
-      await useAnotherTopic(dateKey);
-      const spread = await createSpread(selectedAdTopic, dateKey);
-      setSelectedAdTopic(null);
-      navigation.navigate('SpreadResult', {
-        dateKey,
-        spreadId: spread.id,
-        topic: selectedAdTopic,
-        isNewSpread: true,
-      });
-    } finally {
-      setIsCreatingSpread(null);
-    }
-  }, [selectedAdTopic, isCreatingSpread, useAnotherTopic, createSpread, navigation]);
-
-  const handleCancelAdTopic = useCallback(() => {
-    setSelectedAdTopic(null);
+  const handleQuestionModalClose = useCallback(() => {
+    setQuestionModalTopic(null);
+    setPendingSpreadType(null);
   }, []);
 
   const handleViewSpread = useCallback((spread: SpreadRecord) => {
@@ -173,7 +176,6 @@ export function SpreadsScreen({ navigation }: SpreadsScreenProps) {
   }
 
   const freeSpreadAvailable = canDoFreeSpread();
-  const anotherTopicAvailable = canUseAnotherTopic();
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -201,41 +203,28 @@ export function SpreadsScreen({ navigation }: SpreadsScreenProps) {
         <View style={styles.topicsRow}>
           {TOPIC_IDS.map((topic) => {
             const isSelected = selectedAdTopic === topic.id;
-            const isUsed = usedTopics.has(topic.id);
-            const noAdQuotaLeft = !anotherTopicAvailable;
-            const isDisabledForAd = !freeSpreadAvailable && (isUsed || noAdQuotaLeft);
-            const isDisabled = !freeSpreadAvailable && isDisabledForAd;
             
             return (
               <Pressable
                 key={topic.id}
                 onPress={() => handleTopicPress(topic.id)}
-                disabled={isDisabled || isCreatingSpread !== null}
+                disabled={isCreatingSpread !== null}
                 style={({ pressed }) => [
                   styles.topicCard,
                   pressed && styles.topicCardPressed,
                   isSelected && styles.topicCardSelected,
-                  isDisabled && styles.topicCardDisabled,
                 ]}
               >
                 <PixelText variant="title" style={styles.topicEmoji}>
                   {topic.emoji}
                 </PixelText>
-                <PixelText
-                  variant="caption"
-                  style={isDisabled ? styles.topicLabelDisabled : styles.topicLabel}
-                >
+                <PixelText variant="caption" style={styles.topicLabel}>
                   {t(`home.topics.${topic.id.toLowerCase()}`)}
                 </PixelText>
                 {isCreatingSpread === topic.id && (
                   <LoadingSpinner size={24} color={COLORS.accent} />
                 )}
-                {!freeSpreadAvailable && isUsed && (
-                  <View style={styles.doneBadge}>
-                    <PixelText variant="caption" style={styles.doneBadgeText}>✓</PixelText>
-                  </View>
-                )}
-                {!freeSpreadAvailable && !isUsed && !isSelected && anotherTopicAvailable && (
+                {!freeSpreadAvailable && !isSelected && (
                   <View style={styles.adIconBadge}>
                     <PixelText variant="caption" style={styles.adIconText}>▶</PixelText>
                   </View>
@@ -294,6 +283,12 @@ export function SpreadsScreen({ navigation }: SpreadsScreenProps) {
                     </PixelText>
                   </View>
                   
+                  {spread.userQuestion && (
+                    <PixelText variant="caption" style={styles.historyQuestion} numberOfLines={2}>
+                      "{spread.userQuestion}"
+                    </PixelText>
+                  )}
+                  
                   <View style={styles.miniCardsRow}>
                     {spread.cards.map((sc, i) => (
                       <View key={i} style={styles.miniCard}>
@@ -313,13 +308,7 @@ export function SpreadsScreen({ navigation }: SpreadsScreenProps) {
                       </View>
                     ))}
                     
-                    {spread.clarifier && (
-                      <View style={[styles.miniCard, styles.clarifierMini]}>
-                        <PixelText variant="caption" style={styles.miniCardNumber}>
-                          +{spread.clarifier.drawnCard.card.id}
-                        </PixelText>
-                      </View>
-                    )}
+
                   </View>
                   
                   <PixelText variant="caption" style={styles.tapHint}>
@@ -331,6 +320,15 @@ export function SpreadsScreen({ navigation }: SpreadsScreenProps) {
           </View>
         )}
       </ScrollView>
+
+      {questionModalTopic && (
+        <QuestionInputModal
+          visible={!!questionModalTopic}
+          topic={questionModalTopic}
+          onSubmit={handleQuestionSubmit}
+          onClose={handleQuestionModalClose}
+        />
+      )}
     </SafeAreaView>
   );
 }
@@ -394,9 +392,6 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.surfaceLight,
     borderColor: COLORS.accent,
   },
-  topicCardDisabled: {
-    opacity: 0.5,
-  },
   topicCardSelected: {
     borderColor: COLORS.accent,
     borderWidth: BORDERS.thick,
@@ -407,9 +402,6 @@ const styles = StyleSheet.create({
   },
   topicLabel: {
     color: COLORS.text,
-  },
-  topicLabelDisabled: {
-    color: COLORS.textDark,
   },
   adIconBadge: {
     position: 'absolute',
@@ -424,21 +416,6 @@ const styles = StyleSheet.create({
   adIconText: {
     color: COLORS.background,
     fontSize: 10,
-  },
-  doneBadge: {
-    position: 'absolute',
-    top: SPACING.xs,
-    right: SPACING.xs,
-    backgroundColor: COLORS.success,
-    width: 20,
-    height: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  doneBadgeText: {
-    color: COLORS.background,
-    fontSize: 10,
-    fontWeight: 'bold',
   },
   adSection: {
     backgroundColor: COLORS.surface,
@@ -503,6 +480,11 @@ const styles = StyleSheet.create({
   historyDate: {
     color: COLORS.textMuted,
   },
+  historyQuestion: {
+    color: COLORS.textMuted,
+    fontStyle: 'italic',
+    marginBottom: SPACING.sm,
+  },
   miniCardsRow: {
     flexDirection: 'row',
     gap: SPACING.sm,
@@ -515,9 +497,6 @@ const styles = StyleSheet.create({
     borderColor: COLORS.border,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  clarifierMini: {
-    borderColor: COLORS.accent,
   },
   miniCardNumber: {
     color: COLORS.text,

@@ -7,12 +7,11 @@ import {
   SpreadPosition,
   CombinationPattern,
   SpreadCard,
-  ClarifierCard,
   TOPIC_MODIFIERS,
   CardOrientation,
 } from '../types';
 import { getLocalDateKey } from '../utils/date';
-import { drawRandomCards, drawRandomCardExcluding } from '../utils/cards';
+import { drawRandomCards } from '../utils/cards';
 import { getSpreadsKey, getItem, setItem } from '../utils/storage';
 
 const EMPTY_SPREADS: SpreadRecord[] = [];
@@ -52,8 +51,8 @@ interface SpreadState {
   // Actions
   setHydrated: (hydrated: boolean) => void;
   loadSpreadsForDate: (dateKey: string) => Promise<SpreadRecord[]>;
-  createSpread: (topic: SpreadTopic, dateKey?: string) => Promise<SpreadRecord>;
-  addClarifier: (dateKey: string, spreadId: string) => Promise<SpreadRecord | null>;
+  createSpread: (topic: SpreadTopic, userQuestion?: string, dateKey?: string) => Promise<SpreadRecord>;
+  updateInterpretation: (dateKey: string, spreadId: string, interpretation: string) => Promise<SpreadRecord | null>;
   getSpreadsForDate: (dateKey: string) => SpreadRecord[];
   getSpreadById: (dateKey: string, spreadId: string) => SpreadRecord | null;
   getTodaysSpreads: () => SpreadRecord[];
@@ -95,7 +94,7 @@ export const useSpreadStore = create<SpreadState>()(
       },
       
       // Create a new 3-card spread
-      createSpread: async (topic, dateKey) => {
+      createSpread: async (topic, userQuestion, dateKey) => {
         const targetDate = dateKey || getLocalDateKey();
         
         // Draw 3 cards with orientations
@@ -129,6 +128,7 @@ export const useSpreadStore = create<SpreadState>()(
           pattern,
           modifier,
           createdAt: Date.now(),
+          ...(userQuestion && { userQuestion }),
         };
         
         // Get existing spreads for date
@@ -147,8 +147,8 @@ export const useSpreadStore = create<SpreadState>()(
         return newSpread;
       },
       
-      // Add clarifier card to existing spread
-      addClarifier: async (dateKey, spreadId) => {
+      // Update AI interpretation for a spread
+      updateInterpretation: async (dateKey, spreadId, interpretation) => {
         const spreads = get().spreads[dateKey];
         if (!spreads) return null;
         
@@ -156,22 +156,12 @@ export const useSpreadStore = create<SpreadState>()(
         if (spreadIndex === -1) return null;
         
         const spread = spreads[spreadIndex];
-        if (spread.clarifier) {
-          // Already has clarifier
-          return spread;
-        }
         
-        const existingCardIds = spread.cards.map(c => c.drawnCard.card.id);
-        const clarifierDrawn = drawRandomCardExcluding(existingCardIds);
-        const clarifier: ClarifierCard = {
-          drawnCard: clarifierDrawn,
-          unlockedAt: Date.now(),
-        };
-        
-        // Update spread
+        // Update spread with AI interpretation
         const updatedSpread: SpreadRecord = {
           ...spread,
-          clarifier,
+          aiInterpretation: interpretation,
+          aiGeneratedAt: Date.now(),
         };
         
         const updatedSpreads = [...spreads];
@@ -264,18 +254,4 @@ export function getPatternHintKeys(pattern: CombinationPattern): {
   };
 }
 
-/**
- * Check if clarifier should be suggested
- * Per spec: Show if P3 reversed OR total reversed >= 2
- */
-export function shouldSuggestClarifier(spread: SpreadRecord): boolean {
-  // P3 (ADVICE) is reversed
-  const adviceReversed = spread.cards[2].drawnCard.orientation === 'reversed';
-  
-  // Count total reversed
-  const totalReversed = spread.cards.filter(
-    (c) => c.drawnCard.orientation === 'reversed'
-  ).length;
-  
-  return adviceReversed || totalReversed >= 2;
-}
+

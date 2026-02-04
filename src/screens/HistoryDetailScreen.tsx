@@ -195,6 +195,12 @@ export function HistoryDetailScreen({ route, navigation }: HistoryDetailScreenPr
                     </PixelText>
                   </View>
                   
+                  {spread.userQuestion && (
+                    <PixelText variant="caption" style={styles.spreadQuestion} numberOfLines={2}>
+                      "{spread.userQuestion}"
+                    </PixelText>
+                  )}
+                  
                   <View style={styles.spreadCards}>
                     {spread.cards.map((sc, i) => (
                       <View key={i} style={styles.miniCard}>
@@ -214,13 +220,7 @@ export function HistoryDetailScreen({ route, navigation }: HistoryDetailScreenPr
                       </View>
                     ))}
                     
-                    {spread.clarifier && (
-                      <View style={[styles.miniCard, styles.clarifierMini]}>
-                        <PixelText variant="caption" style={styles.miniCardNumber}>
-                          +{spread.clarifier.drawnCard.card.id}
-                        </PixelText>
-                      </View>
-                    )}
+
                   </View>
                   
                   <PixelText variant="caption" style={styles.tapHint}>
@@ -349,6 +349,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: FONTS.lg,
   },
+  spreadQuestion: {
+    color: COLORS.textMuted,
+    fontStyle: 'italic',
+    marginBottom: SPACING.sm,
+  },
   spreadCards: {
     flexDirection: 'row',
     gap: SPACING.sm,
@@ -361,9 +366,6 @@ const styles = StyleSheet.create({
     borderColor: COLORS.border,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  clarifierMini: {
-    borderColor: COLORS.accent,
   },
   miniCardNumber: {
     color: COLORS.text,

@@ -42,6 +42,7 @@
   "dailyResult": {
     "reveal": "Reveal Your Card",
     "meaning": "Card Meaning",
+    "dailyContext": "Today, This Card Says to You",
     "talisman": "Today's Talisman",
     "actionTip": "Action Tip",
     "reflection": "Your Reflection",
@@ -114,6 +115,8 @@
       }
     },
     "interpretation": "Reading Interpretation",
+    "aiThinking": "AI is thinking",
+    "yourQuestion": "Your Question",
     "energyTone": "Energy Tone",
     "suggestedApproach": "Suggested Approach",
     "clarifierHint": "Your reading has some reversed energy. A clarifier card can provide additional guidance.",
@@ -275,5 +278,18 @@
     "title": "Choose a Topic",
     "subtitle": "Select a topic for your 3-card reading",
     "recentReadings": "Recent Readings"
+  },
+  "questionModal": {
+    "title": "Ask about %{topic}",
+    "placeholder": "Enter your question...",
+    "charCount": "%{count}/30",
+    "example": "Example: \"%{example}\"",
+    "startReading": "Start Reading",
+    "skip": "Skip",
+    "topicLabels": {
+      "love": "love",
+      "money": "money",
+      "work": "work"
+    }
   }
 }

@@ -13,11 +13,6 @@ export interface SpreadCard {
   drawnCard: DrawnCard;
 }
 
-export interface ClarifierCard {
-  drawnCard: DrawnCard;
-  unlockedAt: number;
-}
-
 export interface SpreadRecord {
   id: string;
   dateKey: string;
@@ -25,8 +20,10 @@ export interface SpreadRecord {
   cards: [SpreadCard, SpreadCard, SpreadCard];
   pattern: CombinationPattern;
   modifier: ReversalModifier;
-  clarifier?: ClarifierCard;
   createdAt: number;
+  userQuestion?: string;
+  aiInterpretation?: string;
+  aiGeneratedAt?: number;
 }
 
 export const TOPIC_MODIFIERS: Record<SpreadTopic, ReversalModifier> = {
