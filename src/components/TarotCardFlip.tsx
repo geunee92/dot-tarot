@@ -2,6 +2,7 @@ import React, { forwardRef, useRef, useImperativeHandle } from 'react';
 import { View, Text, Image, StyleSheet, ViewStyle } from 'react-native';
 import { FlipCard, FlipCardRef } from './FlipCard';
 import { COLORS, SPACING, BORDERS, FONTS } from './theme';
+import { getCardDimensions } from './cardConstants';
 import { TarotCard, CardOrientation } from '../types';
 import { getCardImageSource, getKeywords, getTalismanLine, getCardName } from '../utils/cards';
 import { useRewardStore } from '../stores/rewardStore';
@@ -20,32 +21,7 @@ export interface TarotCardFlipRef {
   flipTo: (flipped: boolean) => void;
 }
 
-const IMAGE_ASPECT_RATIO = 1.5;
 
-const CARD_WIDTHS = {
-  small: 100,
-  medium: 160,
-  large: 220,
-};
-
-const CARD_INFO_HEIGHTS = {
-  small: 105,
-  medium: 150,
-  large: 165,
-};
-
-const getCardDimensions = (size: 'small' | 'medium' | 'large') => {
-  const width = CARD_WIDTHS[size];
-  const imageHeight = width * IMAGE_ASPECT_RATIO;
-  const cardInfoHeight = CARD_INFO_HEIGHTS[size];
-  const totalHeight = imageHeight + cardInfoHeight;
-  return {
-    width,
-    imageHeight,
-    cardInfoHeight,
-    totalHeight,
-  };
-};
 
 export const TarotCardFlip = forwardRef<TarotCardFlipRef, TarotCardFlipProps>(
   ({ card, orientation, isFlipped, onFlipComplete, size = 'large', style }, ref) => {
@@ -107,11 +83,9 @@ export const TarotCardFlip = forwardRef<TarotCardFlipRef, TarotCardFlipProps>(
             </Text>
           </View>
 
-          <View style={styles.keywordsContainer}>
-            {keywords.slice(0, 3).map((kw, i) => (
-              <Text key={i} style={styles.keyword}>{kw}</Text>
-            ))}
-          </View>
+          <Text style={styles.keywords}>
+            {keywords.slice(0, 3).join(' · ')}
+          </Text>
 
           <Text style={styles.talismanLine} numberOfLines={2}>"{talismanLine}"</Text>
         </View>
@@ -208,15 +182,10 @@ const styles = StyleSheet.create({
     color: COLORS.background,
     letterSpacing: 1,
   },
-  keywordsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    flexWrap: 'wrap',
-    gap: SPACING.xs,
-  },
-  keyword: {
+  keywords: {
     fontSize: FONTS.sm,
     color: COLORS.textMuted,
+    textAlign: 'center',
   },
   talismanLine: {
     fontSize: FONTS.md,

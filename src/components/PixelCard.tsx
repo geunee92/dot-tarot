@@ -1,29 +1,24 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, ViewStyle } from 'react-native';
 import { COLORS, SPACING, BORDERS, FONTS, SHADOWS, FONT_FAMILY } from './theme';
+import { getCardDimensions, CardSize } from './cardConstants';
 import { TarotCard, CardOrientation } from '../types';
-import { getCardImageSource, getKeywords, getMeaning, getCardName } from '../utils/cards';
+import { getCardImageSource, getKeywords, getMeaning, getCardName, getTalismanLine } from '../utils/cards';
 
 interface PixelCardProps {
   card: TarotCard;
   orientation: CardOrientation;
   showDetails?: boolean;
-  size?: 'small' | 'medium' | 'large';
+  showFullInfo?: boolean;
+  size?: CardSize;
   style?: ViewStyle;
 }
-
-const IMAGE_ASPECT_RATIO = 1.5;
-
-const CARD_WIDTHS: Record<'small' | 'medium' | 'large', number> = {
-  small: 100,
-  medium: 160,
-  large: 220,
-};
 
 export function PixelCard({
   card,
   orientation,
   showDetails = false,
+  showFullInfo = false,
   size = 'medium',
   style,
 }: PixelCardProps) {
@@ -31,14 +26,15 @@ export function PixelCard({
   const keywords = getKeywords(card, orientation);
   const meaning = getMeaning(card, orientation);
   const cardName = getCardName(card);
+  const talismanLine = getTalismanLine(card);
   const isReversed = orientation === 'reversed';
   const orientationColor = isReversed ? COLORS.reversed : COLORS.upright;
   
-  const width = CARD_WIDTHS[size];
-  const imageHeight = width * IMAGE_ASPECT_RATIO;
+  const { width, imageHeight, cardInfoHeight, totalHeight } = getCardDimensions(size);
+  const cardHeight = showFullInfo ? totalHeight : undefined;
 
   return (
-    <View style={[styles.card, { width }, style]}>
+    <View style={[styles.card, { width, height: cardHeight }, style]}>
       <View style={[styles.imageContainer, { height: imageHeight }, isReversed && styles.reversed]}>
         <Image
           source={cardImageSource}
@@ -47,18 +43,40 @@ export function PixelCard({
         />
       </View>
       
-      <View style={styles.nameContainer}>
-        <Text style={styles.cardName} numberOfLines={1}>
-          {cardName.toUpperCase()}
-        </Text>
-        <View style={[styles.orientationBadge, { backgroundColor: orientationColor }]}>
-          <Text style={styles.orientationText}>
-            {isReversed ? '▼' : '▲'}
+      {showFullInfo ? (
+        <View style={[styles.cardInfo, { height: cardInfoHeight }]}>
+          <Text style={styles.cardInfoName} numberOfLines={1}>
+            {cardName}
+          </Text>
+          
+          <View style={[styles.fullInfoBadge, { backgroundColor: orientationColor }]}>
+            <Text style={styles.fullInfoBadgeText}>
+              {isReversed ? 'REVERSED' : 'UPRIGHT'}
+            </Text>
+          </View>
+
+          <Text style={styles.fullInfoKeywords}>
+            {keywords.slice(0, 3).join(' · ')}
+          </Text>
+
+          <Text style={styles.talismanLine} numberOfLines={2}>
+            "{talismanLine}"
           </Text>
         </View>
-      </View>
+      ) : (
+        <View style={styles.nameContainer}>
+          <Text style={styles.cardName} numberOfLines={1}>
+            {cardName.toUpperCase()}
+          </Text>
+          <View style={[styles.orientationBadge, { backgroundColor: orientationColor }]}>
+            <Text style={styles.orientationText}>
+              {isReversed ? '▼' : '▲'}
+            </Text>
+          </View>
+        </View>
+      )}
       
-      {showDetails && (
+      {showDetails && !showFullInfo && (
         <View style={styles.details}>
           <View style={styles.keywordsContainer}>
             {keywords.map((kw, i) => (
@@ -151,5 +169,38 @@ const styles = StyleSheet.create({
     fontSize: FONTS.xs,
     color: COLORS.textMuted,
     lineHeight: FONTS.xs * 2,
+  },
+  cardInfo: {
+    padding: SPACING.md,
+    backgroundColor: COLORS.surfaceLight,
+    justifyContent: 'space-between',
+  },
+  cardInfoName: {
+    fontSize: FONTS.lg,
+    fontWeight: 'bold',
+    color: COLORS.text,
+    textAlign: 'center',
+  },
+  fullInfoBadge: {
+    alignSelf: 'center',
+    paddingHorizontal: SPACING.md,
+    paddingVertical: SPACING.xs,
+  },
+  fullInfoBadgeText: {
+    fontSize: FONTS.xs,
+    fontWeight: 'bold',
+    color: COLORS.background,
+    letterSpacing: 1,
+  },
+  fullInfoKeywords: {
+    fontSize: FONTS.sm,
+    color: COLORS.textMuted,
+    textAlign: 'center',
+  },
+  talismanLine: {
+    fontSize: FONTS.md,
+    fontStyle: 'italic',
+    color: COLORS.accent,
+    textAlign: 'center',
   },
 });
