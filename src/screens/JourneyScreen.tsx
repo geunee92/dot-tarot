@@ -33,7 +33,6 @@ import {
   getMonthKey,
   getPreviousMonthKey,
   getNextMonthKey,
-  countAttendanceInMonth,
 } from '../utils/date';
 
 export function JourneyScreen({ navigation }: JourneyScreenProps) {
@@ -45,9 +44,7 @@ export function JourneyScreen({ navigation }: JourneyScreenProps) {
   const isRewardHydrated = useRewardStore((s) => s.isHydrated);
   const isSettingsHydrated = useSettingsStore((s) => s.isHydrated);
 
-  const getDrawDates = useDrawStore((s) => s.getDrawDates);
   const loadDrawsForMonth = useDrawStore((s) => s.loadDrawsForMonth);
-  const getSpreadDates = useSpreadStore((s) => s.getSpreadDates);
   const loadSpreadsForDate = useSpreadStore((s) => s.loadSpreadsForDate);
 
   const unlockedSkinIds = useRewardStore((s) => s.unlockedSkins);
@@ -55,6 +52,9 @@ export function JourneyScreen({ navigation }: JourneyScreenProps) {
   const selectSkin = useRewardStore((s) => s.selectSkin);
 
   const isHydrated = isDrawHydrated && isSpreadHydrated && isRewardHydrated && isSettingsHydrated;
+
+  const draws = useDrawStore((s) => s.draws);
+  const spreadsState = useSpreadStore((s) => s.spreads);
 
   const unlockedSkins = useMemo(() => {
     return BACK_SKINS.filter((skin) => unlockedSkinIds.includes(skin.id));
@@ -64,19 +64,19 @@ export function JourneyScreen({ navigation }: JourneyScreenProps) {
     return BACK_SKINS.filter((skin) => !unlockedSkinIds.includes(skin.id));
   }, [unlockedSkinIds]);
 
-  const drawDates = useMemo(() => getDrawDates(), [isHydrated]);
-  const attendanceDays = countAttendanceInMonth(drawDates, currentMonth);
+  const drawDates = useMemo(() => Object.keys(draws), [draws]);
+  const totalAttendanceDays = drawDates.length;
   
   const nextMilestone = useMemo(() => {
     for (const milestone of REWARD_MILESTONES) {
-      if (attendanceDays < milestone.days && !unlockedSkinIds.includes(milestone.skinId)) {
+      if (totalAttendanceDays < milestone.days && !unlockedSkinIds.includes(milestone.skinId)) {
         return milestone;
       }
     }
     return null;
-  }, [attendanceDays, unlockedSkinIds]);
+  }, [totalAttendanceDays, unlockedSkinIds]);
 
-  const progress = getMilestoneProgress(attendanceDays, nextMilestone);
+  const progress = getMilestoneProgress(totalAttendanceDays, nextMilestone);
 
   useEffect(() => {
     if (isHydrated) {
@@ -90,8 +90,10 @@ export function JourneyScreen({ navigation }: JourneyScreenProps) {
   }, [drawDates]);
 
   const spreadDatesSet = useMemo(() => {
-    return new Set(getSpreadDates());
-  }, [isHydrated, getSpreadDates]);
+    return new Set(
+      Object.keys(spreadsState).filter((dateKey) => spreadsState[dateKey].length > 0)
+    );
+  }, [spreadsState]);
 
   const handleCalendarDayPress = useCallback((dateKey: string) => {
     if (!dateKey) return;
@@ -168,7 +170,7 @@ export function JourneyScreen({ navigation }: JourneyScreenProps) {
                 {t('deck.thisMonth')}
               </PixelText>
               <PixelText variant="body" style={styles.progressValue}>
-                {attendanceDays} {t('deck.days')}
+                {totalAttendanceDays} {t('deck.days')}
               </PixelText>
             </View>
             
@@ -178,7 +180,7 @@ export function JourneyScreen({ navigation }: JourneyScreenProps) {
             
             {nextMilestone ? (
               <PixelText variant="caption" style={styles.nextMilestone}>
-                {t('deck.nextRewardAt', { days: nextMilestone.days, remaining: nextMilestone.days - attendanceDays })}
+                {t('deck.nextRewardAt', { days: nextMilestone.days, remaining: nextMilestone.days - totalAttendanceDays })}
               </PixelText>
             ) : (
               <PixelText variant="caption" style={styles.allUnlocked}>

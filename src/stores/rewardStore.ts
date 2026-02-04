@@ -116,10 +116,10 @@ export const useRewardStore = create<RewardStoreState>()(
       
       // Check attendance and unlock rewards
       // Returns newly unlocked skin ID or null
+      // Uses TOTAL cumulative attendance (all-time), not per-month
       checkAndUnlockRewards: async (drawDates) => {
         const { unlockedSkins } = get();
-        const currentMonth = getMonthKey();
-        const attendanceDays = countAttendanceInMonth(drawDates, currentMonth);
+        const attendanceDays = drawDates.length;
         
         let newlyUnlocked: string | null = null;
         const updatedUnlocked = [...unlockedSkins];
