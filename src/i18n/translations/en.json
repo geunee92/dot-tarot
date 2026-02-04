@@ -11,17 +11,9 @@
     "backHome": "Back to Home",
     "saving": "Saving...",
     "retry": "Retry",
-    "share": "Share",
-    "sharing": "Sharing..."
+    "share": "Share"
   },
-  "share": {
-    "tagline": "Discover your destiny with DOT TAROT",
-    "cta": "Get Your Daily Reading",
-    "ctaSubtext": "Search DOT TAROT on App Store",
-    "message": "Check out my tarot reading! 🔮\n\nGet yours too 👉 Search DOT TAROT on App Store",
-    "success": "Shared successfully!",
-    "error": "Failed to share"
-  },
+
   "home": {
     "title": "DOT TAROT",
     "cardBacks": "Card Backs",

@@ -15,12 +15,21 @@ import Constants from 'expo-constants';
 // Check if running in Expo Go (no native modules)
 const isExpoGo = Constants.appOwnership === 'expo';
 
+// Google's official test ad unit IDs (for development builds)
+const TEST_REWARDED_AD_UNIT_ID = Platform.select({
+  android: 'ca-app-pub-3940256099942544/5224354917',
+  ios: 'ca-app-pub-3940256099942544/1712485313',
+  default: 'ca-app-pub-3940256099942544/5224354917',
+});
+
 // Production ad unit IDs
-const REWARDED_AD_UNIT_ID = Platform.select({
+const PRODUCTION_REWARDED_AD_UNIT_ID = Platform.select({
   android: 'ca-app-pub-5957078713826547/7178538743',
   ios: 'ca-app-pub-5957078713826547/1324981807',
   default: 'ca-app-pub-5957078713826547/7178538743',
 });
+
+const REWARDED_AD_UNIT_ID = __DEV__ ? TEST_REWARDED_AD_UNIT_ID : PRODUCTION_REWARDED_AD_UNIT_ID;
 
 // ============================================
 // Types
@@ -103,9 +112,10 @@ const realAds = {
     
     try {
       await mobileAds().initialize();
+      if (__DEV__) console.log('[AdMob] Initialized, loading ad with', __DEV__ ? 'TEST' : 'PRODUCTION', 'unit ID');
       realAds.load();
-    } catch {
-      /* empty - fallback to mock */
+    } catch (e) {
+      if (__DEV__) console.warn('[AdMob] Init failed:', e);
     }
   },
   
@@ -136,7 +146,8 @@ const realAds = {
       
       const unsubscribeError = rewardedAd.addAdEventListener(
         AdEventType.ERROR,
-        () => {
+        (error: any) => {
+          if (__DEV__) console.warn('[AdMob] Load error:', error?.message || error);
           adLoaded = false;
           adLoading = false;
           setTimeout(() => realAds.load(), 5000);
