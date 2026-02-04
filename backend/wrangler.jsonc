@@ -1,0 +1,14 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "taro-ai-api",
+  "main": "src/index.ts",
+  "compatibility_date": "2024-01-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "placement": {
+    "mode": "smart",
+    "hint": "wnam"
+  },
+  "kv_namespaces": [
+    { "binding": "RATE_LIMIT", "id": "fdedcfa229e6460793cdcd26690ad193", "preview_id": "9c1c7b1723174a8fbaeff4650547e4ad" }
+  ]
+}
