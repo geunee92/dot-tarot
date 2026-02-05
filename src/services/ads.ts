@@ -11,6 +11,7 @@
 
 import { Platform } from 'react-native';
 import Constants from 'expo-constants';
+import { requestTrackingPermissionsAsync } from 'expo-tracking-transparency';
 
 // Check if running in Expo Go (no native modules)
 const isExpoGo = Constants.appOwnership === 'expo';
@@ -111,6 +112,16 @@ const realAds = {
     }
     
     try {
+      // Request ATT permission before initializing AdMob (iOS 14+)
+      if (Platform.OS === 'ios') {
+        try {
+          const { status } = await requestTrackingPermissionsAsync();
+          if (__DEV__) console.log('[ATT] Tracking permission status:', status);
+        } catch (e) {
+          if (__DEV__) console.warn('[ATT] Permission request failed:', e);
+        }
+      }
+      
       await mobileAds().initialize();
       if (__DEV__) console.log('[AdMob] Initialized, loading ad with', __DEV__ ? 'TEST' : 'PRODUCTION', 'unit ID');
       realAds.load();
