@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { DailyDraw } from '../types';
+import { DailyDraw, Reflection, ReflectionAccuracy } from '../types';
 import { getLocalDateKey, getMonthKey } from '../utils/date';
 import { drawRandomCard } from '../utils/cards';
 import { getDrawKey, getAllDrawKeys, getItem, setItem, removeItem } from '../utils/storage';
@@ -33,6 +33,7 @@ interface DrawState {
   addMemo: (dateKey: string, memo: string) => Promise<boolean>;
   getDrawsForMonth: (monthKey: string) => DailyDraw[];
   getDrawDates: () => string[];
+  updateReflection: (dateKey: string, accuracy: ReflectionAccuracy, text?: string) => Promise<boolean>;
 }
 
 // ============================================
@@ -241,6 +242,33 @@ export const useDrawStore = create<DrawState>()(
       // Get all dates that have draws
       getDrawDates: () => {
         return Object.keys(get().draws);
+      },
+      
+      updateReflection: async (dateKey, accuracy, text) => {
+        const draw = get().draws[dateKey];
+        if (!draw) return false;
+        
+        const reflection: Reflection = {
+          accuracy,
+          text: text?.trim(),
+          createdAt: Date.now(),
+        };
+        
+        const updatedDraw: DailyDraw = {
+          ...draw,
+          reflection,
+        };
+        
+        const storageKey = getDrawKey(dateKey);
+        const saved = await setItem(storageKey, updatedDraw);
+        
+        if (saved) {
+          set((state) => ({
+            draws: { ...state.draws, [dateKey]: updatedDraw },
+          }));
+        }
+        
+        return saved;
       },
     }),
     {
