@@ -1,5 +1,13 @@
-import React, { forwardRef, useRef, useImperativeHandle } from 'react';
+import React, { forwardRef, useRef, useImperativeHandle, useEffect } from 'react';
 import { View, Text, Image, StyleSheet, ViewStyle } from 'react-native';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withRepeat,
+  withSequence,
+  withTiming,
+  withDelay,
+} from 'react-native-reanimated';
 import { FlipCard, FlipCardRef } from './FlipCard';
 import { COLORS, SPACING, BORDERS, FONTS } from './theme';
 import { getCardDimensions } from './cardConstants';
@@ -27,6 +35,33 @@ export const TarotCardFlip = forwardRef<TarotCardFlipRef, TarotCardFlipProps>(
   ({ card, orientation, isFlipped, onFlipComplete, size = 'large', style }, ref) => {
     const flipCardRef = useRef<FlipCardRef>(null);
     const selectedSkin = useRewardStore((state) => state.getSelectedSkin());
+    
+    const glowOpacity = useSharedValue(0);
+    const [isRevealed, setIsRevealed] = React.useState(!!isFlipped);
+
+    useEffect(() => {
+      if (isRevealed) {
+        glowOpacity.value = withDelay(
+          500,
+          withRepeat(
+            withSequence(
+              withTiming(0.8, { duration: 1500 }),
+              withTiming(0.3, { duration: 1500 })
+            ),
+            -1,
+            true
+          )
+        );
+      }
+    }, [isRevealed]);
+
+    const glowStyle = useAnimatedStyle(() => ({
+      shadowColor: COLORS.accent,
+      shadowOffset: { width: 0, height: 0 },
+      shadowOpacity: glowOpacity.value,
+      shadowRadius: 12,
+      elevation: glowOpacity.value > 0 ? 8 : 0,
+    }));
     
     useImperativeHandle(ref, () => ({
       flip: () => flipCardRef.current?.flip(),
@@ -60,7 +95,7 @@ export const TarotCardFlip = forwardRef<TarotCardFlipRef, TarotCardFlipProps>(
     );
 
     const frontContent = (
-      <View style={[styles.cardFront, { width, height: totalHeight }]}>
+      <Animated.View style={[styles.cardFront, { width, height: totalHeight }, isRevealed && glowStyle]}>
         <View style={[styles.imageContainer, { height: imageHeight }, isReversed && styles.reversed]}>
           <Image
             source={cardImageSource}
@@ -89,7 +124,7 @@ export const TarotCardFlip = forwardRef<TarotCardFlipRef, TarotCardFlipProps>(
 
           <Text style={styles.talismanLine} numberOfLines={2}>"{talismanLine}"</Text>
         </View>
-      </View>
+      </Animated.View>
     );
 
     return (
@@ -99,8 +134,11 @@ export const TarotCardFlip = forwardRef<TarotCardFlipRef, TarotCardFlipProps>(
         frontContent={frontContent}
         isFlipped={isFlipped}
         onFlipEnd={(flipped) => {
-          if (flipped && onFlipComplete) {
-            onFlipComplete();
+          if (flipped) {
+            setIsRevealed(true);
+            if (onFlipComplete) {
+              onFlipComplete();
+            }
           }
         }}
         style={style}

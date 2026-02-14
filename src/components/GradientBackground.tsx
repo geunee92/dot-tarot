@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, ViewStyle } from 'react-native';
-import { BACKGROUNDS } from './theme';
+import { LinearGradient } from 'expo-linear-gradient';
+import { BACKGROUNDS, GRADIENTS } from './theme';
 
 type BackgroundVariant = keyof typeof BACKGROUNDS;
 
@@ -15,7 +16,21 @@ export function GradientBackground({
   style,
   children,
 }: GradientBackgroundProps) {
+  const gradientColors = GRADIENTS[variant];
   const backgroundColor = BACKGROUNDS[variant];
+
+  if (gradientColors) {
+    return (
+      <LinearGradient
+        colors={gradientColors as unknown as [string, string, ...string[]]}
+        start={{ x: 0.5, y: 0 }}
+        end={{ x: 0.5, y: 1 }}
+        style={[styles.container, style]}
+      >
+        {children}
+      </LinearGradient>
+    );
+  }
 
   return (
     <View style={[styles.container, { backgroundColor }, style]}>
