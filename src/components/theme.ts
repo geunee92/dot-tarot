@@ -39,11 +39,11 @@ export const BACKGROUNDS = {
 } as const;
 
 export const GRADIENTS = {
-  cosmic: ['#0f0f23', '#0f0f23', '#0f0f23'],
-  plum: ['#1a1a2e', '#1a1a2e', '#1a1a2e'],
-  aurora: ['#0c1829', '#0c1829', '#0c1829'],
-  gold: ['#16213e', '#16213e', '#16213e'],
-  card: ['#1a1a2e', '#1a1a2e', '#1a1a2e'],
+  cosmic: ['#0f0f23', '#1a1a3e', '#0c1829'],
+  plum: ['#1a1a2e', '#2d1b4e', '#1a1a2e'],
+  aurora: ['#0c1829', '#0f2847', '#0c1829'],
+  gold: ['#16213e', '#1a2a50', '#0f1a30'],
+  card: ['#1a1a2e', '#252547', '#1a1a2e'],
 } as const;
 
 export const RADIUS = {
