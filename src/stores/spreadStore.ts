@@ -9,9 +9,13 @@ import {
   SpreadCard,
   TOPIC_MODIFIERS,
   CardOrientation,
+  FollowUpSpreadCard,
+  FollowUp,
+  Reflection,
+  ReflectionAccuracy,
 } from '../types';
 import { getLocalDateKey } from '../utils/date';
-import { drawRandomCards } from '../utils/cards';
+import { drawRandomCards, drawRandomCardsExcluding } from '../utils/cards';
 import { getSpreadsKey, getItem, setItem } from '../utils/storage';
 
 const EMPTY_SPREADS: SpreadRecord[] = [];
@@ -59,6 +63,9 @@ interface SpreadState {
   getSpreadCountByTopic: (dateKey: string, topic: SpreadTopic) => number;
   getUsedTopicsForDate: (dateKey?: string) => SpreadTopic[];
   getSpreadDates: () => string[];
+  createFollowUp: (dateKey: string, spreadId: string, userQuestion: string) => Promise<SpreadRecord | null>;
+  updateFollowUpInterpretation: (dateKey: string, spreadId: string, interpretation: string) => Promise<SpreadRecord | null>;
+  updateSpreadReflection: (dateKey: string, spreadId: string, accuracy: ReflectionAccuracy, text?: string) => Promise<SpreadRecord | null>;
 }
 
 // ============================================
@@ -215,6 +222,126 @@ export const useSpreadStore = create<SpreadState>()(
       getSpreadDates: () => {
         const spreads = get().spreads;
         return Object.keys(spreads).filter((dateKey) => spreads[dateKey].length > 0);
+      },
+      
+      // Create a follow-up reading for an existing spread
+      createFollowUp: async (dateKey, spreadId, userQuestion) => {
+        const spreads = get().spreads[dateKey];
+        if (!spreads) return null;
+        
+        const spreadIndex = spreads.findIndex((s) => s.id === spreadId);
+        if (spreadIndex === -1) return null;
+        
+        const spread = spreads[spreadIndex];
+        
+        // Only one follow-up allowed per spread
+        if (spread.followUp) return null;
+        
+        // Get IDs of original cards to exclude
+        const excludeIds = spread.cards.map((c) => c.drawnCard.card.id);
+        
+        // Draw 3 new cards excluding originals
+        const newCards = drawRandomCardsExcluding(3, excludeIds);
+        
+        // Build follow-up object
+        const followUp: FollowUp = {
+          cards: [
+            { position: 'DEPTH', drawnCard: newCards[0] },
+            { position: 'HIDDEN', drawnCard: newCards[1] },
+            { position: 'OUTCOME', drawnCard: newCards[2] },
+          ] as [FollowUpSpreadCard, FollowUpSpreadCard, FollowUpSpreadCard],
+          userQuestion,
+        };
+        
+        const updatedSpread: SpreadRecord = {
+          ...spread,
+          followUp,
+        };
+        
+        const updatedSpreads = [...spreads];
+        updatedSpreads[spreadIndex] = updatedSpread;
+        
+        // Save to storage
+        const storageKey = getSpreadsKey(dateKey);
+        await setItem(storageKey, updatedSpreads);
+        
+        // Update state
+        set((state) => ({
+          spreads: { ...state.spreads, [dateKey]: updatedSpreads },
+        }));
+        
+        return updatedSpread;
+      },
+      
+      // Update AI interpretation for a follow-up
+      updateFollowUpInterpretation: async (dateKey, spreadId, interpretation) => {
+        const spreads = get().spreads[dateKey];
+        if (!spreads) return null;
+        
+        const spreadIndex = spreads.findIndex((s) => s.id === spreadId);
+        if (spreadIndex === -1) return null;
+        
+        const spread = spreads[spreadIndex];
+        if (!spread.followUp) return null;
+        
+        const updatedSpread: SpreadRecord = {
+          ...spread,
+          followUp: {
+            ...spread.followUp,
+            aiInterpretation: interpretation,
+            aiGeneratedAt: Date.now(),
+          },
+        };
+        
+        const updatedSpreads = [...spreads];
+        updatedSpreads[spreadIndex] = updatedSpread;
+        
+        // Save to storage
+        const storageKey = getSpreadsKey(dateKey);
+        await setItem(storageKey, updatedSpreads);
+        
+        // Update state
+        set((state) => ({
+          spreads: { ...state.spreads, [dateKey]: updatedSpreads },
+        }));
+        
+        return updatedSpread;
+      },
+      
+      // Update reflection for a spread
+      updateSpreadReflection: async (dateKey, spreadId, accuracy, text) => {
+        const spreads = get().spreads[dateKey];
+        if (!spreads) return null;
+        
+        const spreadIndex = spreads.findIndex((s) => s.id === spreadId);
+        if (spreadIndex === -1) return null;
+        
+        const spread = spreads[spreadIndex];
+        
+        const reflection: Reflection = {
+          accuracy,
+          text: text?.trim(),
+          createdAt: Date.now(),
+        };
+        
+        const updatedSpread: SpreadRecord = {
+          ...spread,
+          reflection,
+        };
+        
+        const updatedSpreads = [...spreads];
+        updatedSpreads[spreadIndex] = updatedSpread;
+        
+        // Save to storage
+        const storageKey = getSpreadsKey(dateKey);
+        await setItem(storageKey, updatedSpreads);
+        
+        // Update state
+        set((state) => ({
+          spreads: { ...state.spreads, [dateKey]: updatedSpreads },
+        }));
+        
+        return updatedSpread;
       },
     }),
     {
