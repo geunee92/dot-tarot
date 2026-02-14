@@ -3,6 +3,8 @@ import {
   View,
   ScrollView,
   StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
@@ -12,6 +14,7 @@ import {
   TarotCardFlip,
   TarotCardFlipRef,
   LoadingSpinner,
+  ReflectionInput,
   COLORS,
   SPACING,
   FONTS,
@@ -20,6 +23,7 @@ import {
 import { useDrawStore } from '../stores/drawStore';
 import { DailyResultScreenProps } from '../navigation/types';
 import { getMeaning, getKeywords, getDailyContext } from '../utils/cards';
+import { ReflectionAccuracy } from '../types';
 import { useTranslation } from '../i18n';
 
 export function DailyResultScreen({ route, navigation }: DailyResultScreenProps) {
@@ -28,12 +32,14 @@ export function DailyResultScreen({ route, navigation }: DailyResultScreenProps)
   
   const [hasFlipped, setHasFlipped] = useState(!isNewDraw);
   const flipRef = useRef<TarotCardFlipRef>(null);
+  const scrollRef = useRef<ScrollView>(null);
 
   const confirmedDraw = useDrawStore((s) => s.draws[dateKey]);
   const pendingDraw = useDrawStore((s) => s.pendingDraw);
   const loadDraw = useDrawStore((s) => s.loadDraw);
   const confirmDraw = useDrawStore((s) => s.confirmDraw);
   const clearPendingDraw = useDrawStore((s) => s.clearPendingDraw);
+  const updateReflection = useDrawStore((s) => s.updateReflection);
   const isHydrated = useDrawStore((s) => s.isHydrated);
 
   const draw = confirmedDraw || (pendingDraw?.dateKey === dateKey ? pendingDraw : null);
@@ -68,6 +74,17 @@ export function DailyResultScreen({ route, navigation }: DailyResultScreenProps)
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
   }, [isNewDraw, confirmDraw]);
 
+  const [isReflectionLoading, setIsReflectionLoading] = useState(false);
+
+  const handleSaveReflection = useCallback(async (accuracy: ReflectionAccuracy, text?: string) => {
+    setIsReflectionLoading(true);
+    try {
+      await updateReflection(dateKey, accuracy, text);
+    } finally {
+      setIsReflectionLoading(false);
+    }
+  }, [dateKey, updateReflection]);
+
   const handleGoBack = useCallback(() => {
     navigation.goBack();
   }, [navigation]);
@@ -93,10 +110,17 @@ export function DailyResultScreen({ route, navigation }: DailyResultScreenProps)
 
   return (
     <SafeAreaView style={styles.container} edges={['bottom']}>
+      <KeyboardAvoidingView
+        style={styles.keyboardAvoid}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
+      >
       <ScrollView
+        ref={scrollRef}
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
       >
         <View style={styles.cardSection}>
           <TarotCardFlip
@@ -156,6 +180,22 @@ export function DailyResultScreen({ route, navigation }: DailyResultScreenProps)
               </PixelText>
             </View>
 
+            <View style={styles.reflectionSection}>
+              <PixelText variant="heading" style={styles.sectionTitle}>
+                {t('reflection.title')}
+              </PixelText>
+              <ReflectionInput
+                question={t('reflection.question')}
+                keywords={keywords}
+                existingReflection={draw?.reflection}
+                onSave={handleSaveReflection}
+                isLoading={isReflectionLoading}
+                onInputFocus={() => {
+                  setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 300);
+                }}
+              />
+            </View>
+
             <View style={styles.actionButtons}>
               <PixelButton
                 title={t('common.backHome')}
@@ -167,6 +207,7 @@ export function DailyResultScreen({ route, navigation }: DailyResultScreenProps)
           </View>
         )}
       </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -184,6 +225,9 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: SPACING.lg,
     color: COLORS.textMuted,
+  },
+  keyboardAvoid: {
+    flex: 1,
   },
   scrollView: {
     flex: 1,
@@ -246,6 +290,12 @@ const styles = StyleSheet.create({
     color: COLORS.text,
     lineHeight: FONTS.md * 1.6,
     fontStyle: 'italic',
+  },
+  reflectionSection: {
+    backgroundColor: COLORS.surface,
+    padding: SPACING.lg,
+    borderWidth: BORDERS.medium,
+    borderColor: COLORS.border,
   },
   actionButtons: {
     flexDirection: 'row',

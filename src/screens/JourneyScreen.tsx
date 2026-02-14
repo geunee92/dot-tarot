@@ -95,6 +95,17 @@ export function JourneyScreen({ navigation }: JourneyScreenProps) {
     );
   }, [spreadsState]);
 
+  const reflectionDatesSet = useMemo(() => {
+    const dates = new Set<string>();
+    Object.entries(draws).forEach(([dateKey, draw]) => {
+      if (draw.reflection) dates.add(dateKey);
+    });
+    Object.entries(spreadsState).forEach(([dateKey, spreadList]) => {
+      if (spreadList.some((s) => s.reflection)) dates.add(dateKey);
+    });
+    return dates;
+  }, [draws, spreadsState]);
+
   const handleCalendarDayPress = useCallback((dateKey: string) => {
     if (!dateKey) return;
     if (!drawDatesSet.has(dateKey) && !spreadDatesSet.has(dateKey)) return;
@@ -153,6 +164,7 @@ export function JourneyScreen({ navigation }: JourneyScreenProps) {
             monthKey={currentMonth}
             drawDates={drawDatesSet}
             spreadDates={spreadDatesSet}
+            reflectionDates={reflectionDatesSet}
             onDayPress={handleCalendarDayPress}
             onPreviousMonth={handlePreviousMonth}
             onNextMonth={handleNextMonth}
