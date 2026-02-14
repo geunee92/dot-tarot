@@ -1,5 +1,5 @@
-import { InterpretRequest, InterpretResponse } from './types';
-import { buildPrompt } from './prompts';
+import { InterpretRequest, InterpretResponse, FollowUpInterpretRequest } from './types';
+import { buildPrompt, buildFollowUpPrompt } from './prompts';
 import { checkRateLimit, incrementRateLimit } from './rate-limit';
 
 export interface Env {
@@ -105,6 +105,117 @@ export default {
         }
 
         const prompt = buildPrompt(body);
+
+        const openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${env.OPENAI_API_KEY}`,
+          },
+          body: JSON.stringify({
+            model: 'gpt-4o-mini',
+            messages: [
+              {
+                role: 'user',
+                content: prompt,
+              },
+            ],
+            temperature: 0.7,
+            max_tokens: 500,
+          }),
+        });
+
+        if (!openaiResponse.ok) {
+          const errorData = await openaiResponse.text();
+          console.error('OpenAI API error:', openaiResponse.status, errorData);
+          return new Response(
+            JSON.stringify({ error: 'OpenAI API error', status: openaiResponse.status, details: errorData }),
+            {
+              status: 500,
+              headers: {
+                'Content-Type': 'application/json',
+                ...corsHeaders,
+              },
+            }
+          );
+        }
+
+        const openaiData = (await openaiResponse.json()) as {
+          choices: Array<{ message: { content: string } }>;
+        };
+        const interpretation = openaiData.choices[0].message.content;
+
+        await incrementRateLimit(env, clientIp);
+
+        const response: InterpretResponse = { interpretation };
+        return new Response(JSON.stringify(response), {
+          status: 200,
+          headers: {
+            'Content-Type': 'application/json',
+            ...corsHeaders,
+          },
+        });
+      } catch (error) {
+        return new Response(
+          JSON.stringify({ error: 'Invalid request body' }),
+          {
+            status: 400,
+            headers: {
+              'Content-Type': 'application/json',
+              ...corsHeaders,
+            },
+          }
+        );
+      }
+    }
+
+    if (url.pathname === '/api/interpret-followup' && request.method === 'POST') {
+      const appKey = request.headers.get('X-App-Key');
+      if (appKey !== env.APP_KEY) {
+        return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+          status: 401,
+          headers: {
+            'Content-Type': 'application/json',
+            ...corsHeaders,
+          },
+        });
+      }
+
+      const clientIp = request.headers.get('CF-Connecting-IP') || 'unknown';
+      const rateLimitCheck = await checkRateLimit(env, clientIp);
+
+      if (!rateLimitCheck.allowed) {
+        return new Response(
+          JSON.stringify({
+            error: 'Rate limit exceeded. 10 requests per day allowed.',
+          }),
+          {
+            status: 429,
+            headers: {
+              'Content-Type': 'application/json',
+              ...corsHeaders,
+            },
+          }
+        );
+      }
+
+      try {
+        const body = (await request.json()) as FollowUpInterpretRequest;
+
+        if (!body.topic || !body.originalCards || !body.followUpCards || !body.userQuestion || !body.locale) {
+          return new Response(
+            JSON.stringify({ error: 'Missing required fields' }),
+            {
+              status: 400,
+              headers: {
+                'Content-Type': 'application/json',
+                ...corsHeaders,
+              },
+            }
+          );
+        }
+
+        const prompt = buildFollowUpPrompt(body);
 
         const openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
           method: 'POST',
