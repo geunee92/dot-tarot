@@ -157,6 +157,29 @@ export function drawRandomCardExcluding(excludeIds: number[]): DrawnCard {
   };
 }
 
+/**
+ * Draw multiple random cards excluding specific card IDs (no duplicates)
+ */
+export function drawRandomCardsExcluding(count: number, excludeIds: number[]): DrawnCard[] {
+  const availableCards = TAROT_CARDS.filter(card => !excludeIds.includes(card.id));
+  if (availableCards.length === 0 || count <= 0) {
+    return [];
+  }
+
+  const drawCount = Math.min(count, availableCards.length);
+  const indices = Array.from({ length: availableCards.length }, (_, i) => i);
+
+  for (let i = indices.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [indices[i], indices[j]] = [indices[j], indices[i]];
+  }
+
+  return indices.slice(0, drawCount).map(i => ({
+    card: availableCards[i],
+    orientation: getRandomOrientation(),
+  }));
+}
+
 // ============================================
 // Card Content Helpers
 // ============================================
