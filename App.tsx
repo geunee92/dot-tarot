@@ -1,10 +1,11 @@
 import 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View, Text, Platform } from 'react-native';
 import { useFonts, PressStart2P_400Regular } from '@expo-google-fonts/press-start-2p';
 import * as SplashScreen from 'expo-splash-screen';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
+import { requestTrackingPermissionsAsync } from 'expo-tracking-transparency';
 import { RootNavigator } from './src/navigation';
 import { initializeAds } from './src/services/ads';
 
@@ -15,15 +16,35 @@ export default function App() {
     PressStart2P_400Regular,
     Galmuri11: require('./assets/fonts/Galmuri11.ttf'),
   });
-
-  useEffect(() => {
-    initializeAds();
-  }, []);
+  const adsInitialized = useRef(false);
 
   const onLayoutRootView = useCallback(async () => {
     if (fontsLoaded) {
       await SplashScreen.hideAsync();
     }
+  }, [fontsLoaded]);
+
+  // ATT dialog must appear AFTER splash is hidden — iOS rejects apps where ATT fires before UI is visible
+  useEffect(() => {
+    if (!fontsLoaded || adsInitialized.current) return;
+
+    const initATTAndAds = async () => {
+      if (Platform.OS === 'ios') {
+        try {
+          const { status } = await requestTrackingPermissionsAsync();
+          if (__DEV__) console.log('[ATT] Tracking permission status:', status);
+        } catch (e) {
+          if (__DEV__) console.warn('[ATT] Permission request failed:', e);
+        }
+      }
+
+      initializeAds();
+      adsInitialized.current = true;
+    };
+
+    // Delay ensures splash is fully dismissed before ATT dialog appears
+    const timer = setTimeout(initATTAndAds, 500);
+    return () => clearTimeout(timer);
   }, [fontsLoaded]);
 
   if (!fontsLoaded) {
