@@ -1,4 +1,4 @@
-import { InterpretRequest } from './types';
+import { InterpretRequest, FollowUpInterpretRequest } from './types';
 
 const TOPIC_LABELS: Record<string, { ko: string; en: string }> = {
   LOVE: { ko: '연애', en: 'love' },
@@ -58,4 +58,69 @@ Cards drawn:
 ${cardDescriptions}
 
 Provide a warm, practical interpretation about ${topicLabel} in 2-3 paragraphs, as if giving friendly advice.`;
+}
+
+export function buildFollowUpPrompt(request: FollowUpInterpretRequest): string {
+  const isKorean = request.locale === 'ko';
+  const topicLabel = TOPIC_LABELS[request.topic]?.[request.locale] || request.topic;
+
+  const originalCardDescriptions = request.originalCards
+    .map((card) => {
+      const orientationLabel = ORIENTATION_LABELS[card.orientation]?.[request.locale] || card.orientation;
+      const keywordsStr = card.keywords.join(', ');
+      return `- ${card.position}: ${card.cardName} (${orientationLabel}) - ${keywordsStr}`;
+    })
+    .join('\n');
+
+  const followUpCardDescriptions = request.followUpCards
+    .map((card) => {
+      const orientationLabel = ORIENTATION_LABELS[card.orientation]?.[request.locale] || card.orientation;
+      const keywordsStr = card.keywords.join(', ');
+      return `- ${card.position}: ${card.cardName} (${orientationLabel}) - ${keywordsStr}`;
+    })
+    .join('\n');
+
+  if (isKorean) {
+    return `당신은 따뜻하고 친근한 타로 리더입니다. 오랜 친구처럼 편안하게 이야기하며, 통찰력 있는 해석을 제공합니다.
+
+사용자가 기존 리딩에 대해 추가 질문을 했어요. 원래 리딩의 맥락을 이해한 뒤, 새로 뽑은 3장의 카드로 더 깊은 해석을 2-3문단으로 해주세요.
+
+주제: ${topicLabel}
+
+[원래 리딩]
+스프레드: ${request.originalPattern}
+${request.originalInterpretation ? `해석: ${request.originalInterpretation}` : ''}
+
+원래 카드:
+${originalCardDescriptions}
+
+[추가 질문]
+${request.userQuestion}
+
+[새로 뽑은 카드]
+${followUpCardDescriptions}
+
+위 맥락을 바탕으로 따뜻하고 실용적인 추가 해석을 2-3문단으로 해주세요.`;
+  }
+
+  return `You are a warm, friendly tarot reader speaking like a trusted friend.
+
+The user has a follow-up question about their reading. Understand the original reading context, then interpret the 3 new cards (Depth, Hidden, Outcome) in 2-3 paragraphs.
+
+Topic: ${topicLabel}
+
+[Original Reading]
+Spread: ${request.originalPattern}
+${request.originalInterpretation ? `Interpretation: ${request.originalInterpretation}` : ''}
+
+Original cards:
+${originalCardDescriptions}
+
+[Follow-up Question]
+${request.userQuestion}
+
+[New Cards]
+${followUpCardDescriptions}
+
+Based on the above context, provide a warm, practical follow-up interpretation in 2-3 paragraphs.`;
 }
