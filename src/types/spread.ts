@@ -4,13 +4,35 @@ export type SpreadTopic = 'LOVE' | 'MONEY' | 'WORK';
 
 export type SpreadPosition = 'FLOW' | 'INFLUENCE' | 'ADVICE';
 
+export type FollowUpPosition = 'DEPTH' | 'HIDDEN' | 'OUTCOME';
+
 export type CombinationPattern = 'UUU' | 'UUR' | 'URU' | 'RUU' | 'URR' | 'RUR' | 'RRU' | 'RRR';
 
 export type ReversalModifier = 'INTERNALIZED' | 'BLOCKED_DELAYED' | 'SHADOW_EXCESS';
 
+export type ReflectionAccuracy = 'accurate' | 'neutral' | 'unsure';
+
+export interface Reflection {
+  accuracy: ReflectionAccuracy;
+  text?: string;
+  createdAt: number;
+}
+
 export interface SpreadCard {
   position: SpreadPosition;
   drawnCard: DrawnCard;
+}
+
+export interface FollowUpSpreadCard {
+  position: FollowUpPosition;
+  drawnCard: DrawnCard;
+}
+
+export interface FollowUp {
+  cards: [FollowUpSpreadCard, FollowUpSpreadCard, FollowUpSpreadCard];
+  userQuestion: string;
+  aiInterpretation?: string;
+  aiGeneratedAt?: number;
 }
 
 export interface SpreadRecord {
@@ -24,6 +46,8 @@ export interface SpreadRecord {
   userQuestion?: string;
   aiInterpretation?: string;
   aiGeneratedAt?: number;
+  followUp?: FollowUp;
+  reflection?: Reflection;
 }
 
 export const TOPIC_MODIFIERS: Record<SpreadTopic, ReversalModifier> = {
