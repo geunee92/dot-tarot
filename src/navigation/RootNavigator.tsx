@@ -57,13 +57,14 @@ export function RootNavigator() {
           }}
         />
         
-        <Stack.Screen
-          name="SpreadResult"
-          component={SpreadResultScreen}
-          options={({ route }) => ({
-            title: `${t(`home.topics.${route.params.topic.toLowerCase()}`)} ${t('spreadResult.reading')}`,
-          })}
-        />
+         <Stack.Screen
+           name="SpreadResult"
+           component={SpreadResultScreen}
+           options={({ route }) => ({
+             title: `${t(`home.topics.${route.params.topic.toLowerCase()}`)} ${t('spreadResult.reading')}`,
+             animation: 'fade_from_bottom',
+           })}
+         />
         
         <Stack.Screen
           name="HistoryDetail"

@@ -283,5 +283,42 @@
       "money": "money",
       "work": "work"
     }
+  },
+  "followUp": {
+    "title": "Dig Deeper",
+    "question": "Follow-up Question",
+    "placeholder": "What else would you like to know?",
+    "charCount": "%{count}/60",
+    "startReading": "Draw 3 More Cards",
+    "interpretation": "Deeper Insight",
+    "aiThinking": "AI is reading deeper...",
+    "error": "Could not load interpretation. Please try again.",
+    "retry": "Retry",
+    "hint": "Draw 3 more cards for a deeper reading",
+    "positions": {
+      "depth": "Depth",
+      "depthDesc": "Root cause beneath the surface",
+      "hidden": "Hidden",
+      "hiddenDesc": "What you haven't seen yet",
+      "outcome": "Outcome",
+      "outcomeDesc": "Where this is heading"
+    }
+  },
+  "reflection": {
+    "title": "Daily Reflection",
+    "question": "How was today's talisman?",
+    "spreadQuestion": "How was this reading?",
+    "accurate": "Spot on",
+    "neutral": "So-so",
+    "unsure": "Not sure yet",
+    "accurateEmoji": "😊",
+    "neutralEmoji": "😐",
+    "unsureEmoji": "🤔",
+    "textPlaceholder": "Looking back on today...",
+    "save": "Save",
+    "saved": "Saved!",
+    "edit": "Edit",
+    "keywords": "Today's keywords",
+    "charCount": "%{count}/300"
   }
 }
