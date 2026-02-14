@@ -14,6 +14,7 @@ interface CalendarGridProps {
   monthKey: string;
   drawDates: Set<string>;
   spreadDates?: Set<string>;
+  reflectionDates?: Set<string>;
   onDayPress: (dateKey: string) => void;
   onPreviousMonth: () => void;
   onNextMonth: () => void;
@@ -23,6 +24,7 @@ export function CalendarGrid({
   monthKey,
   drawDates,
   spreadDates = new Set(),
+  reflectionDates = new Set(),
   onDayPress,
   onPreviousMonth,
   onNextMonth,
@@ -77,6 +79,7 @@ export function CalendarGrid({
                   isToday={dateKey === todayKey}
                   hasDrawn={drawDates.has(dateKey)}
                   hasSpread={spreadDates.has(dateKey)}
+                  hasReflection={reflectionDates.has(dateKey)}
                   onPress={onDayPress}
                 />
               );

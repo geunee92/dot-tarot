@@ -15,5 +15,8 @@ export { GradientBackground } from './GradientBackground';
 export { GlowText } from './GlowText';
 export { LanguageSwitcher } from './LanguageSwitcher';
 export { SkeletonText } from './SkeletonText';
+export { TypingText } from './TypingText';
 export { QuestionInputModal } from './QuestionInputModal';
 export * from './cardConstants';
+export { PixelParticles } from './PixelParticles';
+export { ReflectionInput } from './ReflectionInput';

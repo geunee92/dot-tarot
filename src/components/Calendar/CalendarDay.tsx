@@ -9,6 +9,7 @@ interface CalendarDayProps {
   isToday: boolean;
   hasDrawn: boolean;
   hasSpread: boolean;
+  hasReflection?: boolean;
   onPress: (dateKey: string) => void;
 }
 
@@ -18,6 +19,7 @@ export function CalendarDay({
   isToday,
   hasDrawn,
   hasSpread,
+  hasReflection,
   onPress,
 }: CalendarDayProps) {
   if (day === 0) {
@@ -60,6 +62,7 @@ export function CalendarDay({
       <View style={styles.indicators}>
         {hasDrawn && <View style={[styles.indicator, styles.drawIndicator]} />}
         {hasSpread && <View style={[styles.indicator, styles.spreadIndicator]} />}
+        {hasReflection && <View style={[styles.indicator, styles.reflectionIndicator]} />}
       </View>
     </Pressable>
   );
@@ -111,5 +114,8 @@ const styles = StyleSheet.create({
   },
   spreadIndicator: {
     backgroundColor: COLORS.primary,
+  },
+  reflectionIndicator: {
+    backgroundColor: COLORS.accent,
   },
 });
