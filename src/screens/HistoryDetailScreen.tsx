@@ -154,6 +154,18 @@ export function HistoryDetailScreen({ route, navigation }: HistoryDetailScreenPr
                   {draw.drawnCard.orientation === 'upright' ? t('card.upright') : t('card.reversed')}
                 </PixelText>
                 
+                {draw?.reflection && (
+                  <View style={styles.reflectionPreview}>
+                    <PixelText variant="caption" style={styles.reflectionLabel}>
+                      {t('reflection.title')}:
+                    </PixelText>
+                    <PixelText variant="caption" style={styles.reflectionBadge}>
+                      {draw.reflection.accuracy === 'accurate' ? '😊' : draw.reflection.accuracy === 'neutral' ? '😐' : '🤔'}
+                      {' '}{t(`reflection.${draw.reflection.accuracy}`)}
+                    </PixelText>
+                  </View>
+                )}
+
                 {draw.memo && (
                   <View style={styles.memoPreview}>
                     <PixelText variant="caption" style={styles.memoLabel}>
@@ -203,26 +215,25 @@ export function HistoryDetailScreen({ route, navigation }: HistoryDetailScreenPr
                   
                   <View style={styles.spreadCards}>
                     {spread.cards.map((sc, i) => (
-                      <View key={i} style={styles.miniCard}>
-                        <PixelText variant="caption" style={styles.miniCardNumber}>
-                          {sc.drawnCard.card.id}
-                        </PixelText>
-                        <PixelText
-                          variant="caption"
-                          color={
-                            sc.drawnCard.orientation === 'upright'
-                              ? COLORS.upright
-                              : COLORS.reversed
-                          }
-                        >
-                          {sc.drawnCard.orientation === 'upright' ? '↑' : '↓'}
-                        </PixelText>
+                      <View key={i} style={styles.spreadCardItem}>
+                        <PixelCard
+                          card={sc.drawnCard.card}
+                          orientation={sc.drawnCard.orientation}
+                          size="small"
+                        />
                       </View>
                     ))}
-                    
-
                   </View>
                   
+                  {spread.reflection && (
+                    <View style={styles.reflectionPreview}>
+                      <PixelText variant="caption" style={styles.reflectionBadge}>
+                        {spread.reflection.accuracy === 'accurate' ? '😊' : spread.reflection.accuracy === 'neutral' ? '😐' : '🤔'}
+                        {' '}{t(`reflection.${spread.reflection.accuracy}`)}
+                      </PixelText>
+                    </View>
+                  )}
+
                   <PixelText variant="caption" style={styles.tapHint}>
                     {t('common.tapToView')}
                   </PixelText>
@@ -356,20 +367,12 @@ const styles = StyleSheet.create({
   },
   spreadCards: {
     flexDirection: 'row',
+    justifyContent: 'center',
     gap: SPACING.sm,
   },
-  miniCard: {
-    width: 50,
-    height: 60,
-    backgroundColor: COLORS.background,
-    borderWidth: BORDERS.thin,
-    borderColor: COLORS.border,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  miniCardNumber: {
-    color: COLORS.text,
-    fontWeight: 'bold',
+  spreadCardItem: {
+    flex: 1,
+    maxWidth: 90,
   },
   emptyState: {
     flex: 1,
@@ -379,6 +382,19 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     color: COLORS.textMuted,
+  },
+  reflectionPreview: {
+    marginTop: SPACING.sm,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: SPACING.xs,
+  },
+  reflectionLabel: {
+    color: COLORS.accent,
+    fontWeight: 'bold',
+  },
+  reflectionBadge: {
+    color: COLORS.text,
   },
   closeButton: {
     alignSelf: 'center',
