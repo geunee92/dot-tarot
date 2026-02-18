@@ -16,6 +16,7 @@ import {
 import { clearAll, setItem } from '../utils/storage';
 import { useDrawStore } from '../stores/drawStore';
 import { useRewardStore } from '../stores/rewardStore';
+import { useCharacterStore } from '../stores/characterStore';
 import { drawRandomCard } from '../utils/cards';
 import { getDrawKey } from '../utils/storage';
 
@@ -27,6 +28,8 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
   const { t } = useTranslation();
   const [isResetting, setIsResetting] = useState(false);
   const [isInjecting, setIsInjecting] = useState(false);
+  const resetCharacter = useCharacterStore((s) => s.resetCharacter);
+  const characterLevel = useCharacterStore((s) => s.level);
 
   const handleInject56Days = useCallback(async () => {
     if (isInjecting) return;
@@ -118,6 +121,39 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
           </PixelText>
         </View>
 
+        <View style={styles.characterSection}>
+          <PixelText variant="caption" style={styles.characterLabel}>
+            캐릭터 관리
+          </PixelText>
+          <View style={styles.characterInfo}>
+            <PixelText variant="body" style={styles.characterLevelText}>
+              현재 레벨: Lv.{characterLevel}
+            </PixelText>
+          </View>
+          <PixelButton
+            title="캐릭터 초기화"
+            onPress={() => {
+              Alert.alert(
+                '캐릭터 초기화',
+                '레벨, 경험치, 연속 출석 기록이 모두 초기화됩니다. 정말 진행하시겠습니까?',
+                [
+                  { text: t('common.cancel'), style: 'cancel' },
+                  {
+                    text: '초기화',
+                    style: 'destructive',
+                    onPress: () => {
+                      resetCharacter();
+                      Alert.alert('완료', '캐릭터가 초기화되었습니다.');
+                    },
+                  },
+                ]
+              );
+            }}
+            variant="secondary"
+            size="medium"
+          />
+        </View>
+
         {__DEV__ && (
           <View style={styles.dangerZone}>
             <PixelText variant="caption" style={styles.dangerLabel}>
@@ -191,6 +227,24 @@ const styles = StyleSheet.create({
     color: COLORS.textMuted,
   },
   versionText: {
+    color: COLORS.text,
+  },
+  characterSection: {
+    padding: SPACING.lg,
+    backgroundColor: COLORS.surface,
+    borderWidth: BORDERS.medium,
+    borderColor: COLORS.border,
+    gap: SPACING.md,
+  },
+  characterLabel: {
+    color: COLORS.textMuted,
+  },
+  characterInfo: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  characterLevelText: {
     color: COLORS.text,
   },
   backButton: {

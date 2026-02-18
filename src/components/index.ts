@@ -20,3 +20,4 @@ export { QuestionInputModal } from './QuestionInputModal';
 export * from './cardConstants';
 export { PixelParticles } from './PixelParticles';
 export { ReflectionInput } from './ReflectionInput';
+export * from './Character';

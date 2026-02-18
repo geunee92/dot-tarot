@@ -4,16 +4,16 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import * as Haptics from 'expo-haptics';
 import { MainTabParamList } from './types';
-import { DailyScreen, SpreadsScreen, JourneyScreen, SettingsScreen } from '../screens';
+import { HomeScreen, QuestBoardScreen, JourneyScreen, SettingsScreen } from '../screens';
 import { PixelText, COLORS, SPACING, BORDERS, FONTS, SHADOWS } from '../components';
 import { useTranslation } from '../i18n';
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
 const TAB_CONFIG = [
-  { name: 'DailyTab' as const, icon: '★', labelKey: 'tabs.daily' },
-  { name: 'SpreadsTab' as const, icon: '♦', labelKey: 'tabs.spreads' },
-  { name: 'JourneyTab' as const, icon: '◆', labelKey: 'tabs.journey' },
+  { name: 'HomeTab' as const, icon: '★', labelKey: 'tabs.home' },
+  { name: 'QuestsTab' as const, icon: '♦', labelKey: 'tabs.quests' },
+  { name: 'LogTab' as const, icon: '◆', labelKey: 'tabs.log' },
   { name: 'SettingsTab' as const, icon: '●', labelKey: 'tabs.settings' },
 ];
 
@@ -73,9 +73,9 @@ export function TabNavigator() {
         headerShown: false,
       }}
     >
-      <Tab.Screen name="DailyTab" component={DailyScreen} />
-      <Tab.Screen name="SpreadsTab" component={SpreadsScreen} />
-      <Tab.Screen name="JourneyTab" component={JourneyScreen} />
+      <Tab.Screen name="HomeTab" component={HomeScreen} />
+      <Tab.Screen name="QuestsTab" component={QuestBoardScreen} />
+      <Tab.Screen name="LogTab" component={JourneyScreen} />
       <Tab.Screen name="SettingsTab" component={SettingsScreen} />
     </Tab.Navigator>
   );

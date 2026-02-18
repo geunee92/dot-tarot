@@ -49,21 +49,21 @@ export function RootNavigator() {
         />
         
         <Stack.Screen
-          name="DailyResult"
+          name="TrainingResult"
           component={DailyResultScreen}
           options={{
-            title: t('home.dailyCard'),
+            title: t('home.dailyTraining'),
             animation: 'fade',
           }}
         />
         
          <Stack.Screen
-           name="SpreadResult"
+           name="QuestResult"
            component={SpreadResultScreen}
-           options={({ route }) => ({
-             title: `${t(`home.topics.${route.params.topic.toLowerCase()}`)} ${t('spreadResult.reading')}`,
-             animation: 'fade_from_bottom',
-           })}
+            options={({ route }) => ({
+              title: t('quests.resultTitle'),
+              animation: 'fade_from_bottom',
+            })}
          />
         
         <Stack.Screen

@@ -20,14 +20,17 @@ import {
   TypingText,
   PixelParticles,
   ReflectionInput,
+  Toast,
   COLORS,
   SPACING,
   FONTS,
   BORDERS,
   FONT_FAMILY,
 } from '../components';
+import { XPRewardAnimation, XPRewardAnimationRef, LevelUpModal } from '../components/Character';
 import { generateInterpretation, generateFollowUpInterpretation } from '../services/ai';
 import { useSpreadStore } from '../stores/spreadStore';
+import { useCharacterStore } from '../stores/characterStore';
 import { SpreadResultScreenProps } from '../navigation/types';
 import { SpreadPosition, SpreadCard, FollowUpPosition, FollowUpSpreadCard, ReflectionAccuracy } from '../types';
 import { getMeaning, getKeywords } from '../utils/cards';
@@ -57,6 +60,15 @@ export function SpreadResultScreen({ route, navigation }: SpreadResultScreenProp
   const aiRequestedRef = useRef(false);
   const scrollRef = useRef<ScrollView>(null);
 
+  const xpRef = useRef<XPRewardAnimationRef>(null);
+  const xpAwardedRef = useRef(false);
+  const [levelUpInfo, setLevelUpInfo] = useState<{ visible: boolean; newLevel: number; unlocks: string[] }>({ visible: false, newLevel: 1, unlocks: [] });
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const addXP = useCharacterStore((s) => s.addXP);
+  const updateStreak = useCharacterStore((s) => s.updateStreak);
+  const canAccessDeepReading = useCharacterStore((s) => s.canAccessDeepReading);
+
   const [showFollowUp, setShowFollowUp] = useState(false);
   const [followUpQuestion, setFollowUpQuestion] = useState('');
   const [followUpCards, setFollowUpCards] = useState<FollowUpSpreadCard[] | null>(null);
@@ -85,6 +97,7 @@ export function SpreadResultScreen({ route, navigation }: SpreadResultScreenProp
     aiRequestedRef.current = false;
     setAiInterpretation(null);
     setAiError(false);
+    xpAwardedRef.current = false;
     followUpRequestedRef.current = false;
     setShowFollowUp(false);
     setFollowUpQuestion('');
@@ -134,6 +147,23 @@ export function SpreadResultScreen({ route, navigation }: SpreadResultScreenProp
       .then(async (interpretation) => {
         setAiInterpretation(interpretation);
         await updateInterpretation(dateKey, spreadId, interpretation);
+        
+        // Award XP for quest completion (new spreads only, once)
+        if (isNewSpread && !xpAwardedRef.current) {
+          xpAwardedRef.current = true;
+          updateStreak();
+          const result = addXP('quest_completion');
+          
+          setTimeout(() => {
+            xpRef.current?.show(result.event.amount, result.event.bonusAmount);
+          }, 500);
+          
+          if (result.leveledUp) {
+            setTimeout(() => {
+              setLevelUpInfo({ visible: true, newLevel: result.newLevel, unlocks: result.unlocks });
+            }, 2000);
+          }
+        }
       })
       .catch(() => {
         setAiError(true);
@@ -363,16 +393,33 @@ export function SpreadResultScreen({ route, navigation }: SpreadResultScreenProp
 
         {allRevealed && aiInterpretation && !showFollowUp && !spread?.followUp && (
           <View style={styles.followUpPrompt}>
-            <PixelButton
-              title={t('followUp.title')}
-              onPress={handleDigDeeper}
-              variant="accent"
-              size="large"
-              fullWidth
-            />
-            <PixelText variant="caption" color={COLORS.textMuted} align="center" style={styles.followUpHint}>
-              {t('followUp.hint')}
-            </PixelText>
+            {canAccessDeepReading() ? (
+              <>
+                <PixelButton
+                  title={t('followUp.title')}
+                  onPress={handleDigDeeper}
+                  variant="accent"
+                  size="large"
+                  fullWidth
+                />
+                <PixelText variant="caption" color={COLORS.textMuted} align="center" style={styles.followUpHint}>
+                  {t('followUp.hint')}
+                </PixelText>
+              </>
+            ) : (
+              <>
+                <PixelButton
+                  title={`🔒 ${t('followUp.title')}`}
+                  onPress={() => setToastMessage('Lv.10 이상 필요합니다')}
+                  variant="secondary"
+                  size="large"
+                  fullWidth
+                />
+                <PixelText variant="caption" color={COLORS.textMuted} align="center" style={styles.followUpHint}>
+                  Lv.10 도달 시 해금
+                </PixelText>
+              </>
+            )}
           </View>
         )}
 
@@ -542,6 +589,18 @@ export function SpreadResultScreen({ route, navigation }: SpreadResultScreenProp
         )}
       </ScrollView>
       </KeyboardAvoidingView>
+      <XPRewardAnimation ref={xpRef} />
+      <LevelUpModal
+        visible={levelUpInfo.visible}
+        newLevel={levelUpInfo.newLevel}
+        unlocks={levelUpInfo.unlocks}
+        onDismiss={() => setLevelUpInfo(prev => ({ ...prev, visible: false }))}
+      />
+      <Toast
+        message={toastMessage || ''}
+        visible={!!toastMessage}
+        onDismiss={() => setToastMessage(null)}
+      />
     </SafeAreaView>
   );
 }

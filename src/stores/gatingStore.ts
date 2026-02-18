@@ -1,9 +1,10 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { GatingState, DEFAULT_GATING_LIMITS } from '../types';
+import { GatingState, DEFAULT_GATING_LIMITS, SpreadTopic } from '../types';
 import { getLocalDateKey } from '../utils/date';
 import { getGatingKey, getItem, setItem } from '../utils/storage';
+import { useCharacterStore } from './characterStore';
 
 // ============================================
 // Helper: Create default gating state for a date
@@ -32,6 +33,11 @@ interface GatingStoreState {
   setHydrated: (hydrated: boolean) => void;
   loadGatingForDate: (dateKey: string) => Promise<GatingState>;
   getGatingForToday: () => GatingState;
+
+  // Level-gating (NEW)
+  canAccessTopic: (topic: SpreadTopic) => boolean;
+  canDoQuest: (topic: SpreadTopic, dateKey?: string) => { allowed: boolean; reason: 'ok' | 'level_locked' | 'free_used' };
+  canAccessDeepReading: () => boolean;
   
   // Free spread
   canDoFreeSpread: (dateKey?: string) => boolean;
@@ -98,6 +104,28 @@ export const useGatingStore = create<GatingStoreState>()(
           gating: { ...state.gating, [today]: defaultGating },
         }));
         return defaultGating;
+      },
+
+      canAccessTopic: (topic) => {
+        return useCharacterStore.getState().canAccessTopic(topic);
+      },
+
+      canDoQuest: (topic, dateKey) => {
+        const levelOk = useCharacterStore.getState().canAccessTopic(topic);
+        if (!levelOk) {
+          return { allowed: false, reason: 'level_locked' as const };
+        }
+
+        const canFree = get().canDoFreeSpread(dateKey);
+        if (!canFree) {
+          return { allowed: false, reason: 'free_used' as const };
+        }
+
+        return { allowed: true, reason: 'ok' as const };
+      },
+
+      canAccessDeepReading: () => {
+        return useCharacterStore.getState().canAccessDeepReading();
       },
       
       // ============================================
@@ -284,4 +312,6 @@ export const useCanDoFreeSpread = () => useGatingStore((state) => state.canDoFre
 export const useCanUseClarifier = () => useGatingStore((state) => state.canUseClarifier());
 export const useCanUseAnotherTopic = () => useGatingStore((state) => state.canUseAnotherTopic());
 export const useCanShowAd = () => useGatingStore((state) => state.canShowAd());
+export const useCanAccessTopic = (topic: SpreadTopic) => useGatingStore(() => useGatingStore.getState().canAccessTopic(topic));
+export const useCanAccessDeepReading = () => useGatingStore(() => useGatingStore.getState().canAccessDeepReading());
 export const useIsGatingHydrated = () => useGatingStore((state) => state.isHydrated);

@@ -3,22 +3,20 @@ import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { CompositeScreenProps, NavigatorScreenParams } from '@react-navigation/native';
 import { SpreadTopic } from '../types';
 
-// Tab navigator param list
 export type MainTabParamList = {
-  DailyTab: undefined;
-  SpreadsTab: undefined;
-  JourneyTab: undefined;
+  HomeTab: undefined;
+  QuestsTab: undefined;
+  LogTab: undefined;
   SettingsTab: undefined;
 };
 
-// Root stack param list (includes tabs + modal screens)
 export type RootStackParamList = {
   MainTabs: NavigatorScreenParams<MainTabParamList>;
-  DailyResult: {
+  TrainingResult: {
     dateKey: string;
     isNewDraw?: boolean;
   };
-  SpreadResult: {
+  QuestResult: {
     dateKey: string;
     spreadId: string;
     topic: SpreadTopic;
@@ -29,19 +27,19 @@ export type RootStackParamList = {
   };
 };
 
-// Screen props for tab screens
-export type DailyScreenProps = CompositeScreenProps<
-  BottomTabScreenProps<MainTabParamList, 'DailyTab'>,
+// Tab screen props
+export type HomeScreenProps = CompositeScreenProps<
+  BottomTabScreenProps<MainTabParamList, 'HomeTab'>,
   NativeStackScreenProps<RootStackParamList>
 >;
 
-export type SpreadsScreenProps = CompositeScreenProps<
-  BottomTabScreenProps<MainTabParamList, 'SpreadsTab'>,
+export type QuestBoardScreenProps = CompositeScreenProps<
+  BottomTabScreenProps<MainTabParamList, 'QuestsTab'>,
   NativeStackScreenProps<RootStackParamList>
 >;
 
-export type JourneyScreenProps = CompositeScreenProps<
-  BottomTabScreenProps<MainTabParamList, 'JourneyTab'>,
+export type TrainingLogScreenProps = CompositeScreenProps<
+  BottomTabScreenProps<MainTabParamList, 'LogTab'>,
   NativeStackScreenProps<RootStackParamList>
 >;
 
@@ -50,9 +48,16 @@ export type SettingsScreenProps = CompositeScreenProps<
   NativeStackScreenProps<RootStackParamList>
 >;
 
-// Screen props for stack screens (modals)
-export type DailyResultScreenProps = NativeStackScreenProps<RootStackParamList, 'DailyResult'>;
-export type SpreadResultScreenProps = NativeStackScreenProps<RootStackParamList, 'SpreadResult'>;
+// Stack screen props
+export type TrainingResultScreenProps = NativeStackScreenProps<RootStackParamList, 'TrainingResult'>;
+export type QuestResultScreenProps = NativeStackScreenProps<RootStackParamList, 'QuestResult'>;
 export type HistoryDetailScreenProps = NativeStackScreenProps<RootStackParamList, 'HistoryDetail'>;
 
 export type RootStackNavigationProp = NativeStackScreenProps<RootStackParamList>['navigation'];
+
+// Keep old types as aliases during transition (screens still use old names internally)
+export type DailyScreenProps = HomeScreenProps;
+export type SpreadsScreenProps = QuestBoardScreenProps;
+export type JourneyScreenProps = TrainingLogScreenProps;
+export type DailyResultScreenProps = TrainingResultScreenProps;
+export type SpreadResultScreenProps = QuestResultScreenProps;
