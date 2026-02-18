@@ -54,10 +54,3 @@ export type QuestResultScreenProps = NativeStackScreenProps<RootStackParamList, 
 export type HistoryDetailScreenProps = NativeStackScreenProps<RootStackParamList, 'HistoryDetail'>;
 
 export type RootStackNavigationProp = NativeStackScreenProps<RootStackParamList>['navigation'];
-
-// Keep old types as aliases during transition (screens still use old names internally)
-export type DailyScreenProps = HomeScreenProps;
-export type SpreadsScreenProps = QuestBoardScreenProps;
-export type JourneyScreenProps = TrainingLogScreenProps;
-export type DailyResultScreenProps = TrainingResultScreenProps;
-export type SpreadResultScreenProps = QuestResultScreenProps;

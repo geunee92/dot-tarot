@@ -176,7 +176,7 @@ function UnlockItem({ unlock, index }: { unlock: string; index: number }) {
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.85)',
+    backgroundColor: COLORS.overlayHeavy,
     justifyContent: 'center',
     alignItems: 'center',
   },

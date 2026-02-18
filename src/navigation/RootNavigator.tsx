@@ -4,18 +4,19 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { RootStackParamList } from './types';
 import { TabNavigator } from './TabNavigator';
 import {
-  DailyResultScreen,
-  SpreadResultScreen,
+  TrainingResultScreen,
+  QuestResultScreen,
   HistoryDetailScreen,
 } from '../screens';
+import { COLORS } from '../components';
 import { t } from '../i18n';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
-const COLORS = {
-  background: '#0c0a1d',
-  surface: '#1a1633',
-  text: '#f5f5f5',
+const NAV_COLORS = {
+  background: COLORS.background,
+  surface: COLORS.surface,
+  text: COLORS.text,
 };
 
 export function RootNavigator() {
@@ -25,15 +26,15 @@ export function RootNavigator() {
         initialRouteName="MainTabs"
         screenOptions={{
           headerStyle: {
-            backgroundColor: COLORS.surface,
+            backgroundColor: NAV_COLORS.surface,
           },
-          headerTintColor: COLORS.text,
+          headerTintColor: NAV_COLORS.text,
           headerTitleStyle: {
             fontWeight: 'bold',
           },
           headerBackTitle: '',
           contentStyle: {
-            backgroundColor: COLORS.background,
+            backgroundColor: NAV_COLORS.background,
           },
           animation: 'slide_from_right',
         }}
@@ -50,7 +51,7 @@ export function RootNavigator() {
         
         <Stack.Screen
           name="TrainingResult"
-          component={DailyResultScreen}
+          component={TrainingResultScreen}
           options={{
             title: t('home.dailyTraining'),
             animation: 'fade',
@@ -59,7 +60,7 @@ export function RootNavigator() {
         
          <Stack.Screen
            name="QuestResult"
-           component={SpreadResultScreen}
+            component={QuestResultScreen}
             options={({ route }) => ({
               title: t('quests.resultTitle'),
               animation: 'fade_from_bottom',

@@ -28,6 +28,11 @@ export const COLORS = {
   border: '#4a69bd',
   borderLight: '#6b8cce',
   borderAccent: '#f8b500',
+  
+  overlayLight: 'rgba(0, 0, 0, 0.3)',
+  overlay: 'rgba(0, 0, 0, 0.6)',
+  overlayDark: 'rgba(0, 0, 0, 0.7)',
+  overlayHeavy: 'rgba(0, 0, 0, 0.85)',
 } as const;
 
 export const BACKGROUNDS = {

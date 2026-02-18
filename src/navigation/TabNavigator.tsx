@@ -4,7 +4,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import * as Haptics from 'expo-haptics';
 import { MainTabParamList } from './types';
-import { HomeScreen, QuestBoardScreen, JourneyScreen, SettingsScreen } from '../screens';
+import { HomeScreen, QuestBoardScreen, TrainingLogScreen, SettingsScreen } from '../screens';
 import { PixelText, COLORS, SPACING, BORDERS, FONTS, SHADOWS } from '../components';
 import { useTranslation } from '../i18n';
 
@@ -75,7 +75,7 @@ export function TabNavigator() {
     >
       <Tab.Screen name="HomeTab" component={HomeScreen} />
       <Tab.Screen name="QuestsTab" component={QuestBoardScreen} />
-      <Tab.Screen name="LogTab" component={JourneyScreen} />
+      <Tab.Screen name="LogTab" component={TrainingLogScreen} />
       <Tab.Screen name="SettingsTab" component={SettingsScreen} />
     </Tab.Navigator>
   );

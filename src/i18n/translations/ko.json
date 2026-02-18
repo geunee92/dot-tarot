@@ -11,11 +11,12 @@
     "backHome": "홈으로 돌아가기",
     "saving": "저장 중...",
     "retry": "다시 시도",
-    "share": "공유하기"
+    "share": "공유하기",
+    "error": "오류가 발생했습니다"
   },
 
   "home": {
-    "title": "도트 타로",
+    "title": "도트 오라클",
     "cardBacks": "카드 뒷면",
     "dailyCard": "오늘의 카드",
     "drawCard": "오늘의 카드 뽑기",
@@ -34,7 +35,6 @@
     "dailyTraining": "오늘의 수련",
     "questBoard": "의뢰 게시판",
     "startTraining": "수련 시작하기",
-    "viewTraining": "오늘의 수련 보기",
     "goToQuests": "의뢰 보러 가기"
   },
   "dailyResult": {
