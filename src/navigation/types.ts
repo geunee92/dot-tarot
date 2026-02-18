@@ -4,8 +4,9 @@ import { CompositeScreenProps, NavigatorScreenParams } from '@react-navigation/n
 import { SpreadTopic } from '../types';
 
 export type MainTabParamList = {
-  HomeTab: undefined;
-  QuestsTab: undefined;
+  CharacterTab: undefined;
+  TalismanTab: undefined;
+  SpreadTab: undefined;
   LogTab: undefined;
   SettingsTab: undefined;
 };
@@ -28,13 +29,18 @@ export type RootStackParamList = {
 };
 
 // Tab screen props
-export type HomeScreenProps = CompositeScreenProps<
-  BottomTabScreenProps<MainTabParamList, 'HomeTab'>,
+export type CharacterScreenProps = CompositeScreenProps<
+  BottomTabScreenProps<MainTabParamList, 'CharacterTab'>,
   NativeStackScreenProps<RootStackParamList>
 >;
 
-export type QuestBoardScreenProps = CompositeScreenProps<
-  BottomTabScreenProps<MainTabParamList, 'QuestsTab'>,
+export type TalismanScreenProps = CompositeScreenProps<
+  BottomTabScreenProps<MainTabParamList, 'TalismanTab'>,
+  NativeStackScreenProps<RootStackParamList>
+>;
+
+export type SpreadScreenProps = CompositeScreenProps<
+  BottomTabScreenProps<MainTabParamList, 'SpreadTab'>,
   NativeStackScreenProps<RootStackParamList>
 >;
 

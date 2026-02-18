@@ -259,7 +259,11 @@ export function QuestResultScreen({ route, navigation }: QuestResultScreenProps)
   }, [dateKey, spreadId, updateSpreadReflection]);
 
   const handleGoBack = useCallback(() => {
-    navigation.goBack();
+    navigation.navigate('MainTabs', { screen: 'CharacterTab' });
+  }, [navigation]);
+
+  const handleGoToSpreads = useCallback(() => {
+    navigation.navigate('MainTabs', { screen: 'SpreadTab' });
   }, [navigation]);
 
   if (!spread) {
@@ -293,7 +297,7 @@ export function QuestResultScreen({ route, navigation }: QuestResultScreenProps)
       >
         <View style={styles.header}>
           <PixelText variant="heading" style={styles.topicTitle}>
-            {t(`home.topics.${topic.toLowerCase()}`)} {t('spreadResult.reading')}
+            {t(`topics.${topic.toLowerCase()}`)} {t('spread.resultTitle')}
           </PixelText>
         </View>
 
@@ -410,13 +414,13 @@ export function QuestResultScreen({ route, navigation }: QuestResultScreenProps)
               <>
                 <PixelButton
                   title={`🔒 ${t('followUp.title')}`}
-                  onPress={() => setToastMessage('Lv.10 이상 필요합니다')}
+                  onPress={() => setToastMessage(t('spread.locked', { level: 10 }))}
                   variant="secondary"
                   size="large"
                   fullWidth
                 />
                 <PixelText variant="caption" color={COLORS.textMuted} align="center" style={styles.followUpHint}>
-                  Lv.10 도달 시 해금
+                  {t('spread.locked', { level: 10 })}
                 </PixelText>
               </>
             )}
@@ -579,6 +583,12 @@ export function QuestResultScreen({ route, navigation }: QuestResultScreenProps)
 
         {allRevealed && (
           <View style={styles.actionButtons}>
+            <PixelButton
+              title={t('spread.title')}
+              onPress={handleGoToSpreads}
+              variant="secondary"
+              size="medium"
+            />
             <PixelButton
               title={t('common.backHome')}
               onPress={handleGoBack}

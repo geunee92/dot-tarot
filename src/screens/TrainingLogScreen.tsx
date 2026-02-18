@@ -153,12 +153,12 @@ export function TrainingLogScreen({ navigation }: TrainingLogScreenProps) {
         showsVerticalScrollIndicator={false}
       >
         <PixelText variant="title" style={styles.title}>
-          {t('journey.title')}
+          {t('records.title')}
         </PixelText>
 
         <View style={styles.section}>
           <PixelText variant="heading" style={styles.sectionTitle}>
-            {t('journey.calendar')}
+            {t('records.calendar')}
           </PixelText>
           <CalendarGrid
             monthKey={currentMonth}
@@ -173,7 +173,7 @@ export function TrainingLogScreen({ navigation }: TrainingLogScreenProps) {
 
         <View style={styles.section}>
           <PixelText variant="heading" style={styles.sectionTitle}>
-            {t('journey.collection')}
+            {t('records.collection')}
           </PixelText>
           
           <View style={styles.progressBox}>

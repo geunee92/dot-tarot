@@ -6,7 +6,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import { useCharacterStore } from '../../stores/characterStore';
-import { getEvolutionStageDef } from '../../config/progression';
+import { getEvolutionStageDef, getXPForLevel } from '../../config/progression';
 import { PixelText } from '../PixelText';
 import { COLORS, BORDERS, RADIUS, SPACING } from '../theme';
 
@@ -16,15 +16,18 @@ interface CharacterStatusProps {
 
 export function CharacterStatus({ compact = false }: CharacterStatusProps) {
   const level = useCharacterStore((s) => s.level);
+  const currentXP = useCharacterStore((s) => s.currentXP);
   const streak = useCharacterStore((s) => s.streak);
-  const xpProgress = useCharacterStore((s) => s.getXPProgress());
+
+  const neededXP = getXPForLevel(level);
+  const xpPercentage = neededXP > 0 ? currentXP / neededXP : 0;
   
   const evolutionStageDef = getEvolutionStageDef(level);
   const progressWidth = useSharedValue(0);
 
   useEffect(() => {
-    progressWidth.value = withTiming(xpProgress.percentage, { duration: 500 });
-  }, [xpProgress.percentage]);
+    progressWidth.value = withTiming(xpPercentage, { duration: 500 });
+  }, [xpPercentage]);
 
   const progressStyle = useAnimatedStyle(() => ({
     width: `${progressWidth.value * 100}%`,
@@ -80,7 +83,7 @@ export function CharacterStatus({ compact = false }: CharacterStatusProps) {
           />
         </View>
         <PixelText variant="caption" align="right" style={styles.xpText}>
-          {xpProgress.current}/{xpProgress.needed} XP
+          {currentXP}/{neededXP} XP
         </PixelText>
       </View>
     </View>

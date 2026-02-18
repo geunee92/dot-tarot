@@ -37,7 +37,7 @@ import { SpreadTopic, SpreadRecord } from '../types';
 import { useTranslation } from '../i18n';
 
 type QuestBoardScreenProps = CompositeScreenProps<
-  BottomTabScreenProps<MainTabParamList, 'QuestsTab'>,
+  BottomTabScreenProps<MainTabParamList, 'SpreadTab'>,
   NativeStackScreenProps<RootStackParamList>
 >;
 
@@ -89,7 +89,7 @@ export function QuestBoardScreen({ navigation }: QuestBoardScreenProps) {
     if (!canAccessTopic(topicId)) {
       const config = TOPIC_CONFIGS.find((c) => c.id === topicId);
       if (config) {
-        showToast('Lv.' + config.requiredLevel + ' 이상 필요합니다');
+        showToast(t('spread.locked', { level: config.requiredLevel }));
       }
       return;
     }
@@ -143,7 +143,7 @@ export function QuestBoardScreen({ navigation }: QuestBoardScreenProps) {
       setSelectedTopic(null);
     } catch (error) {
       console.error('Failed to create spread:', error);
-      showToast('퀘스트 생성 실패');
+      showToast(t('spread.createFailed'));
     }
   };
 
@@ -164,7 +164,7 @@ export function QuestBoardScreen({ navigation }: QuestBoardScreenProps) {
 
   const renderTopicCard = (config: typeof TOPIC_CONFIGS[0]) => {
     const isLocked = !canAccessTopic(config.id);
-    const label = t('home.topics.' + config.id.toLowerCase());
+    const label = t('topics.' + config.id.toLowerCase());
     const isFreeAvailable = canDoFreeSpread(todayKey);
 
     return (
@@ -201,7 +201,7 @@ export function QuestBoardScreen({ navigation }: QuestBoardScreenProps) {
     const config = TOPIC_CONFIGS.find((c) => c.id === spread.topic);
     const date = parseDateKey(spread.dateKey);
     const dateStr = date ? (date.getMonth() + 1) + '/' + date.getDate() : '';
-    const label = t('home.topics.' + spread.topic.toLowerCase());
+    const label = t('topics.' + spread.topic.toLowerCase());
 
     return (
       <TouchableOpacity
@@ -218,7 +218,7 @@ export function QuestBoardScreen({ navigation }: QuestBoardScreenProps) {
             <PixelText variant="caption" style={styles.recentDate}>{dateStr}</PixelText>
           </View>
           <PixelText variant="body" style={styles.recentQuestion} numberOfLines={1}>
-            {spread.userQuestion || t('home.generalReading')}
+            {spread.userQuestion || t('spread.recentSpreads')}
           </PixelText>
         </View>
       </TouchableOpacity>
@@ -248,7 +248,7 @@ export function QuestBoardScreen({ navigation }: QuestBoardScreenProps) {
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.header}>
-            <PixelText variant="heading" style={styles.headerTitle}>{t('home.spreadTitle')}</PixelText>
+            <PixelText variant="heading" style={styles.headerTitle}>{t('spread.title')}</PixelText>
             <View style={styles.levelBadge}>
               <PixelText variant="caption" style={styles.levelText}>Lv.{level}</PixelText>
             </View>
@@ -260,7 +260,7 @@ export function QuestBoardScreen({ navigation }: QuestBoardScreenProps) {
 
           {recentSpreads.length > 0 && (
             <View style={styles.recentSection}>
-              <PixelText variant="heading" style={styles.sectionTitle}>최근 퀘스트</PixelText>
+              <PixelText variant="heading" style={styles.sectionTitle}>{t('spread.recentSpreads')}</PixelText>
               {recentSpreads.map(renderRecentQuest)}
             </View>
           )}
@@ -290,15 +290,14 @@ export function QuestBoardScreen({ navigation }: QuestBoardScreenProps) {
         >
           <View style={styles.modalOverlay}>
             <View style={styles.modalContent}>
-              <PixelText variant="heading" style={styles.modalTitle}>추가 퀘스트 잠금 해제</PixelText>
+              <PixelText variant="heading" style={styles.modalTitle}>{t('spread.adUnlockTitle')}</PixelText>
               <PixelText variant="body" style={styles.modalText}>
-                오늘의 무료 퀘스트를 이미 완료했습니다.{"\n"}
-                광고를 시청하고 새로운 퀘스트를 시작하시겠습니까?
+                {t('spread.adUnlockBody')}
               </PixelText>
               
               <RewardedAdButton
-                title="광고 보고 잠금 해제"
-                subtitle="새로운 운세 확인하기"
+                title={t('spread.adUnlockCta')}
+                subtitle={t('spread.adUnlockSubtitle')}
                 onRewardEarned={handleAdRewardEarned}
               />
               

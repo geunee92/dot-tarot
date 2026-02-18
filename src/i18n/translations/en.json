@@ -8,34 +8,30 @@
     "tapToView": "Tap to view details",
     "drawing": "Drawing...",
     "loadingCard": "Loading card...",
-    "backHome": "Back to Home",
+    "backHome": "Back to Character",
     "saving": "Saving...",
     "retry": "Retry",
     "share": "Share",
     "error": "An error occurred"
   },
 
-  "home": {
+  "character": {
     "title": "DOT ORACLE",
     "cardBacks": "Card Backs",
-    "dailyCard": "Daily Card",
-    "drawCard": "Draw Today's Card",
-    "spreadTitle": "3-Card Spread",
-    "freeUsed": "Free used",
-    "freeDaily": "Choose a topic for your daily reading",
-    "watchAd": "Watch an ad for another reading",
-    "attendance": "Attendance",
-    "settings": "Settings",
-    "topics": {
-      "general": "General",
-      "love": "Love",
-      "money": "Money",
-      "work": "Work"
-    },
-    "dailyTraining": "Daily Training",
-    "questBoard": "Quest Board",
-    "startTraining": "Start Training",
-    "goToQuests": "Go to Quests"
+    "evolutionStage": "Evolution Stage",
+    "currentStage": "Current Stage",
+    "streak": "Streak",
+    "streakDays": "%{count} day streak",
+    "unlockedTopics": "Unlocked Topics",
+    "nextUnlock": "Next Unlock",
+    "nextUnlockAt": "Unlocks %{feature} at Lv.%{level}",
+    "maxLevel": "Max level reached!"
+  },
+  "topics": {
+    "general": "General",
+    "love": "Love",
+    "money": "Money",
+    "work": "Work"
   },
   "dailyResult": {
     "reveal": "Reveal Your Card",
@@ -47,9 +43,15 @@
     "memoPlaceholder": "Write your thoughts about this card...",
     "saveMemo": "Save Memo"
   },
+  "talisman": {
+    "title": "Today's Talisman",
+    "drawCard": "Draw Talisman",
+    "todaysTalisman": "Today's Talisman",
+    "alreadyDrawn": "Already drawn today's talisman"
+  },
   "spreadResult": {
-    "title": "3-Card Reading",
-    "reading": "Reading",
+    "title": "3-Card Spread Result",
+    "reading": "Result",
     "pattern": "Pattern",
     "loadingSpread": "Loading spread...",
     "positions": {
@@ -120,14 +122,14 @@
         "work": "Focusing on work is tough today. Don't push yourself—maybe just do some light organizing or take notes?"
       }
     },
-    "interpretation": "Reading Interpretation",
+    "interpretation": "Spread Interpretation",
     "aiThinking": "AI is thinking",
     "yourQuestion": "Your Question",
     "energyTone": "Energy Tone",
     "suggestedApproach": "Suggested Approach",
-    "clarifierHint": "Your reading has some reversed energy. A clarifier card can provide additional guidance.",
+    "clarifierHint": "Your interpretation has reversed energy. A clarifier card can provide additional guidance.",
     "clarifierOptional": "Want more insight? Unlock a clarifier card for deeper understanding.",
-    "clarifierHintUUU": "Your reading is flowing smoothly. Get a concrete first action with the Clarifier.",
+    "clarifierHintUUU": "Your interpretation is flowing smoothly. Get a concrete first action with the Clarifier.",
     "clarifierHintReversed": "Want deeper insight? Get additional guidance with the Clarifier.",
     "clarifierInsights": {
       "UUU": {
@@ -217,7 +219,7 @@
     "clarifier": "Clarifier Card",
     "unlockClarifier": "Unlock Clarifier",
     "unlockAnother": "Unlock Another Topic",
-    "insight": "Spread Insight",
+    "insight": "Additional Insight",
     "watchAdFor": "Watch ad to unlock"
   },
   "deck": {
@@ -239,10 +241,10 @@
     "requirement": "Reach %{days} days to unlock"
   },
   "history": {
-    "title": "Reading History",
+    "title": "Record Detail",
     "dailyCard": "Daily Card",
     "spreads": "Spreads",
-    "noReadings": "No readings on this day",
+    "noReadings": "No records on this day",
     "memo": "Memo",
     "noMemo": "No memo saved",
     "topic": "Topic"
@@ -260,7 +262,12 @@
     "resetDataConfirm": "All data will be deleted. Continue?",
     "reset": "Reset",
     "resetting": "Resetting...",
-    "resetComplete": "Data has been reset. Please restart the app."
+    "resetComplete": "Data has been reset. Please restart the app.",
+    "characterManagement": "Character",
+    "currentLevel": "Current Level: Lv.%{level}",
+    "resetCharacter": "Reset Character",
+    "resetCharacterConfirm": "Level, XP, and streak progress will be reset. Continue?",
+    "resetCharacterDone": "Character progress has been reset."
   },
   "card": {
     "upright": "UPRIGHT",
@@ -269,38 +276,36 @@
     "keywords": "Keywords"
   },
   "tabs": {
-    "daily": "Daily",
-    "spreads": "Spreads",
-    "journey": "Journey",
-    "settings": "Settings",
-    "home": "Home",
-    "quests": "Quests",
-    "log": "Log"
+    "character": "Character",
+    "talisman": "Talisman",
+    "spread": "Spread",
+    "records": "Records",
+    "settings": "Settings"
   },
-  "journey": {
-    "title": "My Journey",
+  "records": {
+    "title": "Records",
     "calendar": "Calendar",
     "collection": "Collection",
     "history": "History"
   },
-  "spreads": {
-    "title": "Choose a Topic",
-    "subtitle": "Select a topic for your 3-card reading",
-    "recentReadings": "Recent Readings"
-  },
-  "quests": {
-    "title": "Quest Board",
-    "subtitle": "Help clients with their concerns",
-    "resultTitle": "Quest Result",
-    "locked": "Requires Lv.%{level}",
-    "recentQuests": "Recent Quests"
+  "spread": {
+    "title": "3-Card Spread",
+    "subtitle": "Choose a topic and draw your cards",
+    "resultTitle": "Spread Result",
+    "locked": "Unlocks at Lv.%{level}",
+    "recentSpreads": "Recent Spreads",
+    "createFailed": "Couldn't create the spread. Please try again.",
+    "adUnlockTitle": "Open One More Spread",
+    "adUnlockBody": "You've used today's free spread.\nWatch a short ad to open one more?",
+    "adUnlockCta": "Watch ad and open",
+    "adUnlockSubtitle": "Continue in about 30 seconds"
   },
   "questionModal": {
     "title": "Ask about %{topic}",
     "placeholder": "Enter your question...",
     "charCount": "%{count}/30",
     "example": "Example: \"%{example}\"",
-    "startReading": "Start Reading",
+    "startReading": "Start Spread",
     "skip": "Skip",
     "topicLabels": {
       "general": "general",
@@ -332,7 +337,7 @@
   "reflection": {
     "title": "Daily Reflection",
     "question": "How was today's talisman?",
-    "spreadQuestion": "How was this reading?",
+    "spreadQuestion": "How was this spread interpretation?",
     "accurate": "Spot on",
     "neutral": "So-so",
     "unsure": "Not sure yet",
