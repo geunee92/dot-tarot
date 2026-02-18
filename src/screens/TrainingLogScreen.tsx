@@ -24,7 +24,7 @@ import { useDrawStore } from '../stores/drawStore';
 import { useSpreadStore } from '../stores/spreadStore';
 import { useRewardStore, getMilestoneProgress } from '../stores/rewardStore';
 import { useSettingsStore } from '../stores/settingsStore';
-import { JourneyScreenProps } from '../navigation/types';
+import { TrainingLogScreenProps } from '../navigation/types';
 import { BackSkin, REWARD_MILESTONES } from '../types';
 import { BACK_SKINS } from '../data';
 import { useTranslation } from '../i18n';
@@ -35,7 +35,7 @@ import {
   getNextMonthKey,
 } from '../utils/date';
 
-export function JourneyScreen({ navigation }: JourneyScreenProps) {
+export function TrainingLogScreen({ navigation }: TrainingLogScreenProps) {
   const { t } = useTranslation();
   const [currentMonth, setCurrentMonth] = useState(getMonthKey());
 
@@ -380,7 +380,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    backgroundColor: COLORS.overlayLight,
   },
   skinSymbol: {
     fontSize: FONTS.lg,

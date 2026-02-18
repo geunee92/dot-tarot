@@ -11,11 +11,12 @@
     "backHome": "Back to Home",
     "saving": "Saving...",
     "retry": "Retry",
-    "share": "Share"
+    "share": "Share",
+    "error": "An error occurred"
   },
 
   "home": {
-    "title": "DOT TAROT",
+    "title": "DOT ORACLE",
     "cardBacks": "Card Backs",
     "dailyCard": "Daily Card",
     "drawCard": "Draw Today's Card",
@@ -34,7 +35,6 @@
     "dailyTraining": "Daily Training",
     "questBoard": "Quest Board",
     "startTraining": "Start Training",
-    "viewTraining": "View Today's Training",
     "goToQuests": "Go to Quests"
   },
   "dailyResult": {

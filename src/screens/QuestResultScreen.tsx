@@ -31,7 +31,7 @@ import { XPRewardAnimation, XPRewardAnimationRef, LevelUpModal } from '../compon
 import { generateInterpretation, generateFollowUpInterpretation } from '../services/ai';
 import { useSpreadStore } from '../stores/spreadStore';
 import { useCharacterStore } from '../stores/characterStore';
-import { SpreadResultScreenProps } from '../navigation/types';
+import { QuestResultScreenProps } from '../navigation/types';
 import { SpreadPosition, SpreadCard, FollowUpPosition, FollowUpSpreadCard, ReflectionAccuracy } from '../types';
 import { getMeaning, getKeywords } from '../utils/cards';
 import { useTranslation } from '../i18n';
@@ -48,7 +48,7 @@ const FOLLOWUP_POSITION_KEYS: Record<FollowUpPosition, string> = {
   OUTCOME: 'outcome',
 };
 
-export function SpreadResultScreen({ route, navigation }: SpreadResultScreenProps) {
+export function QuestResultScreen({ route, navigation }: QuestResultScreenProps) {
   const { t } = useTranslation();
   const { dateKey, spreadId, topic, isNewSpread } = route.params;
   

@@ -23,12 +23,12 @@ import {
 import { useDrawStore } from '../stores/drawStore';
 import { useCharacterStore } from '../stores/characterStore';
 import { XPRewardAnimation, XPRewardAnimationRef, LevelUpModal } from '../components/Character';
-import { DailyResultScreenProps } from '../navigation/types';
+import { TrainingResultScreenProps } from '../navigation/types';
 import { getMeaning, getKeywords, getDailyContext } from '../utils/cards';
 import { ReflectionAccuracy } from '../types';
 import { useTranslation } from '../i18n';
 
-export function DailyResultScreen({ route, navigation }: DailyResultScreenProps) {
+export function TrainingResultScreen({ route, navigation }: TrainingResultScreenProps) {
   const { t } = useTranslation();
   const { dateKey, isNewDraw } = route.params;
   

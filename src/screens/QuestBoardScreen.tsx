@@ -183,13 +183,13 @@ export function QuestBoardScreen({ navigation }: QuestBoardScreenProps) {
               <AdBadge />
             </View>
           )}
-          <PixelText style={styles.cardEmoji}>{config.emoji}</PixelText>
-          <PixelText style={styles.cardLabel}>{label}</PixelText>
+          <PixelText variant="body" style={styles.cardEmoji}>{config.emoji}</PixelText>
+          <PixelText variant="body" style={styles.cardLabel}>{label}</PixelText>
           
           {isLocked && (
             <View style={styles.lockOverlay}>
-              <PixelText style={styles.lockIcon}>🔒</PixelText>
-              <PixelText style={styles.lockText}>Lv.{config.requiredLevel}</PixelText>
+              <PixelText variant="body" style={styles.lockIcon}>🔒</PixelText>
+              <PixelText variant="caption" style={styles.lockText}>Lv.{config.requiredLevel}</PixelText>
             </View>
           )}
         </View>
@@ -210,14 +210,14 @@ export function QuestBoardScreen({ navigation }: QuestBoardScreenProps) {
         onPress={() => handleRecentPress(spread.id, spread.dateKey, spread.topic)}
       >
         <View style={styles.recentIconContainer}>
-          <PixelText style={styles.recentEmoji}>{config?.emoji || '❓'}</PixelText>
+          <PixelText variant="body" style={styles.recentEmoji}>{config?.emoji || '❓'}</PixelText>
         </View>
         <View style={styles.recentInfo}>
           <View style={styles.recentHeader}>
-            <PixelText style={styles.recentTopic}>{label}</PixelText>
-            <PixelText style={styles.recentDate}>{dateStr}</PixelText>
+            <PixelText variant="caption" style={styles.recentTopic}>{label}</PixelText>
+            <PixelText variant="caption" style={styles.recentDate}>{dateStr}</PixelText>
           </View>
-          <PixelText style={styles.recentQuestion} numberOfLines={1}>
+          <PixelText variant="body" style={styles.recentQuestion} numberOfLines={1}>
             {spread.userQuestion || t('home.generalReading')}
           </PixelText>
         </View>
@@ -248,9 +248,9 @@ export function QuestBoardScreen({ navigation }: QuestBoardScreenProps) {
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.header}>
-            <PixelText style={styles.headerTitle}>{t('home.spreadTitle')}</PixelText>
+            <PixelText variant="heading" style={styles.headerTitle}>{t('home.spreadTitle')}</PixelText>
             <View style={styles.levelBadge}>
-              <PixelText style={styles.levelText}>Lv.{level}</PixelText>
+              <PixelText variant="caption" style={styles.levelText}>Lv.{level}</PixelText>
             </View>
           </View>
 
@@ -260,7 +260,7 @@ export function QuestBoardScreen({ navigation }: QuestBoardScreenProps) {
 
           {recentSpreads.length > 0 && (
             <View style={styles.recentSection}>
-              <PixelText style={styles.sectionTitle}>최근 퀘스트</PixelText>
+              <PixelText variant="heading" style={styles.sectionTitle}>최근 퀘스트</PixelText>
               {recentSpreads.map(renderRecentQuest)}
             </View>
           )}
@@ -290,8 +290,8 @@ export function QuestBoardScreen({ navigation }: QuestBoardScreenProps) {
         >
           <View style={styles.modalOverlay}>
             <View style={styles.modalContent}>
-              <PixelText style={styles.modalTitle}>추가 퀘스트 잠금 해제</PixelText>
-              <PixelText style={styles.modalText}>
+              <PixelText variant="heading" style={styles.modalTitle}>추가 퀘스트 잠금 해제</PixelText>
+              <PixelText variant="body" style={styles.modalText}>
                 오늘의 무료 퀘스트를 이미 완료했습니다.{"\n"}
                 광고를 시청하고 새로운 퀘스트를 시작하시겠습니까?
               </PixelText>
@@ -306,7 +306,7 @@ export function QuestBoardScreen({ navigation }: QuestBoardScreenProps) {
                 style={styles.closeButton}
                 onPress={() => setShowAdModal(false)}
               >
-                <PixelText style={styles.closeButtonText}>{t('common.cancel')}</PixelText>
+                <PixelText variant="body" style={styles.closeButtonText}>{t('common.cancel')}</PixelText>
               </TouchableOpacity>
             </View>
           </View>
@@ -395,7 +395,7 @@ const styles = StyleSheet.create({
   },
   lockOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    backgroundColor: COLORS.overlay,
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 10,
@@ -468,7 +468,7 @@ const styles = StyleSheet.create({
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    backgroundColor: COLORS.overlayDark,
     justifyContent: 'center',
     alignItems: 'center',
     padding: SPACING.lg,
