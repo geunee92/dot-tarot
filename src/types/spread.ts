@@ -1,6 +1,6 @@
 import { DrawnCard } from './card';
 
-export type SpreadTopic = 'LOVE' | 'MONEY' | 'WORK';
+export type SpreadTopic = 'GENERAL' | 'LOVE' | 'MONEY' | 'WORK';
 
 export type SpreadPosition = 'FLOW' | 'INFLUENCE' | 'ADVICE';
 
@@ -8,7 +8,7 @@ export type FollowUpPosition = 'DEPTH' | 'HIDDEN' | 'OUTCOME';
 
 export type CombinationPattern = 'UUU' | 'UUR' | 'URU' | 'RUU' | 'URR' | 'RUR' | 'RRU' | 'RRR';
 
-export type ReversalModifier = 'INTERNALIZED' | 'BLOCKED_DELAYED' | 'SHADOW_EXCESS';
+export type ReversalModifier = 'NEUTRAL' | 'INTERNALIZED' | 'BLOCKED_DELAYED' | 'SHADOW_EXCESS';
 
 export type ReflectionAccuracy = 'accurate' | 'neutral' | 'unsure';
 
@@ -51,6 +51,7 @@ export interface SpreadRecord {
 }
 
 export const TOPIC_MODIFIERS: Record<SpreadTopic, ReversalModifier> = {
+  GENERAL: 'NEUTRAL',
   LOVE: 'INTERNALIZED',
   MONEY: 'BLOCKED_DELAYED',
   WORK: 'SHADOW_EXCESS',

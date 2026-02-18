@@ -49,13 +49,13 @@ export function HistoryDetailScreen({ route, navigation }: HistoryDetailScreenPr
   const handleViewDraw = useCallback(() => {
     if (!dateKey) return;
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    navigation.navigate('DailyResult', { dateKey, isNewDraw: false });
+    navigation.navigate('TrainingResult', { dateKey, isNewDraw: false });
   }, [navigation, dateKey]);
 
   const handleViewSpread = useCallback((spread: SpreadRecord) => {
     if (!dateKey) return;
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    navigation.navigate('SpreadResult', {
+    navigation.navigate('QuestResult', {
       dateKey,
       spreadId: spread.id,
       topic: spread.topic,

@@ -21,6 +21,8 @@ import {
   BORDERS,
 } from '../components';
 import { useDrawStore } from '../stores/drawStore';
+import { useCharacterStore } from '../stores/characterStore';
+import { XPRewardAnimation, XPRewardAnimationRef, LevelUpModal } from '../components/Character';
 import { DailyResultScreenProps } from '../navigation/types';
 import { getMeaning, getKeywords, getDailyContext } from '../utils/cards';
 import { ReflectionAccuracy } from '../types';
@@ -33,6 +35,12 @@ export function DailyResultScreen({ route, navigation }: DailyResultScreenProps)
   const [hasFlipped, setHasFlipped] = useState(!isNewDraw);
   const flipRef = useRef<TarotCardFlipRef>(null);
   const scrollRef = useRef<ScrollView>(null);
+  const xpRef = useRef<XPRewardAnimationRef>(null);
+  const [levelUpInfo, setLevelUpInfo] = useState<{ visible: boolean; newLevel: number; unlocks: string[] }>({ visible: false, newLevel: 1, unlocks: [] });
+  const xpAwardedRef = useRef(false);
+
+  const addXP = useCharacterStore((s) => s.addXP);
+  const updateStreak = useCharacterStore((s) => s.updateStreak);
 
   const confirmedDraw = useDrawStore((s) => s.draws[dateKey]);
   const pendingDraw = useDrawStore((s) => s.pendingDraw);
@@ -49,6 +57,10 @@ export function DailyResultScreen({ route, navigation }: DailyResultScreenProps)
       loadDraw(dateKey);
     }
   }, [isHydrated, dateKey, draw]);
+
+  useEffect(() => {
+    xpAwardedRef.current = false;
+  }, [dateKey]);
 
   useEffect(() => {
     if (!isNewDraw) return;
@@ -70,9 +82,28 @@ export function DailyResultScreen({ route, navigation }: DailyResultScreenProps)
     setHasFlipped(true);
     if (isNewDraw) {
       await confirmDraw();
+      
+      // Award XP only once per draw
+      if (!xpAwardedRef.current) {
+        xpAwardedRef.current = true;
+        updateStreak();
+        const result = addXP('daily_training');
+        
+        // Show XP animation
+        setTimeout(() => {
+          xpRef.current?.show(result.event.amount, result.event.bonusAmount);
+        }, 500);
+        
+        // Show level up modal if leveled up
+        if (result.leveledUp) {
+          setTimeout(() => {
+            setLevelUpInfo({ visible: true, newLevel: result.newLevel, unlocks: result.unlocks });
+          }, 2000);
+        }
+      }
     }
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-  }, [isNewDraw, confirmDraw]);
+  }, [isNewDraw, confirmDraw, addXP, updateStreak]);
 
   const [isReflectionLoading, setIsReflectionLoading] = useState(false);
 
@@ -208,6 +239,13 @@ export function DailyResultScreen({ route, navigation }: DailyResultScreenProps)
         )}
       </ScrollView>
       </KeyboardAvoidingView>
+      <XPRewardAnimation ref={xpRef} />
+      <LevelUpModal
+        visible={levelUpInfo.visible}
+        newLevel={levelUpInfo.newLevel}
+        unlocks={levelUpInfo.unlocks}
+        onDismiss={() => setLevelUpInfo(prev => ({ ...prev, visible: false }))}
+      />
     </SafeAreaView>
   );
 }

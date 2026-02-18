@@ -1,9 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import {
-  View,
-  StyleSheet,
-  Pressable,
-} from 'react-native';
+import { View, StyleSheet, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 import {
@@ -14,24 +10,26 @@ import {
   GradientBackground,
   COLORS,
   SPACING,
-  RADIUS,
   SHADOWS,
   BORDERS,
 } from '../components';
+import { CharacterSprite, CharacterStatus } from '../components/Character';
 import { useDrawStore } from '../stores/drawStore';
+import { useCharacterStore } from '../stores/characterStore';
 import { useSettingsStore } from '../stores/settingsStore';
 import { useRewardStore } from '../stores/rewardStore';
-import { DailyScreenProps } from '../navigation/types';
+import { HomeScreenProps } from '../navigation/types';
 import { useTranslation } from '../i18n';
 import { getLocalDateKey } from '../utils/date';
 
-export function DailyScreen({ navigation }: DailyScreenProps) {
+export function HomeScreen({ navigation }: HomeScreenProps) {
   const { t } = useTranslation();
   const [isCreatingDraw, setIsCreatingDraw] = useState(false);
 
   const isDrawHydrated = useDrawStore((s) => s.isHydrated);
   const isSettingsHydrated = useSettingsStore((s) => s.isHydrated);
   const isRewardHydrated = useRewardStore((s) => s.isHydrated);
+  const isCharacterHydrated = useCharacterStore((s) => s.isHydrated);
 
   const todaysDraw = useDrawStore((s) => s.getTodaysDraw());
   const hasDrawnToday = useDrawStore((s) => s.hasDrawnToday());
@@ -40,8 +38,9 @@ export function DailyScreen({ navigation }: DailyScreenProps) {
   const getDrawDates = useDrawStore((s) => s.getDrawDates);
 
   const checkAndUnlockRewards = useRewardStore((s) => s.checkAndUnlockRewards);
+  const evolutionStage = useCharacterStore((s) => s.getEvolutionStage());
 
-  const isHydrated = isDrawHydrated && isSettingsHydrated && isRewardHydrated;
+  const isHydrated = isDrawHydrated && isSettingsHydrated && isRewardHydrated && isCharacterHydrated;
 
   useEffect(() => {
     if (isHydrated) {
@@ -61,7 +60,7 @@ export function DailyScreen({ navigation }: DailyScreenProps) {
     if (isCreatingDraw) return;
     setIsCreatingDraw(true);
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-    
+
     try {
       const dateKey = getLocalDateKey();
       await prepareDraw(dateKey);
@@ -75,6 +74,11 @@ export function DailyScreen({ navigation }: DailyScreenProps) {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     const dateKey = getLocalDateKey();
     navigation.navigate('TrainingResult', { dateKey, isNewDraw: false });
+  }, [navigation]);
+
+  const handleGoToQuests = useCallback(() => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    navigation.navigate('QuestsTab');
   }, [navigation]);
 
   if (!isHydrated) {
@@ -95,22 +99,28 @@ export function DailyScreen({ navigation }: DailyScreenProps) {
     <SafeAreaView style={styles.container} edges={['top']}>
       <GradientBackground variant="cosmic" />
       <View style={styles.content}>
-        <PixelText variant="title" style={styles.title}>
-          {t('home.title')}
-        </PixelText>
-        
-        <PixelText variant="heading" style={styles.subtitle}>
-          {t('home.dailyCard')}
-        </PixelText>
+        <View style={styles.characterSection}>
+          <CharacterSprite
+            evolutionStage={evolutionStage}
+            animationState="idle"
+            size="large"
+          />
+          <View style={styles.statusContainer}>
+            <CharacterStatus />
+          </View>
+        </View>
 
-        <View style={styles.cardArea}>
+        <View style={styles.trainingSection}>
+          <PixelText variant="heading" style={styles.sectionTitle}>
+            {t('home.dailyTraining')}
+          </PixelText>
+
           {hasDrawnToday && todaysDraw ? (
-            <Pressable onPress={handleViewTodaysDraw} style={styles.cardContainer}>
+            <Pressable onPress={handleViewTodaysDraw} style={styles.drawnCardContainer}>
               <PixelCard
                 card={todaysDraw.drawnCard.card}
                 orientation={todaysDraw.drawnCard.orientation}
-                size="large"
-                showFullInfo
+                size="small"
               />
               <PixelText variant="caption" style={styles.tapHint}>
                 {t('common.tapToView')}
@@ -122,12 +132,9 @@ export function DailyScreen({ navigation }: DailyScreenProps) {
                 <PixelText variant="title" style={styles.placeholderIcon}>
                   ✨
                 </PixelText>
-                <PixelText variant="caption" style={styles.placeholderText}>
-                  {t('card.tapReveal')}
-                </PixelText>
               </View>
               <PixelButton
-                title={isCreatingDraw ? t('common.drawing') : t('home.drawCard')}
+                title={isCreatingDraw ? t('common.drawing') : t('home.startTraining')}
                 onPress={handleDrawCard}
                 variant="accent"
                 size="large"
@@ -136,6 +143,16 @@ export function DailyScreen({ navigation }: DailyScreenProps) {
               />
             </View>
           )}
+        </View>
+
+        <View style={styles.questLinkSection}>
+          <PixelButton
+            title={t('home.goToQuests')}
+            onPress={handleGoToQuests}
+            variant="secondary"
+            size="medium"
+            fullWidth
+          />
         </View>
       </View>
     </SafeAreaView>
@@ -161,50 +178,51 @@ const styles = StyleSheet.create({
     paddingHorizontal: SPACING.lg,
     paddingTop: SPACING.lg,
   },
-  title: {
-    color: COLORS.accent,
-    textAlign: 'center',
-    marginBottom: SPACING.md,
-  },
-  subtitle: {
-    color: COLORS.text,
-    textAlign: 'center',
+  characterSection: {
+    alignItems: 'center',
     marginBottom: SPACING.xl,
   },
-  cardArea: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingBottom: SPACING.xxl,
+  statusContainer: {
+    width: '100%',
+    marginTop: SPACING.lg,
   },
-  cardContainer: {
+  trainingSection: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  sectionTitle: {
+    color: COLORS.text,
+    textAlign: 'center',
+    marginBottom: SPACING.lg,
+  },
+  drawnCardContainer: {
     alignItems: 'center',
   },
   tapHint: {
-    marginTop: SPACING.lg,
+    marginTop: SPACING.md,
     color: COLORS.textMuted,
   },
   drawContainer: {
     alignItems: 'center',
     width: '100%',
-    gap: SPACING.xl,
+    gap: SPACING.lg,
   },
   cardPlaceholder: {
-    width: 220,
-    height: 495,
+    width: 120,
+    height: 180,
     backgroundColor: COLORS.surface,
     borderWidth: BORDERS.medium,
     borderColor: COLORS.border,
     borderStyle: 'dashed',
     justifyContent: 'center',
     alignItems: 'center',
-    gap: SPACING.md,
     ...SHADOWS.block,
   },
   placeholderIcon: {
-    fontSize: 48,
+    fontSize: 36,
   },
-  placeholderText: {
-    color: COLORS.textMuted,
+  questLinkSection: {
+    paddingBottom: SPACING.xl,
+    paddingTop: SPACING.lg,
   },
 });

@@ -17,12 +17,17 @@ import { useTranslation } from '../i18n';
 const MAX_LENGTH = 30;
 
 const TOPIC_ICONS: Record<SpreadTopic, string> = {
+  GENERAL: '🔮',
   LOVE: '💕',
   MONEY: '💰',
   WORK: '💼',
 };
 
 const EXAMPLE_QUESTIONS: Record<SpreadTopic, { en: string; ko: string }> = {
+  GENERAL: {
+    en: 'What does the universe want to tell me?',
+    ko: '오늘 우주가 전하고 싶은 메시지는?',
+  },
   LOVE: {
     en: 'Should I confess to my crush?',
     ko: '짝사랑에게 고백해도 될까요?',

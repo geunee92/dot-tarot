@@ -35,6 +35,7 @@ const TOPIC_IDS: { id: SpreadTopic; emoji: string }[] = [
 ];
 
 const TOPIC_EMOJIS: Record<SpreadTopic, string> = {
+  GENERAL: '🔮',
   LOVE: '💕',
   MONEY: '💰',
   WORK: '💼',
@@ -124,7 +125,7 @@ export function SpreadsScreen({ navigation }: SpreadsScreenProps) {
       }
       
       const spread = await createSpread(topic, userQuestion, dateKey);
-      navigation.navigate('SpreadResult', {
+      navigation.navigate('QuestResult', {
         dateKey,
         spreadId: spread.id,
         topic,
@@ -143,7 +144,7 @@ export function SpreadsScreen({ navigation }: SpreadsScreenProps) {
 
   const handleViewSpread = useCallback((spread: SpreadRecord) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    navigation.navigate('SpreadResult', {
+    navigation.navigate('QuestResult', {
       dateKey: spread.dateKey,
       spreadId: spread.id,
       topic: spread.topic,

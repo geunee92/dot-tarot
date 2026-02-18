@@ -1,4 +1,4 @@
-export type Topic = 'LOVE' | 'MONEY' | 'WORK';
+export type Topic = 'GENERAL' | 'LOVE' | 'MONEY' | 'WORK';
 export type Orientation = 'upright' | 'reversed';
 export type Locale = 'en' | 'ko';
 

@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "도트 타로",
-    "slug": "dot-tarot",
-    "version": "1.1.0",
+    "name": "도트 오라클",
+    "slug": "dot-oracle",
+    "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
@@ -14,11 +14,11 @@
     },
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.geunee92.taro-app",
-      "buildNumber": "2",
+      "bundleIdentifier": "com.geunee92.dot-oracle",
+      "buildNumber": "1",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
-        "CFBundleDisplayName": "도트 타로",
+        "CFBundleDisplayName": "도트 오라클",
         "NSUserTrackingUsageDescription": "이 앱은 맞춤형 광고를 제공하기 위해 기기 정보를 사용합니다. This app uses device information to provide personalized ads."
       }
     },
@@ -29,7 +29,7 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.geunee92.taroapp",
+      "package": "com.geunee92.dotoracleapp",
       "versionCode": 1
     },
     "web": {
