@@ -13,16 +13,16 @@ import {
   SHADOWS,
   BORDERS,
 } from '../components';
-import { CharacterSprite, CharacterStatus } from '../components/Character';
+import { CharacterStatus } from '../components/Character';
 import { useDrawStore } from '../stores/drawStore';
 import { useCharacterStore } from '../stores/characterStore';
 import { useSettingsStore } from '../stores/settingsStore';
 import { useRewardStore } from '../stores/rewardStore';
-import { HomeScreenProps } from '../navigation/types';
+import { TalismanScreenProps } from '../navigation/types';
 import { useTranslation } from '../i18n';
 import { getLocalDateKey } from '../utils/date';
 
-export function HomeScreen({ navigation }: HomeScreenProps) {
+export function TalismanScreen({ navigation }: TalismanScreenProps) {
   const { t } = useTranslation();
   const [isCreatingDraw, setIsCreatingDraw] = useState(false);
 
@@ -38,7 +38,6 @@ export function HomeScreen({ navigation }: HomeScreenProps) {
   const getDrawDates = useDrawStore((s) => s.getDrawDates);
 
   const checkAndUnlockRewards = useRewardStore((s) => s.checkAndUnlockRewards);
-  const evolutionStage = useCharacterStore((s) => s.getEvolutionStage());
 
   const isHydrated = isDrawHydrated && isSettingsHydrated && isRewardHydrated && isCharacterHydrated;
 
@@ -47,7 +46,7 @@ export function HomeScreen({ navigation }: HomeScreenProps) {
       const dates = getDrawDates();
       checkAndUnlockRewards(dates);
     }
-  }, [isHydrated, hasDrawnToday]);
+  }, [isHydrated, hasDrawnToday, getDrawDates, checkAndUnlockRewards]);
 
   useEffect(() => {
     if (isHydrated && hasPendingDrawToday && !hasDrawnToday) {
@@ -76,11 +75,6 @@ export function HomeScreen({ navigation }: HomeScreenProps) {
     navigation.navigate('TrainingResult', { dateKey, isNewDraw: false });
   }, [navigation]);
 
-  const handleGoToQuests = useCallback(() => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    navigation.navigate('QuestsTab');
-  }, [navigation]);
-
   if (!isHydrated) {
     return (
       <SafeAreaView style={styles.container}>
@@ -99,20 +93,13 @@ export function HomeScreen({ navigation }: HomeScreenProps) {
     <SafeAreaView style={styles.container} edges={['top']}>
       <GradientBackground variant="cosmic" />
       <View style={styles.content}>
-        <View style={styles.characterSection}>
-          <CharacterSprite
-            evolutionStage={evolutionStage}
-            animationState="idle"
-            size="large"
-          />
-          <View style={styles.statusContainer}>
-            <CharacterStatus />
-          </View>
+        <View style={styles.statusSection}>
+          <CharacterStatus />
         </View>
 
-        <View style={styles.trainingSection}>
+        <View style={styles.drawSection}>
           <PixelText variant="heading" style={styles.sectionTitle}>
-            {t('home.dailyTraining')}
+            {t('talisman.title')}
           </PixelText>
 
           {hasDrawnToday && todaysDraw ? (
@@ -120,7 +107,7 @@ export function HomeScreen({ navigation }: HomeScreenProps) {
               <PixelCard
                 card={todaysDraw.drawnCard.card}
                 orientation={todaysDraw.drawnCard.orientation}
-                size="small"
+                size="medium"
               />
               <PixelText variant="caption" style={styles.tapHint}>
                 {t('common.tapToView')}
@@ -134,7 +121,7 @@ export function HomeScreen({ navigation }: HomeScreenProps) {
                 </PixelText>
               </View>
               <PixelButton
-                title={isCreatingDraw ? t('common.drawing') : t('home.startTraining')}
+                title={isCreatingDraw ? t('common.drawing') : t('talisman.drawCard')}
                 onPress={handleDrawCard}
                 variant="accent"
                 size="large"
@@ -143,16 +130,6 @@ export function HomeScreen({ navigation }: HomeScreenProps) {
               />
             </View>
           )}
-        </View>
-
-        <View style={styles.questLinkSection}>
-          <PixelButton
-            title={t('home.goToQuests')}
-            onPress={handleGoToQuests}
-            variant="secondary"
-            size="medium"
-            fullWidth
-          />
         </View>
       </View>
     </SafeAreaView>
@@ -176,40 +153,38 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     paddingHorizontal: SPACING.lg,
-    paddingTop: SPACING.lg,
+    paddingTop: SPACING.md,
   },
-  characterSection: {
-    alignItems: 'center',
+  statusSection: {
     marginBottom: SPACING.xl,
   },
-  statusContainer: {
-    width: '100%',
-    marginTop: SPACING.lg,
-  },
-  trainingSection: {
+  drawSection: {
     flex: 1,
     alignItems: 'center',
+    justifyContent: 'center',
+    paddingBottom: SPACING.xxl,
   },
   sectionTitle: {
     color: COLORS.text,
     textAlign: 'center',
-    marginBottom: SPACING.lg,
+    marginBottom: SPACING.xl,
   },
   drawnCardContainer: {
     alignItems: 'center',
+    gap: SPACING.md,
   },
   tapHint: {
-    marginTop: SPACING.md,
     color: COLORS.textMuted,
   },
   drawContainer: {
     alignItems: 'center',
     width: '100%',
-    gap: SPACING.lg,
+    gap: SPACING.xl,
+    maxWidth: 300,
   },
   cardPlaceholder: {
-    width: 120,
-    height: 180,
+    width: 160,
+    height: 240,
     backgroundColor: COLORS.surface,
     borderWidth: BORDERS.medium,
     borderColor: COLORS.border,
@@ -219,10 +194,6 @@ const styles = StyleSheet.create({
     ...SHADOWS.block,
   },
   placeholderIcon: {
-    fontSize: 36,
-  },
-  questLinkSection: {
-    paddingBottom: SPACING.xl,
-    paddingTop: SPACING.lg,
+    fontSize: 48,
   },
 });

@@ -1,4 +1,5 @@
-export { HomeScreen } from './HomeScreen';
+export { CharacterScreen } from './CharacterScreen';
+export { TalismanScreen } from './TalismanScreen';
 export { QuestBoardScreen } from './QuestBoardScreen';
 export { TrainingLogScreen } from './TrainingLogScreen';
 export { TrainingResultScreen } from './TrainingResultScreen';

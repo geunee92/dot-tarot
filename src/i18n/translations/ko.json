@@ -8,34 +8,38 @@
     "tapToView": "탭해서 자세히 보기",
     "drawing": "카드 뽑는 중...",
     "loadingCard": "카드 불러오는 중...",
-    "backHome": "홈으로 돌아가기",
+    "backHome": "캐릭터로 돌아가기",
     "saving": "저장 중...",
     "retry": "다시 시도",
     "share": "공유하기",
     "error": "오류가 발생했습니다"
   },
 
-  "home": {
+  "character": {
     "title": "도트 오라클",
     "cardBacks": "카드 뒷면",
-    "dailyCard": "오늘의 카드",
-    "drawCard": "오늘의 카드 뽑기",
-    "spreadTitle": "3장 스프레드",
-    "freeUsed": "무료 사용 완료",
-    "freeDaily": "오늘의 리딩 주제를 선택하세요",
-    "watchAd": "광고를 보고 추가 리딩하기",
-    "attendance": "출석",
-    "settings": "설정",
-    "topics": {
-      "general": "범용",
-      "love": "연애",
-      "money": "금전",
-      "work": "직장"
-    },
-    "dailyTraining": "오늘의 수련",
-    "questBoard": "의뢰 게시판",
-    "startTraining": "수련 시작하기",
-    "goToQuests": "의뢰 보러 가기"
+    "evolutionStage": "진화 단계",
+    "currentStage": "현재 단계",
+    "streak": "연속 출석",
+    "streakDays": "%{count}일 연속",
+    "unlockedTopics": "해금된 주제",
+    "nextUnlock": "다음 해금",
+    "nextUnlockAt": "Lv.%{level}에서 %{feature} 해금",
+    "maxLevel": "최고 레벨 달성!"
+  },
+
+  "topics": {
+    "general": "범용",
+    "love": "연애",
+    "money": "금전",
+    "work": "직장"
+  },
+
+  "talisman": {
+    "title": "오늘의 부적",
+    "drawCard": "부적 뽑기",
+    "todaysTalisman": "오늘의 부적",
+    "alreadyDrawn": "오늘의 부적은 이미 뽑았어요"
   },
   "dailyResult": {
     "reveal": "카드 공개하기",
@@ -48,8 +52,8 @@
     "saveMemo": "메모 저장"
   },
   "spreadResult": {
-    "title": "3장 리딩",
-    "reading": "리딩",
+    "title": "3장 스프레드 결과",
+    "reading": "결과",
     "pattern": "패턴",
     "loadingSpread": "스프레드 불러오는 중...",
     "positions": {
@@ -120,14 +124,14 @@
         "work": "일에 집중하기 어려운 날이에요. 무리하지 말고, 간단한 정리나 메모 정도만 해두는 건 어떨까요?"
       }
     },
-    "interpretation": "리딩 해석",
+    "interpretation": "스프레드 해석",
     "aiThinking": "AI가 해석 중입니다",
     "yourQuestion": "질문",
     "energyTone": "에너지 톤",
     "suggestedApproach": "추천 접근 방식",
-    "clarifierHint": "리딩에 역방향 에너지가 있어요. 클래리파이어 카드가 추가 안내를 드릴 수 있어요.",
+    "clarifierHint": "해석에 역방향 에너지가 있어요. 클래리파이어 카드가 추가 안내를 드릴 수 있어요.",
     "clarifierOptional": "더 깊은 통찰을 원하세요? 클래리파이어 카드로 더 자세히 알아보세요.",
-    "clarifierHintUUU": "리딩이 순조로워요. 클래리파이어로 구체적인 첫 행동을 알아보세요.",
+    "clarifierHintUUU": "해석 흐름이 순조로워요. 클래리파이어로 구체적인 첫 행동을 알아보세요.",
     "clarifierHintReversed": "더 깊은 인사이트가 필요하세요? 클래리파이어로 추가 조언을 받아보세요.",
     "clarifierInsights": {
       "UUU": {
@@ -217,7 +221,7 @@
     "clarifier": "클래리파이어 카드",
     "unlockClarifier": "클래리파이어 해금",
     "unlockAnother": "다른 주제 해금",
-    "insight": "스프레드 인사이트",
+    "insight": "추가 인사이트",
     "watchAdFor": "광고를 보고 해금하기"
   },
   "deck": {
@@ -239,13 +243,9 @@
     "requirement": "%{days}일 출석하면 해금돼요"
   },
   "history": {
-    "title": "리딩 기록",
-    "dailyCard": "오늘의 카드",
+    "title": "기록 상세",
     "spreads": "스프레드",
-    "noReadings": "이 날의 리딩이 없어요",
-    "memo": "메모",
-    "noMemo": "저장된 메모가 없어요",
-    "topic": "주제"
+    "noReadings": "이 날의 기록이 없어요"
   },
   "settings": {
     "title": "설정",
@@ -260,7 +260,12 @@
     "resetDataConfirm": "모든 데이터가 삭제됩니다. 계속하시겠습니까?",
     "reset": "초기화",
     "resetting": "초기화 중...",
-    "resetComplete": "데이터가 초기화되었습니다. 앱을 다시 시작해주세요."
+    "resetComplete": "데이터가 초기화되었습니다. 앱을 다시 시작해주세요.",
+    "characterManagement": "캐릭터 관리",
+    "currentLevel": "현재 레벨: Lv.%{level}",
+    "resetCharacter": "캐릭터 초기화",
+    "resetCharacterConfirm": "레벨, 경험치, 연속 출석 기록이 초기화됩니다. 진행하시겠어요?",
+    "resetCharacterDone": "캐릭터가 초기화되었습니다."
   },
   "card": {
     "upright": "정방향",
@@ -269,38 +274,36 @@
     "keywords": "키워드"
   },
   "tabs": {
-    "daily": "오늘",
-    "spreads": "스프레드",
-    "journey": "여정",
-    "settings": "설정",
-    "home": "홈",
-    "quests": "의뢰",
-    "log": "수련일지"
+    "character": "캐릭터",
+    "talisman": "부적",
+    "spread": "스프레드",
+    "records": "기록",
+    "settings": "설정"
   },
-  "journey": {
-    "title": "나의 여정",
+  "records": {
+    "title": "기록",
     "calendar": "캘린더",
     "collection": "컬렉션",
     "history": "기록"
   },
-  "spreads": {
-    "title": "주제 선택",
-    "subtitle": "3장 리딩을 위한 주제를 선택하세요",
-    "recentReadings": "최근 리딩"
-  },
-  "quests": {
-    "title": "의뢰 게시판",
-    "subtitle": "의뢰인의 고민을 해결해주세요",
-    "resultTitle": "의뢰 결과",
-    "locked": "Lv.%{level} 이상 필요",
-    "recentQuests": "최근 의뢰"
+  "spread": {
+    "title": "3장 스프레드",
+    "subtitle": "주제를 선택하고 카드를 뽑아보세요",
+    "resultTitle": "스프레드 결과",
+    "locked": "Lv.%{level}부터 이용 가능",
+    "recentSpreads": "최근 스프레드",
+    "createFailed": "스프레드 생성에 실패했어요. 다시 시도해 주세요.",
+    "adUnlockTitle": "추가 스프레드 열기",
+    "adUnlockBody": "오늘의 무료 스프레드를 완료했어요.\n광고를 보고 1회 추가로 열까요?",
+    "adUnlockCta": "광고 보고 스프레드 열기",
+    "adUnlockSubtitle": "30초 후 바로 이어서 진행"
   },
   "questionModal": {
     "title": "%{topic}에 대해 물어보세요",
     "placeholder": "질문을 입력하세요...",
     "charCount": "%{count}/30",
     "example": "예시: \"%{example}\"",
-    "startReading": "시작하기",
+    "startReading": "스프레드 시작하기",
     "skip": "건너뛰기",
     "topicLabels": {
       "general": "범용",
@@ -332,7 +335,7 @@
   "reflection": {
     "title": "오늘의 회고",
     "question": "오늘의 부적은 어땠나요?",
-    "spreadQuestion": "이 리딩은 어땠나요?",
+    "spreadQuestion": "이 스프레드 해석은 어땠나요?",
     "accurate": "맞았어",
     "neutral": "그저 그래",
     "unsure": "잘 모르겠어",

@@ -31,6 +31,7 @@ import { useTranslation } from '../i18n';
 export function TrainingResultScreen({ route, navigation }: TrainingResultScreenProps) {
   const { t } = useTranslation();
   const { dateKey, isNewDraw } = route.params;
+  const isDailyReflectionEnabled = false;
   
   const [hasFlipped, setHasFlipped] = useState(!isNewDraw);
   const flipRef = useRef<TarotCardFlipRef>(null);
@@ -65,7 +66,7 @@ export function TrainingResultScreen({ route, navigation }: TrainingResultScreen
   useEffect(() => {
     if (!isNewDraw) return;
 
-    const unsubscribe = navigation.addListener('beforeRemove', (e) => {
+    const unsubscribe = navigation.addListener('beforeRemove', () => {
       if (!hasFlipped && pendingDraw) {
         clearPendingDraw();
       }
@@ -117,7 +118,11 @@ export function TrainingResultScreen({ route, navigation }: TrainingResultScreen
   }, [dateKey, updateReflection]);
 
   const handleGoBack = useCallback(() => {
-    navigation.goBack();
+    navigation.navigate('MainTabs', { screen: 'TalismanTab' });
+  }, [navigation]);
+
+  const handleGoToSpreads = useCallback(() => {
+    navigation.navigate('MainTabs', { screen: 'SpreadTab' });
   }, [navigation]);
 
   if (!draw) {
@@ -211,23 +216,31 @@ export function TrainingResultScreen({ route, navigation }: TrainingResultScreen
               </PixelText>
             </View>
 
-            <View style={styles.reflectionSection}>
-              <PixelText variant="heading" style={styles.sectionTitle}>
-                {t('reflection.title')}
-              </PixelText>
-              <ReflectionInput
-                question={t('reflection.question')}
-                keywords={keywords}
-                existingReflection={draw?.reflection}
-                onSave={handleSaveReflection}
-                isLoading={isReflectionLoading}
-                onInputFocus={() => {
-                  setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 300);
-                }}
-              />
-            </View>
+            {isDailyReflectionEnabled && (
+              <View style={styles.reflectionSection}>
+                <PixelText variant="heading" style={styles.sectionTitle}>
+                  {t('reflection.title')}
+                </PixelText>
+                <ReflectionInput
+                  question={t('reflection.question')}
+                  keywords={keywords}
+                  existingReflection={draw?.reflection}
+                  onSave={handleSaveReflection}
+                  isLoading={isReflectionLoading}
+                  onInputFocus={() => {
+                    setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 300);
+                  }}
+                />
+              </View>
+            )}
 
             <View style={styles.actionButtons}>
+              <PixelButton
+                title={t('spread.title')}
+                onPress={handleGoToSpreads}
+                variant="secondary"
+                size="medium"
+              />
               <PixelButton
                 title={t('common.backHome')}
                 onPress={handleGoBack}

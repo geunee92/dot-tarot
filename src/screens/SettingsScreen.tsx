@@ -123,27 +123,30 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
 
         <View style={styles.characterSection}>
           <PixelText variant="caption" style={styles.characterLabel}>
-            캐릭터 관리
+            {t('settings.characterManagement')}
           </PixelText>
           <View style={styles.characterInfo}>
             <PixelText variant="body" style={styles.characterLevelText}>
-              현재 레벨: Lv.{characterLevel}
+              {t('settings.currentLevel', { level: characterLevel })}
             </PixelText>
           </View>
           <PixelButton
-            title="캐릭터 초기화"
+            title={t('settings.resetCharacter')}
             onPress={() => {
               Alert.alert(
-                '캐릭터 초기화',
-                '레벨, 경험치, 연속 출석 기록이 모두 초기화됩니다. 정말 진행하시겠습니까?',
+                t('settings.resetCharacter'),
+                t('settings.resetCharacterConfirm'),
                 [
                   { text: t('common.cancel'), style: 'cancel' },
                   {
-                    text: '초기화',
+                    text: t('settings.reset'),
                     style: 'destructive',
                     onPress: () => {
                       resetCharacter();
-                      Alert.alert('완료', '캐릭터가 초기화되었습니다.');
+                      Alert.alert(
+                        t('settings.resetCharacter'),
+                        t('settings.resetCharacterDone')
+                      );
                     },
                   },
                 ]
@@ -188,7 +191,7 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
 
         <PixelButton
           title={t('common.backHome')}
-          onPress={() => navigation.goBack()}
+          onPress={() => navigation.navigate('MainTabs', { screen: 'CharacterTab' })}
           variant="ghost"
           size="medium"
           style={styles.backButton}

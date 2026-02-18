@@ -188,7 +188,7 @@ export function HistoryDetailScreen({ route, navigation }: HistoryDetailScreenPr
         {spreads.length > 0 && (
           <View style={styles.section}>
             <PixelText variant="heading" style={styles.sectionTitle}>
-              {t('home.spreadTitle')} ({spreads.length})
+              {t('history.spreads')} ({spreads.length})
             </PixelText>
             
             <View style={styles.spreadsList}>
@@ -203,7 +203,7 @@ export function HistoryDetailScreen({ route, navigation }: HistoryDetailScreenPr
                 >
                   <View style={styles.spreadHeader}>
                     <PixelText variant="body" style={styles.spreadTopic}>
-                      {t(`home.topics.${spread.topic.toLowerCase()}`)}
+                      {t(`topics.${spread.topic.toLowerCase()}`)}
                     </PixelText>
                   </View>
                   

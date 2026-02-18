@@ -53,7 +53,7 @@ export function RootNavigator() {
           name="TrainingResult"
           component={TrainingResultScreen}
           options={{
-            title: t('home.dailyTraining'),
+            title: t('talisman.title'),
             animation: 'fade',
           }}
         />
@@ -62,7 +62,7 @@ export function RootNavigator() {
            name="QuestResult"
             component={QuestResultScreen}
             options={({ route }) => ({
-              title: t('quests.resultTitle'),
+              title: t('spread.resultTitle'),
               animation: 'fade_from_bottom',
             })}
          />

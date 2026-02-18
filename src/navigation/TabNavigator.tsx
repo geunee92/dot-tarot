@@ -4,16 +4,23 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import * as Haptics from 'expo-haptics';
 import { MainTabParamList } from './types';
-import { HomeScreen, QuestBoardScreen, TrainingLogScreen, SettingsScreen } from '../screens';
+import {
+  CharacterScreen,
+  TalismanScreen,
+  QuestBoardScreen,
+  TrainingLogScreen,
+  SettingsScreen,
+} from '../screens';
 import { PixelText, COLORS, SPACING, BORDERS, FONTS, SHADOWS } from '../components';
 import { useTranslation } from '../i18n';
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
 const TAB_CONFIG = [
-  { name: 'HomeTab' as const, icon: '★', labelKey: 'tabs.home' },
-  { name: 'QuestsTab' as const, icon: '♦', labelKey: 'tabs.quests' },
-  { name: 'LogTab' as const, icon: '◆', labelKey: 'tabs.log' },
+  { name: 'CharacterTab' as const, icon: '★', labelKey: 'tabs.character' },
+  { name: 'TalismanTab' as const, icon: '✦', labelKey: 'tabs.talisman' },
+  { name: 'SpreadTab' as const, icon: '♦', labelKey: 'tabs.spread' },
+  { name: 'LogTab' as const, icon: '◆', labelKey: 'tabs.records' },
   { name: 'SettingsTab' as const, icon: '●', labelKey: 'tabs.settings' },
 ];
 
@@ -73,8 +80,9 @@ export function TabNavigator() {
         headerShown: false,
       }}
     >
-      <Tab.Screen name="HomeTab" component={HomeScreen} />
-      <Tab.Screen name="QuestsTab" component={QuestBoardScreen} />
+      <Tab.Screen name="CharacterTab" component={CharacterScreen} />
+      <Tab.Screen name="TalismanTab" component={TalismanScreen} />
+      <Tab.Screen name="SpreadTab" component={QuestBoardScreen} />
       <Tab.Screen name="LogTab" component={TrainingLogScreen} />
       <Tab.Screen name="SettingsTab" component={SettingsScreen} />
     </Tab.Navigator>
