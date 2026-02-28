@@ -4,11 +4,9 @@ import { CompositeScreenProps, NavigatorScreenParams } from '@react-navigation/n
 import { SpreadTopic } from '../types';
 
 export type MainTabParamList = {
-  CharacterTab: undefined;
-  TalismanTab: undefined;
+  HomeTab: undefined;
   SpreadTab: undefined;
-  LogTab: undefined;
-  SettingsTab: undefined;
+  JournalTab: undefined;
 };
 
 export type RootStackParamList = {
@@ -26,16 +24,12 @@ export type RootStackParamList = {
   HistoryDetail: {
     dateKey: string;
   };
+  Settings: undefined;
 };
 
 // Tab screen props
-export type CharacterScreenProps = CompositeScreenProps<
-  BottomTabScreenProps<MainTabParamList, 'CharacterTab'>,
-  NativeStackScreenProps<RootStackParamList>
->;
-
-export type TalismanScreenProps = CompositeScreenProps<
-  BottomTabScreenProps<MainTabParamList, 'TalismanTab'>,
+export type HomeScreenProps = CompositeScreenProps<
+  BottomTabScreenProps<MainTabParamList, 'HomeTab'>,
   NativeStackScreenProps<RootStackParamList>
 >;
 
@@ -44,13 +38,8 @@ export type SpreadScreenProps = CompositeScreenProps<
   NativeStackScreenProps<RootStackParamList>
 >;
 
-export type TrainingLogScreenProps = CompositeScreenProps<
-  BottomTabScreenProps<MainTabParamList, 'LogTab'>,
-  NativeStackScreenProps<RootStackParamList>
->;
-
-export type SettingsScreenProps = CompositeScreenProps<
-  BottomTabScreenProps<MainTabParamList, 'SettingsTab'>,
+export type JournalScreenProps = CompositeScreenProps<
+  BottomTabScreenProps<MainTabParamList, 'JournalTab'>,
   NativeStackScreenProps<RootStackParamList>
 >;
 
@@ -58,5 +47,6 @@ export type SettingsScreenProps = CompositeScreenProps<
 export type TrainingResultScreenProps = NativeStackScreenProps<RootStackParamList, 'TrainingResult'>;
 export type QuestResultScreenProps = NativeStackScreenProps<RootStackParamList, 'QuestResult'>;
 export type HistoryDetailScreenProps = NativeStackScreenProps<RootStackParamList, 'HistoryDetail'>;
+export type SettingsScreenProps = NativeStackScreenProps<RootStackParamList, 'Settings'>;
 
 export type RootStackNavigationProp = NativeStackScreenProps<RootStackParamList>['navigation'];

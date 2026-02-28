@@ -118,7 +118,7 @@ export function TrainingResultScreen({ route, navigation }: TrainingResultScreen
   }, [dateKey, updateReflection]);
 
   const handleGoBack = useCallback(() => {
-    navigation.navigate('MainTabs', { screen: 'TalismanTab' });
+    navigation.navigate('MainTabs', { screen: 'HomeTab' });
   }, [navigation]);
 
   const handleGoToSpreads = useCallback(() => {

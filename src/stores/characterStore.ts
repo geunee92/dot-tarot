@@ -8,8 +8,6 @@ import {
   getEvolutionStage as getEvolutionStageForLevel,
   getUnlocksAtLevel,
   getXPForLevel,
-  isDeepReadingUnlocked,
-  isTopicUnlocked,
 } from '../config/progression';
 import { getLocalDateKey } from '../utils/date';
 
@@ -76,7 +74,6 @@ interface CharacterStoreState {
   getEvolutionStage: () => EvolutionStage;
   getXPProgress: () => { current: number; needed: number; percentage: number };
   canAccessTopic: (topic: SpreadTopic) => boolean;
-  canAccessDeepReading: () => boolean;
   getUnlockedTopics: () => SpreadTopic[];
   resetCharacter: () => void;
 }
@@ -180,14 +177,9 @@ export const useCharacterStore = create<CharacterStoreState>()(
         };
       },
 
-      canAccessTopic: (topic) => isTopicUnlocked(topic, get().level),
+      canAccessTopic: (_topic) => true,
 
-      canAccessDeepReading: () => isDeepReadingUnlocked(get().level),
-
-      getUnlockedTopics: () => {
-        const level = get().level;
-        return TOPICS.filter((topic) => isTopicUnlocked(topic, level));
-      },
+      getUnlockedTopics: () => TOPICS,
 
       resetCharacter: () => {
         const hydrated = get().isHydrated;

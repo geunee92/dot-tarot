@@ -7,6 +7,7 @@ import {
   TrainingResultScreen,
   QuestResultScreen,
   HistoryDetailScreen,
+  SettingsScreen,
 } from '../screens';
 import { COLORS } from '../components';
 import { t } from '../i18n';
@@ -48,7 +49,7 @@ export function RootNavigator() {
             headerBackTitle: ' ',
           }}
         />
-        
+
         <Stack.Screen
           name="TrainingResult"
           component={TrainingResultScreen}
@@ -57,21 +58,31 @@ export function RootNavigator() {
             animation: 'fade',
           }}
         />
-        
-         <Stack.Screen
-           name="QuestResult"
-            component={QuestResultScreen}
-            options={({ route }) => ({
-              title: t('spread.resultTitle'),
-              animation: 'fade_from_bottom',
-            })}
-         />
-        
+
+        <Stack.Screen
+          name="QuestResult"
+          component={QuestResultScreen}
+          options={() => ({
+            title: t('spread.resultTitle'),
+            animation: 'fade_from_bottom',
+          })}
+        />
+
         <Stack.Screen
           name="HistoryDetail"
           component={HistoryDetailScreen}
           options={{
             title: t('history.title'),
+            presentation: 'modal',
+            animation: 'slide_from_bottom',
+          }}
+        />
+
+        <Stack.Screen
+          name="Settings"
+          component={SettingsScreen}
+          options={{
+            title: t('settings.title'),
             presentation: 'modal',
             animation: 'slide_from_bottom',
           }}

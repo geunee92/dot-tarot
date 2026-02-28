@@ -1,7 +1,16 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, StyleSheet, Pressable } from 'react-native';
+import { View, ScrollView, StyleSheet, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
+import { HomeScreenProps } from '../navigation/types';
+import { CharacterSprite, CharacterStatus } from '../components/Character';
+import { useCharacterStore } from '../stores/characterStore';
+import { useDrawStore } from '../stores/drawStore';
+import { useSettingsStore } from '../stores/settingsStore';
+import { useRewardStore } from '../stores/rewardStore';
+import { getEvolutionStageDef } from '../config/progression';
+import { useTranslation } from '../i18n';
+import { getLocalDateKey } from '../utils/date';
 import {
   PixelButton,
   PixelText,
@@ -10,43 +19,40 @@ import {
   GradientBackground,
   COLORS,
   SPACING,
-  SHADOWS,
   BORDERS,
+  SHADOWS,
 } from '../components';
-import { CharacterStatus } from '../components/Character';
-import { useDrawStore } from '../stores/drawStore';
-import { useCharacterStore } from '../stores/characterStore';
-import { useSettingsStore } from '../stores/settingsStore';
-import { useRewardStore } from '../stores/rewardStore';
-import { TalismanScreenProps } from '../navigation/types';
-import { useTranslation } from '../i18n';
-import { getLocalDateKey } from '../utils/date';
 
-export function TalismanScreen({ navigation }: TalismanScreenProps) {
-  const { t } = useTranslation();
+export function HomeScreen({ navigation }: HomeScreenProps) {
+  const { t, locale } = useTranslation();
   const [isCreatingDraw, setIsCreatingDraw] = useState(false);
+
+  const level = useCharacterStore((s) => s.level);
+  const evolutionStage = useCharacterStore((s) => s.getEvolutionStage());
+  const isCharacterHydrated = useCharacterStore((s) => s.isHydrated);
 
   const isDrawHydrated = useDrawStore((s) => s.isHydrated);
   const isSettingsHydrated = useSettingsStore((s) => s.isHydrated);
   const isRewardHydrated = useRewardStore((s) => s.isHydrated);
-  const isCharacterHydrated = useCharacterStore((s) => s.isHydrated);
 
   const todaysDraw = useDrawStore((s) => s.getTodaysDraw());
   const hasDrawnToday = useDrawStore((s) => s.hasDrawnToday());
   const hasPendingDrawToday = useDrawStore((s) => s.hasPendingDrawToday());
   const prepareDraw = useDrawStore((s) => s.prepareDraw);
   const getDrawDates = useDrawStore((s) => s.getDrawDates);
-
   const checkAndUnlockRewards = useRewardStore((s) => s.checkAndUnlockRewards);
 
-  const isHydrated = isDrawHydrated && isSettingsHydrated && isRewardHydrated && isCharacterHydrated;
+  const isHydrated = isCharacterHydrated && isDrawHydrated && isSettingsHydrated && isRewardHydrated;
+
+  const evolutionStageDef = getEvolutionStageDef(level);
+  const stageName = locale === 'ko' ? evolutionStageDef.nameKo : evolutionStageDef.nameEn;
 
   useEffect(() => {
     if (isHydrated) {
       const dates = getDrawDates();
       checkAndUnlockRewards(dates);
     }
-  }, [isHydrated, hasDrawnToday, getDrawDates, checkAndUnlockRewards]);
+  }, [isHydrated]);
 
   useEffect(() => {
     if (isHydrated && hasPendingDrawToday && !hasDrawnToday) {
@@ -81,9 +87,6 @@ export function TalismanScreen({ navigation }: TalismanScreenProps) {
         <GradientBackground variant="cosmic" />
         <View style={styles.loadingContainer}>
           <LoadingSpinner size={60} />
-          <PixelText variant="body" style={styles.loadingText}>
-            {t('common.loading')}
-          </PixelText>
         </View>
       </SafeAreaView>
     );
@@ -92,14 +95,29 @@ export function TalismanScreen({ navigation }: TalismanScreenProps) {
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <GradientBackground variant="cosmic" />
-      <View style={styles.content}>
-        <View style={styles.statusSection}>
-          <CharacterStatus />
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* A. Character Hero Area */}
+        <View style={styles.heroSection}>
+          <CharacterSprite
+            evolutionStage={evolutionStage}
+            animationState="idle"
+            size="hero"
+          />
+          <View style={styles.stageBadge}>
+            <PixelText variant="caption" style={styles.stageText}>
+              {stageName}
+            </PixelText>
+          </View>
+          <CharacterStatus variant="inline" />
         </View>
 
-        <View style={styles.drawSection}>
+        {/* B. Daily Talisman Draw (CTA) */}
+        <View style={styles.talismanSection}>
           <PixelText variant="heading" style={styles.sectionTitle}>
-            {t('talisman.title')}
+            {t('home.todaysTalisman')}
           </PixelText>
 
           {hasDrawnToday && todaysDraw ? (
@@ -121,7 +139,7 @@ export function TalismanScreen({ navigation }: TalismanScreenProps) {
                 </PixelText>
               </View>
               <PixelButton
-                title={isCreatingDraw ? t('common.drawing') : t('talisman.drawCard')}
+                title={isCreatingDraw ? t('common.drawing') : t('home.drawCard')}
                 onPress={handleDrawCard}
                 variant="accent"
                 size="large"
@@ -131,7 +149,7 @@ export function TalismanScreen({ navigation }: TalismanScreenProps) {
             </View>
           )}
         </View>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -146,23 +164,33 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  loadingText: {
-    marginTop: SPACING.lg,
-    color: COLORS.textMuted,
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: SPACING.lg,
-    paddingTop: SPACING.md,
-  },
-  statusSection: {
-    marginBottom: SPACING.xl,
-  },
-  drawSection: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+  scrollContent: {
+    padding: SPACING.lg,
     paddingBottom: SPACING.xxl,
+  },
+  heroSection: {
+    alignItems: 'center',
+    marginBottom: SPACING.xl,
+    marginTop: SPACING.md,
+  },
+  stageBadge: {
+    marginTop: SPACING.md,
+    marginBottom: SPACING.md,
+    backgroundColor: COLORS.surface,
+    paddingHorizontal: SPACING.md,
+    paddingVertical: SPACING.xs,
+    borderRadius: 12,
+    borderWidth: BORDERS.thin,
+    borderColor: COLORS.accent,
+    ...SHADOWS.blockLight,
+  },
+  stageText: {
+    color: COLORS.accent,
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+  },
+  talismanSection: {
+    alignItems: 'center',
   },
   sectionTitle: {
     color: COLORS.text,

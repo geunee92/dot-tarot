@@ -24,7 +24,7 @@ import { useDrawStore } from '../stores/drawStore';
 import { useSpreadStore } from '../stores/spreadStore';
 import { useRewardStore, getMilestoneProgress } from '../stores/rewardStore';
 import { useSettingsStore } from '../stores/settingsStore';
-import { TrainingLogScreenProps } from '../navigation/types';
+import { JournalScreenProps } from '../navigation/types';
 import { BackSkin, REWARD_MILESTONES } from '../types';
 import { BACK_SKINS } from '../data';
 import { useTranslation } from '../i18n';
@@ -35,7 +35,7 @@ import {
   getNextMonthKey,
 } from '../utils/date';
 
-export function TrainingLogScreen({ navigation }: TrainingLogScreenProps) {
+export function TrainingLogScreen({ navigation }: JournalScreenProps) {
   const { t } = useTranslation();
   const [currentMonth, setCurrentMonth] = useState(getMonthKey());
 
@@ -152,9 +152,17 @@ export function TrainingLogScreen({ navigation }: TrainingLogScreenProps) {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <PixelText variant="title" style={styles.title}>
-          {t('records.title')}
-        </PixelText>
+        <View style={styles.titleRow}>
+          <PixelText variant="title" style={styles.title}>
+            {t('records.title')}
+          </PixelText>
+          <Pressable
+            onPress={() => navigation.navigate('Settings')}
+            style={styles.settingsButton}
+          >
+            <PixelText variant="body" style={styles.settingsIcon}>⚙</PixelText>
+          </Pressable>
+        </View>
 
         <View style={styles.section}>
           <PixelText variant="heading" style={styles.sectionTitle}>
@@ -272,10 +280,21 @@ const styles = StyleSheet.create({
     paddingHorizontal: SPACING.lg,
     paddingBottom: SPACING.xxl,
   },
+  titleRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginVertical: SPACING.lg,
+  },
   title: {
     color: COLORS.accent,
-    textAlign: 'center',
-    marginVertical: SPACING.lg,
+  },
+  settingsButton: {
+    padding: SPACING.sm,
+  },
+  settingsIcon: {
+    fontSize: FONTS.xl,
+    color: COLORS.textMuted,
   },
   section: {
     marginBottom: SPACING.xl,

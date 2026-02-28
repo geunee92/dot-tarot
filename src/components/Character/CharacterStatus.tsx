@@ -12,9 +12,10 @@ import { COLORS, BORDERS, RADIUS, SPACING } from '../theme';
 
 interface CharacterStatusProps {
   compact?: boolean;
+  variant?: 'default' | 'inline';
 }
 
-export function CharacterStatus({ compact = false }: CharacterStatusProps) {
+export function CharacterStatus({ compact = false, variant = 'default' }: CharacterStatusProps) {
   const level = useCharacterStore((s) => s.level);
   const currentXP = useCharacterStore((s) => s.currentXP);
   const streak = useCharacterStore((s) => s.streak);
@@ -32,6 +33,35 @@ export function CharacterStatus({ compact = false }: CharacterStatusProps) {
   const progressStyle = useAnimatedStyle(() => ({
     width: `${progressWidth.value * 100}%`,
   }));
+
+  if (variant === 'inline') {
+    return (
+      <View style={styles.inlineContainer}>
+        <View style={styles.inlineRow}>
+          <PixelText variant="caption" color={COLORS.accent}>
+            Lv.{level}
+          </PixelText>
+          <View style={styles.inlineBarBg}>
+            <Animated.View
+              style={[
+                styles.barFill,
+                progressStyle,
+                { backgroundColor: COLORS.accent },
+              ]}
+            />
+          </View>
+          <PixelText variant="caption" style={styles.inlineXP}>
+            {currentXP}/{neededXP}
+          </PixelText>
+        </View>
+        {streak.currentStreak > 0 && (
+          <PixelText variant="caption" color={COLORS.warning} align="center">
+            🔥 {streak.currentStreak}
+          </PixelText>
+        )}
+      </View>
+    );
+  }
 
   if (compact) {
     return (
@@ -147,5 +177,27 @@ const styles = StyleSheet.create({
     borderColor: COLORS.border,
     borderRadius: RADIUS.sm,
     overflow: 'hidden',
+  },
+  inlineContainer: {
+    alignItems: 'center',
+    gap: SPACING.xs,
+  },
+  inlineRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: SPACING.sm,
+  },
+  inlineBarBg: {
+    width: 100,
+    height: 8,
+    backgroundColor: COLORS.surfaceLight,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    borderRadius: RADIUS.sm,
+    overflow: 'hidden',
+  },
+  inlineXP: {
+    color: COLORS.textMuted,
+    opacity: 0.8,
   },
 });

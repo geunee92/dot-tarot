@@ -8,7 +8,7 @@
     "tapToView": "Tap to view details",
     "drawing": "Drawing...",
     "loadingCard": "Loading card...",
-    "backHome": "Back to Character",
+    "backHome": "Back to Home",
     "saving": "Saving...",
     "retry": "Retry",
     "share": "Share",
@@ -276,11 +276,13 @@
     "keywords": "Keywords"
   },
   "tabs": {
-    "character": "Character",
-    "talisman": "Talisman",
+    "home": "Home",
     "spread": "Spread",
-    "records": "Records",
-    "settings": "Settings"
+    "journal": "Journal"
+  },
+  "home": {
+    "todaysTalisman": "Today's Talisman",
+    "drawCard": "Draw Talisman"
   },
   "records": {
     "title": "Records",
@@ -312,26 +314,6 @@
       "love": "love",
       "money": "money",
       "work": "work"
-    }
-  },
-  "followUp": {
-    "title": "Dig Deeper",
-    "question": "Follow-up Question",
-    "placeholder": "What else would you like to know?",
-    "charCount": "%{count}/60",
-    "startReading": "Draw 3 More Cards",
-    "interpretation": "Deeper Insight",
-    "aiThinking": "AI is reading deeper...",
-    "error": "Could not load interpretation. Please try again.",
-    "retry": "Retry",
-    "hint": "Draw 3 more cards for a deeper reading",
-    "positions": {
-      "depth": "Depth",
-      "depthDesc": "Root cause beneath the surface",
-      "hidden": "Hidden",
-      "hiddenDesc": "What you haven't seen yet",
-      "outcome": "Outcome",
-      "outcomeDesc": "Where this is heading"
     }
   },
   "reflection": {

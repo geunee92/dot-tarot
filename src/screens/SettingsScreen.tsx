@@ -24,7 +24,7 @@ const { DevSettings } = NativeModules;
 
 const APP_VERSION = '1.0.0';
 
-export function SettingsScreen({ navigation }: SettingsScreenProps) {
+export function SettingsScreen(_props: SettingsScreenProps) {
   const { t } = useTranslation();
   const [isResetting, setIsResetting] = useState(false);
   const [isInjecting, setIsInjecting] = useState(false);
@@ -99,17 +99,13 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
   }, [t]);
 
   return (
-    <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
+    <SafeAreaView style={styles.container} edges={['bottom']}>
       <GradientBackground variant="cosmic" />
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <PixelText variant="title" style={styles.title}>
-          {t('settings.title')}
-        </PixelText>
-
         <LanguageSwitcher />
 
         <View style={styles.versionContainer}>
@@ -188,14 +184,6 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
             />
           </View>
         )}
-
-        <PixelButton
-          title={t('common.backHome')}
-          onPress={() => navigation.navigate('MainTabs', { screen: 'CharacterTab' })}
-          variant="ghost"
-          size="medium"
-          style={styles.backButton}
-        />
       </ScrollView>
     </SafeAreaView>
   );
@@ -212,10 +200,6 @@ const styles = StyleSheet.create({
   scrollContent: {
     padding: SPACING.lg,
     gap: SPACING.xl,
-  },
-  title: {
-    color: COLORS.accent,
-    marginBottom: SPACING.md,
   },
   versionContainer: {
     padding: SPACING.lg,
@@ -249,10 +233,6 @@ const styles = StyleSheet.create({
   },
   characterLevelText: {
     color: COLORS.text,
-  },
-  backButton: {
-    alignSelf: 'center',
-    marginTop: SPACING.lg,
   },
   dangerZone: {
     padding: SPACING.lg,

@@ -8,7 +8,7 @@
     "tapToView": "탭해서 자세히 보기",
     "drawing": "카드 뽑는 중...",
     "loadingCard": "카드 불러오는 중...",
-    "backHome": "캐릭터로 돌아가기",
+    "backHome": "홈으로 돌아가기",
     "saving": "저장 중...",
     "retry": "다시 시도",
     "share": "공유하기",
@@ -274,11 +274,13 @@
     "keywords": "키워드"
   },
   "tabs": {
-    "character": "캐릭터",
-    "talisman": "부적",
+    "home": "홈",
     "spread": "스프레드",
-    "records": "기록",
-    "settings": "설정"
+    "journal": "기록"
+  },
+  "home": {
+    "todaysTalisman": "오늘의 부적",
+    "drawCard": "부적 뽑기"
   },
   "records": {
     "title": "기록",
@@ -310,26 +312,6 @@
       "love": "사랑",
       "money": "금전",
       "work": "직장"
-    }
-  },
-  "followUp": {
-    "title": "더 깊이 보기",
-    "question": "추가 질문",
-    "placeholder": "더 알고 싶은 것이 있나요?",
-    "charCount": "%{count}/60",
-    "startReading": "카드 3장 더 뽑기",
-    "interpretation": "심층 해석",
-    "aiThinking": "AI가 더 깊이 읽는 중...",
-    "error": "해석을 불러오지 못했습니다. 다시 시도해 주세요.",
-    "retry": "다시 시도",
-    "hint": "추가 3장을 뽑아 더 깊은 해석을 받아보세요",
-    "positions": {
-      "depth": "심층",
-      "depthDesc": "표면 아래 숨겨진 근본 원인",
-      "hidden": "미지",
-      "hiddenDesc": "아직 보지 못한 것",
-      "outcome": "결과",
-      "outcomeDesc": "이 흐름이 향하는 곳"
     }
   },
   "reflection": {

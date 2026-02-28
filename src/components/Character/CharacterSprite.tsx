@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import { StyleSheet, Image, ImageSourcePropType } from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -10,26 +10,35 @@ import Animated, {
   cancelAnimation,
 } from 'react-native-reanimated';
 import { EvolutionStage, CharacterAnimationState } from '../../types/character';
-import { COLORS, BORDERS, SHADOWS, RADIUS } from '../theme';
+import { COLORS } from '../theme';
 
 export interface CharacterSpriteProps {
   evolutionStage: EvolutionStage;
   animationState: CharacterAnimationState;
-  size?: 'small' | 'medium' | 'large';
+  size?: 'small' | 'medium' | 'large' | 'hero';
 }
 
-const STAGE_CONFIG: Record<EvolutionStage, { emoji: string; glow: string }> = {
-  apprentice: { emoji: '🔮', glow: '#a855f7' }, // Purple
-  journeyman: { emoji: '⚡', glow: '#3b82f6' }, // Blue
-  adept: { emoji: '🌟', glow: COLORS.accent }, // Gold
-  master: { emoji: '👁️', glow: COLORS.aurora }, // Aurora
-  grandmaster: { emoji: '🌌', glow: '#ec4899' }, // Pink/Cosmic
+const CHARACTER_IMAGES: Record<EvolutionStage, ImageSourcePropType> = {
+  apprentice: require('../../../assets/characters/apprentice.png'),
+  journeyman: require('../../../assets/characters/journeyman.png'),
+  adept: require('../../../assets/characters/adept.png'),
+  master: require('../../../assets/characters/master.png'),
+  grandmaster: require('../../../assets/characters/grandmaster.png'),
+};
+
+const STAGE_CONFIG: Record<EvolutionStage, { glow: string }> = {
+  apprentice: { glow: '#a855f7' },
+  journeyman: { glow: '#3b82f6' },
+  adept: { glow: COLORS.accent },
+  master: { glow: COLORS.aurora },
+  grandmaster: { glow: '#ec4899' },
 };
 
 const SIZE_CONFIG = {
-  small: { size: 48, fontSize: 24 },
-  medium: { size: 80, fontSize: 40 },
-  large: { size: 120, fontSize: 60 },
+  small: { size: 48 },
+  medium: { size: 80 },
+  large: { size: 120 },
+  hero: { size: 200 },
 };
 
 export function CharacterSprite({
@@ -121,8 +130,6 @@ export function CharacterSprite({
         {
           width: dimensions.size,
           height: dimensions.size,
-          borderColor: config.glow,
-          backgroundColor: COLORS.surface,
         },
         animatedStyle,
         glowStyle,
@@ -132,7 +139,14 @@ export function CharacterSprite({
         },
       ]}
     >
-      <Text style={{ fontSize: dimensions.fontSize }}>{config.emoji}</Text>
+      <Image
+        source={CHARACTER_IMAGES[evolutionStage]}
+        style={{
+          width: dimensions.size,
+          height: dimensions.size,
+        }}
+        resizeMode="contain"
+      />
     </Animated.View>
   );
 }
@@ -141,8 +155,6 @@ const styles = StyleSheet.create({
   container: {
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: BORDERS.medium,
-    borderRadius: RADIUS.sm, // Pixel style usually means sharp or slightly rounded
     shadowOffset: { width: 0, height: 0 },
     elevation: 5,
   },

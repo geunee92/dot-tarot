@@ -5,11 +5,9 @@ import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import * as Haptics from 'expo-haptics';
 import { MainTabParamList } from './types';
 import {
-  CharacterScreen,
-  TalismanScreen,
+  HomeScreen,
   QuestBoardScreen,
   TrainingLogScreen,
-  SettingsScreen,
 } from '../screens';
 import { PixelText, COLORS, SPACING, BORDERS, FONTS, SHADOWS } from '../components';
 import { useTranslation } from '../i18n';
@@ -17,11 +15,9 @@ import { useTranslation } from '../i18n';
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
 const TAB_CONFIG = [
-  { name: 'CharacterTab' as const, icon: '★', labelKey: 'tabs.character' },
-  { name: 'TalismanTab' as const, icon: '✦', labelKey: 'tabs.talisman' },
+  { name: 'HomeTab' as const, icon: '★', labelKey: 'tabs.home' },
   { name: 'SpreadTab' as const, icon: '♦', labelKey: 'tabs.spread' },
-  { name: 'LogTab' as const, icon: '◆', labelKey: 'tabs.records' },
-  { name: 'SettingsTab' as const, icon: '●', labelKey: 'tabs.settings' },
+  { name: 'JournalTab' as const, icon: '◆', labelKey: 'tabs.journal' },
 ];
 
 function PixelTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
@@ -32,7 +28,7 @@ function PixelTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
       {state.routes.map((route, index) => {
         const isFocused = state.index === index;
         const tabConfig = TAB_CONFIG.find((tab) => tab.name === route.name);
-        
+
         if (!tabConfig) return null;
 
         const onPress = () => {
@@ -80,11 +76,9 @@ export function TabNavigator() {
         headerShown: false,
       }}
     >
-      <Tab.Screen name="CharacterTab" component={CharacterScreen} />
-      <Tab.Screen name="TalismanTab" component={TalismanScreen} />
+      <Tab.Screen name="HomeTab" component={HomeScreen} />
       <Tab.Screen name="SpreadTab" component={QuestBoardScreen} />
-      <Tab.Screen name="LogTab" component={TrainingLogScreen} />
-      <Tab.Screen name="SettingsTab" component={SettingsScreen} />
+      <Tab.Screen name="JournalTab" component={TrainingLogScreen} />
     </Tab.Navigator>
   );
 }

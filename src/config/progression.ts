@@ -27,10 +27,9 @@ export const XP_CONFIG = {
 
 export const UNLOCK_TABLE: Record<string, number> = {
   GENERAL: 1,
-  LOVE: 3,
-  MONEY: 5,
-  WORK: 7,
-  DEEP_READING: 10,
+  LOVE: 1,
+  MONEY: 1,
+  WORK: 1,
 } as const;
 
 // ============================================
@@ -116,11 +115,6 @@ export function isTopicUnlocked(topic: SpreadTopic, level: number): boolean {
   const required = UNLOCK_TABLE[topic];
   if (required === undefined) return false;
   return level >= required;
-}
-
-/** Check if deep reading is unlocked at a given level */
-export function isDeepReadingUnlocked(level: number): boolean {
-  return level >= UNLOCK_TABLE.DEEP_READING;
 }
 
 /** Get list of features that unlock at a specific level */

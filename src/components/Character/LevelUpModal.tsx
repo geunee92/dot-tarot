@@ -161,7 +161,6 @@ function UnlockItem({ unlock, index }: { unlock: string; index: number }) {
   if (unlock === 'LOVE') text = '💘 연애 의뢰 해금!';
   else if (unlock === 'MONEY') text = '💰 금전 의뢰 해금!';
   else if (unlock === 'WORK') text = '💼 직업 의뢰 해금!';
-  else if (unlock === 'DEEP_READING') text = '🔮 심층 의뢰 해금!';
   else if (unlock.startsWith('EVOLUTION_')) return null; // Handled separately
 
   return (

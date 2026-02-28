@@ -31,15 +31,18 @@ import { useGatingStore } from '../stores/gatingStore';
 import { useSettingsStore } from '../stores/settingsStore';
 import { useCharacterStore } from '../stores/characterStore';
 import { TOPIC_CONFIGS } from '../config/topics';
-import { getLocalDateKey, parseDateKey } from '../utils/date';
+import { getLocalDateKey } from '../utils/date';
 import { MainTabParamList, RootStackParamList } from '../navigation/types';
-import { SpreadTopic, SpreadRecord } from '../types';
+import { SpreadTopic } from '../types';
 import { useTranslation } from '../i18n';
 
 type QuestBoardScreenProps = CompositeScreenProps<
   BottomTabScreenProps<MainTabParamList, 'SpreadTab'>,
   NativeStackScreenProps<RootStackParamList>
 >;
+
+// Re-export SpreadScreenProps for compatibility
+export type { QuestBoardScreenProps };
 
 const { width } = Dimensions.get('window');
 const CARD_WIDTH = (width - SPACING.lg * 3) / 2;
@@ -49,7 +52,6 @@ export function QuestBoardScreen({ navigation }: QuestBoardScreenProps) {
   const insets = useSafeAreaInsets();
 
   const isSpreadHydrated = useSpreadStore((s) => s.isHydrated);
-  const spreads = useSpreadStore((s) => s.spreads);
   const createSpread = useSpreadStore((s) => s.createSpread);
 
   const isGatingHydrated = useGatingStore((s) => s.isHydrated);
@@ -61,8 +63,6 @@ export function QuestBoardScreen({ navigation }: QuestBoardScreenProps) {
   const isSettingsHydrated = useSettingsStore((s) => s.isHydrated);
   
   const isCharacterHydrated = useCharacterStore((s) => s.isHydrated);
-  const level = useCharacterStore((s) => s.level);
-  const canAccessTopic = useCharacterStore((s) => s.canAccessTopic);
 
   const [selectedTopic, setSelectedTopic] = useState<SpreadTopic | null>(null);
   const [isQuestionModalVisible, setIsQuestionModalVisible] = useState(false);
@@ -85,14 +85,6 @@ export function QuestBoardScreen({ navigation }: QuestBoardScreenProps) {
 
   const handleTopicPress = (topicId: SpreadTopic) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-
-    if (!canAccessTopic(topicId)) {
-      const config = TOPIC_CONFIGS.find((c) => c.id === topicId);
-      if (config) {
-        showToast(t('spread.locked', { level: config.requiredLevel }));
-      }
-      return;
-    }
 
     if (!canDoFreeSpread(todayKey)) {
       setSelectedTopic(topicId);
@@ -153,73 +145,25 @@ export function QuestBoardScreen({ navigation }: QuestBoardScreenProps) {
     }
   };
 
-  const handleRecentPress = (spreadId: string, dateKey: string, topic: SpreadTopic) => {
-    navigation.navigate('QuestResult', {
-      dateKey,
-      spreadId,
-      topic,
-      isNewSpread: false,
-    });
-  };
-
   const renderTopicCard = (config: typeof TOPIC_CONFIGS[0]) => {
-    const isLocked = !canAccessTopic(config.id);
     const label = t('topics.' + config.id.toLowerCase());
     const isFreeAvailable = canDoFreeSpread(todayKey);
 
     return (
       <TouchableOpacity
         key={config.id}
-        style={[
-          styles.card,
-          isLocked && styles.cardLocked,
-        ]}
+        style={styles.card}
         onPress={() => handleTopicPress(config.id)}
         activeOpacity={0.7}
       >
         <View style={styles.cardContent}>
-          {!isFreeAvailable && !isLocked && (
+          {!isFreeAvailable && (
             <View style={styles.adBadgeContainer}>
               <AdBadge />
             </View>
           )}
           <PixelText variant="body" style={styles.cardEmoji}>{config.emoji}</PixelText>
           <PixelText variant="body" style={styles.cardLabel}>{label}</PixelText>
-          
-          {isLocked && (
-            <View style={styles.lockOverlay}>
-              <PixelText variant="body" style={styles.lockIcon}>🔒</PixelText>
-              <PixelText variant="caption" style={styles.lockText}>Lv.{config.requiredLevel}</PixelText>
-            </View>
-          )}
-        </View>
-      </TouchableOpacity>
-    );
-  };
-
-  const renderRecentQuest = (spread: SpreadRecord) => {
-    const config = TOPIC_CONFIGS.find((c) => c.id === spread.topic);
-    const date = parseDateKey(spread.dateKey);
-    const dateStr = date ? (date.getMonth() + 1) + '/' + date.getDate() : '';
-    const label = t('topics.' + spread.topic.toLowerCase());
-
-    return (
-      <TouchableOpacity
-        key={spread.id}
-        style={styles.recentItem}
-        onPress={() => handleRecentPress(spread.id, spread.dateKey, spread.topic)}
-      >
-        <View style={styles.recentIconContainer}>
-          <PixelText variant="body" style={styles.recentEmoji}>{config?.emoji || '❓'}</PixelText>
-        </View>
-        <View style={styles.recentInfo}>
-          <View style={styles.recentHeader}>
-            <PixelText variant="caption" style={styles.recentTopic}>{label}</PixelText>
-            <PixelText variant="caption" style={styles.recentDate}>{dateStr}</PixelText>
-          </View>
-          <PixelText variant="body" style={styles.recentQuestion} numberOfLines={1}>
-            {spread.userQuestion || t('spread.recentSpreads')}
-          </PixelText>
         </View>
       </TouchableOpacity>
     );
@@ -235,11 +179,6 @@ export function QuestBoardScreen({ navigation }: QuestBoardScreenProps) {
     );
   }
 
-  const recentSpreads = Object.values(spreads)
-    .flat()
-    .sort((a, b) => b.createdAt - a.createdAt)
-    .slice(0, 5);
-
   return (
     <GradientBackground variant="plum">
       <View style={[styles.container, { paddingTop: insets.top }]}>
@@ -249,21 +188,12 @@ export function QuestBoardScreen({ navigation }: QuestBoardScreenProps) {
         >
           <View style={styles.header}>
             <PixelText variant="heading" style={styles.headerTitle}>{t('spread.title')}</PixelText>
-            <View style={styles.levelBadge}>
-              <PixelText variant="caption" style={styles.levelText}>Lv.{level}</PixelText>
-            </View>
           </View>
 
           <View style={styles.gridContainer}>
             {TOPIC_CONFIGS.map(renderTopicCard)}
           </View>
 
-          {recentSpreads.length > 0 && (
-            <View style={styles.recentSection}>
-              <PixelText variant="heading" style={styles.sectionTitle}>{t('spread.recentSpreads')}</PixelText>
-              {recentSpreads.map(renderRecentQuest)}
-            </View>
-          )}
         </ScrollView>
 
         <Toast 
