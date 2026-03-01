@@ -25,6 +25,7 @@ export type RootStackParamList = {
     dateKey: string;
   };
   Settings: undefined;
+  MiniGame: undefined;
 };
 
 // Tab screen props
@@ -48,5 +49,6 @@ export type TrainingResultScreenProps = NativeStackScreenProps<RootStackParamLis
 export type QuestResultScreenProps = NativeStackScreenProps<RootStackParamList, 'QuestResult'>;
 export type HistoryDetailScreenProps = NativeStackScreenProps<RootStackParamList, 'HistoryDetail'>;
 export type SettingsScreenProps = NativeStackScreenProps<RootStackParamList, 'Settings'>;
+export type MiniGameScreenProps = NativeStackScreenProps<RootStackParamList, 'MiniGame'>;
 
 export type RootStackNavigationProp = NativeStackScreenProps<RootStackParamList>['navigation'];

@@ -4,3 +4,4 @@ export * from './spread';
 export * from './gating';
 export * from './rewards';
 export * from './character';
+export * from './pet';

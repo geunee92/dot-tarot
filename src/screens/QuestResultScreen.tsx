@@ -103,7 +103,12 @@ export function QuestResultScreen({ route, navigation }: QuestResultScreenProps)
     generateInterpretation(spread)
       .then(async (interpretation) => {
         setAiInterpretation(interpretation);
-        await updateInterpretation(dateKey, spreadId, interpretation);
+
+        try {
+          await updateInterpretation(dateKey, spreadId, interpretation);
+        } catch (e) {
+          console.warn('[Store Update Error]', e);
+        }
 
         // Award XP for quest completion (new spreads only, once)
         if (isNewSpread && !xpAwardedRef.current) {
@@ -112,7 +117,7 @@ export function QuestResultScreen({ route, navigation }: QuestResultScreenProps)
           const result = addXP('quest_completion');
 
           setTimeout(() => {
-            xpRef.current?.show(result.event.amount, result.event.bonusAmount);
+            xpRef.current?.show(result.event.totalAmount, result.event.bonusAmount);
           }, 500);
 
           if (result.leveledUp) {
@@ -123,7 +128,7 @@ export function QuestResultScreen({ route, navigation }: QuestResultScreenProps)
         }
       })
       .catch((error) => {
-        console.error('[AI Interpret Error]', error?.message || error, JSON.stringify(error));
+        console.error('[AI Interpret Error]', error?.message || error);
         setAiError(true);
       })
       .finally(() => {

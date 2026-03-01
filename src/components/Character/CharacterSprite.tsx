@@ -50,6 +50,7 @@ export function CharacterSprite({
   const dimensions = SIZE_CONFIG[size];
 
   const translateY = useSharedValue(0);
+  const translateX = useSharedValue(0);
   const scale = useSharedValue(1);
   const opacity = useSharedValue(1);
   const glowOpacity = useSharedValue(0.5);
@@ -57,21 +58,43 @@ export function CharacterSprite({
   useEffect(() => {
     // Reset animations
     cancelAnimation(translateY);
+    cancelAnimation(translateX);
     cancelAnimation(scale);
     cancelAnimation(opacity);
     cancelAnimation(glowOpacity);
 
     translateY.value = 0;
+    translateX.value = 0;
     scale.value = 1;
     opacity.value = 1;
     glowOpacity.value = 0.5;
 
     switch (animationState) {
       case 'idle':
+        // Vertical bounce
         translateY.value = withRepeat(
           withTiming(-4, { duration: 1500, easing: Easing.inOut(Easing.quad) }),
           -1,
           true
+        );
+        // Glow breathing: 0.3↔0.7 over 4s cycle
+        glowOpacity.value = withRepeat(
+          withSequence(
+            withTiming(0.7, { duration: 2000, easing: Easing.inOut(Easing.quad) }),
+            withTiming(0.3, { duration: 2000, easing: Easing.inOut(Easing.quad) })
+          ),
+          -1,
+          false
+        );
+        // Periodic blink: every 3.5s dip to 0.7 for 100ms
+        opacity.value = withRepeat(
+          withSequence(
+            withTiming(1, { duration: 3400 }),
+            withTiming(0.7, { duration: 50 }),
+            withTiming(1, { duration: 50 })
+          ),
+          -1,
+          false
         );
         break;
       case 'reading':
@@ -110,11 +133,60 @@ export function CharacterSprite({
           true
         );
         break;
+      case 'eating':
+        scale.value = withRepeat(
+          withSequence(
+            withTiming(1.1, { duration: 200, easing: Easing.out(Easing.quad) }),
+            withTiming(0.95, { duration: 200, easing: Easing.in(Easing.quad) })
+          ),
+          3,
+          false
+        );
+        break;
+      case 'petted':
+        translateX.value = withRepeat(
+          withSequence(
+            withTiming(6, { duration: 150, easing: Easing.inOut(Easing.quad) }),
+            withTiming(-6, { duration: 150, easing: Easing.inOut(Easing.quad) }),
+            withTiming(0, { duration: 150, easing: Easing.inOut(Easing.quad) })
+          ),
+          2,
+          false
+        );
+        break;
+      case 'sad':
+        translateY.value = withTiming(6, { duration: 1000 });
+        opacity.value = withTiming(0.6, { duration: 1000 });
+        break;
+      case 'hungry':
+        translateX.value = withRepeat(
+          withSequence(
+            withTiming(2, { duration: 80 }),
+            withTiming(-2, { duration: 80 }),
+            withTiming(0, { duration: 80 })
+          ),
+          -1,
+          false
+        );
+        opacity.value = withTiming(0.5, { duration: 500 });
+        break;
+      case 'sleeping':
+        translateY.value = withRepeat(
+          withTiming(-2, { duration: 3000, easing: Easing.inOut(Easing.quad) }),
+          -1,
+          true
+        );
+        opacity.value = withTiming(0.4, { duration: 1000 });
+        break;
     }
   }, [animationState]);
 
   const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: translateY.value }, { scale: scale.value }],
+    transform: [
+      { translateX: translateX.value },
+      { translateY: translateY.value },
+      { scale: scale.value },
+    ],
     opacity: opacity.value,
   }));
 

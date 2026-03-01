@@ -21,3 +21,4 @@ export * from './cardConstants';
 export { PixelParticles } from './PixelParticles';
 export { ReflectionInput } from './ReflectionInput';
 export * from './Character';
+export * from './Pet';

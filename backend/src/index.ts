@@ -4,8 +4,25 @@ import { checkRateLimit, incrementRateLimit } from './rate-limit';
 
 export interface Env {
   OPENAI_API_KEY: string;
+  OPENAI_BASE_URL?: string; // Cloudflare AI Gateway URL or custom proxy
   RATE_LIMIT: KVNamespace;
   APP_KEY: string;
+}
+
+const ALLOWED_BASE_URLS = [
+  'https://api.openai.com',
+  'https://gateway.ai.cloudflare.com',
+];
+
+function getOpenAIBaseUrl(env: Env): string {
+  const url = env.OPENAI_BASE_URL;
+  if (!url) return 'https://api.openai.com/v1';
+  if (ALLOWED_BASE_URLS.some((allowed) => url.startsWith(allowed))) {
+    return url;
+  }
+  // Reject unknown base URLs to prevent API key leakage
+  console.error(`Blocked OPENAI_BASE_URL: ${url}`);
+  return 'https://api.openai.com/v1';
 }
 
 const corsHeaders = {
@@ -106,7 +123,8 @@ export default {
 
         const prompt = buildPrompt(body);
 
-        const openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+        const baseUrl = getOpenAIBaseUrl(env);
+        const openaiResponse = await fetch(`${baseUrl}/chat/completions`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -217,7 +235,8 @@ export default {
 
         const prompt = buildFollowUpPrompt(body);
 
-        const openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+        const baseUrl = getOpenAIBaseUrl(env);
+        const openaiResponse = await fetch(`${baseUrl}/chat/completions`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

@@ -1,6 +1,6 @@
 export type EvolutionStage = 'apprentice' | 'journeyman' | 'adept' | 'master' | 'grandmaster';
-export type CharacterAnimationState = 'idle' | 'reading' | 'happy' | 'tired' | 'levelup';
-export type XPSource = 'daily_training' | 'quest_completion' | 'advanced_quest' | 'training_journal' | 'streak_bonus';
+export type CharacterAnimationState = 'idle' | 'reading' | 'happy' | 'tired' | 'levelup' | 'eating' | 'petted' | 'sad' | 'hungry' | 'sleeping';
+export type XPSource = 'daily_training' | 'quest_completion' | 'advanced_quest' | 'training_journal' | 'streak_bonus' | 'mini_game';
 
 export interface StreakInfo {
   currentStreak: number;

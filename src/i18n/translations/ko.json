@@ -314,6 +314,29 @@
       "work": "직장"
     }
   },
+  "pet": {
+    "hunger": "배고픔",
+    "mood": "기분",
+    "mastery": "숙련도",
+    "feed": "먹이주기",
+    "petAction": "쓰다듬기",
+    "play": "놀아주기",
+    "tarot": "타로",
+    "feedSuccess": "맛있게 먹었어요!",
+    "petSuccess": "기분이 좋아졌어요!",
+    "miniGameComplete": "재미있었어요!",
+    "feedCooldown": "아직 배가 불러요. 나중에 다시 와주세요.",
+    "petCooldown": "지금은 쉬고 싶어요.",
+    "miniGameCooldown": "조금 쉬고 나서 다시 놀아줘요.",
+    "miniGameLimitReached": "오늘은 충분히 놀았어요!",
+    "tarotBlocked": "캐릭터가 배고파서 집중할 수 없어요",
+    "tarotBlockedMood": "캐릭터의 기분이 안 좋아서 집중할 수 없어요",
+    "miniGameTitle": "카드 매칭 게임",
+    "miniGameMatchFound": "짝을 찾았어요!",
+    "miniGameCongrats": "축하해요! 모든 짝을 맞췄어요!",
+    "miniGameMoodGain": "기분 +%{amount}",
+    "miniGameXPGain": "경험치 +%{amount}"
+  },
   "reflection": {
     "title": "오늘의 회고",
     "question": "오늘의 부적은 어땠나요?",

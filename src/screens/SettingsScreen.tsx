@@ -17,6 +17,7 @@ import { clearAll, setItem } from '../utils/storage';
 import { useDrawStore } from '../stores/drawStore';
 import { useRewardStore } from '../stores/rewardStore';
 import { useCharacterStore } from '../stores/characterStore';
+import { usePetStore } from '../stores/petStore';
 import { drawRandomCard } from '../utils/cards';
 import { getDrawKey } from '../utils/storage';
 
@@ -29,6 +30,7 @@ export function SettingsScreen(_props: SettingsScreenProps) {
   const [isResetting, setIsResetting] = useState(false);
   const [isInjecting, setIsInjecting] = useState(false);
   const resetCharacter = useCharacterStore((s) => s.resetCharacter);
+  const resetPet = usePetStore((s) => s.resetPet);
   const characterLevel = useCharacterStore((s) => s.level);
 
   const handleInject56Days = useCallback(async () => {
@@ -139,6 +141,7 @@ export function SettingsScreen(_props: SettingsScreenProps) {
                     style: 'destructive',
                     onPress: () => {
                       resetCharacter();
+                      resetPet();
                       Alert.alert(
                         t('settings.resetCharacter'),
                         t('settings.resetCharacterDone')

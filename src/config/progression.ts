@@ -15,6 +15,7 @@ export const XP_CONFIG = {
   QUEST_COMPLETION_XP: 50,
   ADVANCED_QUEST_XP: 80,
   TRAINING_JOURNAL_XP: 20,
+  MINI_GAME_XP: 15,
 
   // Streak multiplier
   STREAK_BONUS_PER_DAY: 0.1,

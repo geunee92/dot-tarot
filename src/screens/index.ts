@@ -5,3 +5,4 @@ export { TrainingResultScreen } from './TrainingResultScreen';
 export { QuestResultScreen } from './QuestResultScreen';
 export { HistoryDetailScreen } from './HistoryDetailScreen';
 export { SettingsScreen } from './SettingsScreen';
+export { MiniGameScreen } from './MiniGameScreen';

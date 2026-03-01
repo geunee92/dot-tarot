@@ -316,6 +316,29 @@
       "work": "work"
     }
   },
+  "pet": {
+    "hunger": "Hunger",
+    "mood": "Mood",
+    "mastery": "Mastery",
+    "feed": "Feed",
+    "petAction": "Pet",
+    "play": "Play",
+    "tarot": "Tarot",
+    "feedSuccess": "Yummy!",
+    "petSuccess": "Feeling happy!",
+    "miniGameComplete": "That was fun!",
+    "feedCooldown": "Still full. Come back later.",
+    "petCooldown": "Wants to rest for now.",
+    "miniGameCooldown": "Let's play again later.",
+    "miniGameLimitReached": "Played enough for today!",
+    "tarotBlocked": "Too hungry to focus on tarot",
+    "tarotBlockedMood": "Not in the mood for tarot right now",
+    "miniGameTitle": "Card Matching Game",
+    "miniGameMatchFound": "Match found!",
+    "miniGameCongrats": "Congrats! All pairs matched!",
+    "miniGameMoodGain": "Mood +%{amount}",
+    "miniGameXPGain": "XP +%{amount}"
+  },
   "reflection": {
     "title": "Daily Reflection",
     "question": "How was today's talisman?",

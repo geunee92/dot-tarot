@@ -38,6 +38,8 @@ const getDefaultBaseXP = (source: XPSource): number => {
       return XP_CONFIG.ADVANCED_QUEST_XP;
     case 'training_journal':
       return XP_CONFIG.TRAINING_JOURNAL_XP;
+    case 'mini_game':
+      return XP_CONFIG.MINI_GAME_XP;
     case 'streak_bonus':
       return 0;
     default:

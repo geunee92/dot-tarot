@@ -30,6 +30,7 @@ import { useSpreadStore } from '../stores/spreadStore';
 import { useGatingStore } from '../stores/gatingStore';
 import { useSettingsStore } from '../stores/settingsStore';
 import { useCharacterStore } from '../stores/characterStore';
+import { usePetStore } from '../stores/petStore';
 import { TOPIC_CONFIGS } from '../config/topics';
 import { getLocalDateKey } from '../utils/date';
 import { MainTabParamList, RootStackParamList } from '../navigation/types';
@@ -64,12 +65,16 @@ export function QuestBoardScreen({ navigation }: QuestBoardScreenProps) {
   
   const isCharacterHydrated = useCharacterStore((s) => s.isHydrated);
 
+  const isPetHydrated = usePetStore((s) => s.isHydrated);
+  const canDoTarotCheck = usePetStore((s) => s.canDoTarot);
+  const getTarotBlockReason = usePetStore((s) => s.getTarotBlockReason);
+
   const [selectedTopic, setSelectedTopic] = useState<SpreadTopic | null>(null);
   const [isQuestionModalVisible, setIsQuestionModalVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [showAdModal, setShowAdModal] = useState(false);
 
-  const isReady = isSpreadHydrated && isGatingHydrated && isSettingsHydrated && isCharacterHydrated;
+  const isReady = isSpreadHydrated && isGatingHydrated && isSettingsHydrated && isCharacterHydrated && isPetHydrated;
   const todayKey = getLocalDateKey();
 
   useEffect(() => {
@@ -85,6 +90,17 @@ export function QuestBoardScreen({ navigation }: QuestBoardScreenProps) {
 
   const handleTopicPress = (topicId: SpreadTopic) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+
+    // Pet gating check
+    if (!canDoTarotCheck()) {
+      const reason = getTarotBlockReason();
+      if (reason === 'hunger') {
+        showToast(t('pet.tarotBlocked'));
+      } else {
+        showToast(t('pet.tarotBlockedMood'));
+      }
+      return;
+    }
 
     if (!canDoFreeSpread(todayKey)) {
       setSelectedTopic(topicId);
@@ -315,6 +331,7 @@ const styles = StyleSheet.create({
   },
   cardEmoji: {
     fontSize: 40,
+    lineHeight: 50,
     marginBottom: SPACING.sm,
   },
   cardLabel: {

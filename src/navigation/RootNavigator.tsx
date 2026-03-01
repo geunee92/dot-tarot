@@ -8,6 +8,7 @@ import {
   QuestResultScreen,
   HistoryDetailScreen,
   SettingsScreen,
+  MiniGameScreen,
 } from '../screens';
 import { COLORS } from '../components';
 import { t } from '../i18n';
@@ -83,6 +84,16 @@ export function RootNavigator() {
           component={SettingsScreen}
           options={{
             title: t('settings.title'),
+            presentation: 'modal',
+            animation: 'slide_from_bottom',
+          }}
+        />
+
+        <Stack.Screen
+          name="MiniGame"
+          component={MiniGameScreen}
+          options={{
+            title: t('pet.miniGameTitle'),
             presentation: 'modal',
             animation: 'slide_from_bottom',
           }}
