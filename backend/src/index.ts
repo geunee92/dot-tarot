@@ -1,6 +1,21 @@
 import { InterpretRequest, InterpretResponse, FollowUpInterpretRequest } from './types';
 import { buildPrompt, buildFollowUpPrompt } from './prompts';
-import { checkRateLimit, incrementRateLimit } from './rate-limit';
+import { checkRateLimit, incrementRateLimit, DAILY_LIMIT } from './rate-limit';
+
+// Input bounds to prevent oversized prompts / token-cost abuse.
+const MAX_CARDS = 15;
+const MAX_QUESTION_LENGTH = 500;
+
+/** Validate the cards array and optional user question. Returns an error string, or null if valid. */
+function validateCards(cards: unknown, userQuestion?: string): string | null {
+  if (!Array.isArray(cards) || cards.length === 0 || cards.length > MAX_CARDS) {
+    return `cards must be an array of 1-${MAX_CARDS} items`;
+  }
+  if (userQuestion !== undefined && userQuestion.length > MAX_QUESTION_LENGTH) {
+    return `userQuestion must be at most ${MAX_QUESTION_LENGTH} characters`;
+  }
+  return null;
+}
 
 export interface Env {
   OPENAI_API_KEY: string;
@@ -51,8 +66,8 @@ export default {
       const data = await env.RATE_LIMIT.get(key, 'json') as { count: number; resetAt: number } | null;
       
       const now = Date.now();
-      const limit = 30;
-      
+      const limit = DAILY_LIMIT;
+
       let status: { ip: string; count: number; remaining: number; resetAt: string; isExpired: boolean };
       
       if (!data) {
@@ -93,7 +108,7 @@ export default {
       if (!rateLimitCheck.allowed) {
         return new Response(
           JSON.stringify({
-            error: 'Rate limit exceeded. 10 requests per day allowed.',
+            error: `Rate limit exceeded. ${DAILY_LIMIT} requests per day allowed.`,
           }),
           {
             status: 429,
@@ -119,6 +134,14 @@ export default {
               },
             }
           );
+        }
+
+        const cardsError = validateCards(body.cards, body.userQuestion);
+        if (cardsError) {
+          return new Response(JSON.stringify({ error: cardsError }), {
+            status: 400,
+            headers: { 'Content-Type': 'application/json', ...corsHeaders },
+          });
         }
 
         const prompt = buildPrompt(body);
@@ -205,7 +228,7 @@ export default {
       if (!rateLimitCheck.allowed) {
         return new Response(
           JSON.stringify({
-            error: 'Rate limit exceeded. 10 requests per day allowed.',
+            error: `Rate limit exceeded. ${DAILY_LIMIT} requests per day allowed.`,
           }),
           {
             status: 429,
@@ -231,6 +254,16 @@ export default {
               },
             }
           );
+        }
+
+        const followUpError =
+          validateCards(body.originalCards, body.userQuestion) ||
+          validateCards(body.followUpCards);
+        if (followUpError) {
+          return new Response(JSON.stringify({ error: followUpError }), {
+            status: 400,
+            headers: { 'Content-Type': 'application/json', ...corsHeaders },
+          });
         }
 
         const prompt = buildFollowUpPrompt(body);

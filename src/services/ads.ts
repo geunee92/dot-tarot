@@ -22,11 +22,12 @@ const TEST_REWARDED_AD_UNIT_ID = Platform.select({
   default: 'ca-app-pub-3940256099942544/5224354917',
 });
 
-// Production ad unit IDs
+// Production ad unit IDs — configured via .env (see .env.example), inlined at build time.
+// Falls back to Google's test unit IDs when not set, so the app never ships a broken ad call.
 const PRODUCTION_REWARDED_AD_UNIT_ID = Platform.select({
-  android: 'ca-app-pub-5957078713826547/7178538743',
-  ios: 'ca-app-pub-5957078713826547/1324981807',
-  default: 'ca-app-pub-5957078713826547/7178538743',
+  android: process.env.EXPO_PUBLIC_ADMOB_REWARDED_ANDROID ?? TEST_REWARDED_AD_UNIT_ID,
+  ios: process.env.EXPO_PUBLIC_ADMOB_REWARDED_IOS ?? TEST_REWARDED_AD_UNIT_ID,
+  default: process.env.EXPO_PUBLIC_ADMOB_REWARDED_ANDROID ?? TEST_REWARDED_AD_UNIT_ID,
 });
 
 const REWARDED_AD_UNIT_ID = __DEV__ ? TEST_REWARDED_AD_UNIT_ID : PRODUCTION_REWARDED_AD_UNIT_ID;

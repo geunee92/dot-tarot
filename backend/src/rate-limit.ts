@@ -2,6 +2,9 @@ export interface Env {
   RATE_LIMIT: KVNamespace;
 }
 
+/** Max interpretation requests allowed per IP per day (resets at UTC midnight). */
+export const DAILY_LIMIT = 30;
+
 interface RateLimitData {
   count: number;
   resetAt: number;
@@ -15,19 +18,18 @@ export async function checkRateLimit(
   const data = await env.RATE_LIMIT.get(key, 'json');
 
   const now = Date.now();
-  const limit = 30;
 
   if (!data) {
-    return { allowed: true, remaining: limit - 1 };
+    return { allowed: true, remaining: DAILY_LIMIT - 1 };
   }
 
   const rateLimitData = data as RateLimitData;
 
   if (now > rateLimitData.resetAt) {
-    return { allowed: true, remaining: limit - 1 };
+    return { allowed: true, remaining: DAILY_LIMIT - 1 };
   }
 
-  const remaining = Math.max(0, limit - rateLimitData.count);
+  const remaining = Math.max(0, DAILY_LIMIT - rateLimitData.count);
   return { allowed: remaining > 0, remaining };
 }
 

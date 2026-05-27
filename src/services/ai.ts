@@ -16,10 +16,17 @@ interface InterpretRequest {
   locale: 'en' | 'ko';
 }
 
-const API_URL = 'https://taro-ai-api.geunee92.workers.dev';
-const APP_KEY = '***REMOVED-LEAKED-KEY***';
+// Configured via .env (see .env.example). These are inlined at build time by Expo.
+const API_URL = process.env.EXPO_PUBLIC_TARO_API_URL ?? '';
+const APP_KEY = process.env.EXPO_PUBLIC_TARO_APP_KEY ?? '';
 
 export async function generateInterpretation(spread: SpreadRecord): Promise<string> {
+  if (!API_URL || !APP_KEY) {
+    throw new Error(
+      'AI API is not configured. Set EXPO_PUBLIC_TARO_API_URL and EXPO_PUBLIC_TARO_APP_KEY in .env (see .env.example).'
+    );
+  }
+
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 30000);
 
